@@ -37,7 +37,7 @@ _EVENT_INDEX_PAGE = "https://www.opdi.aero/flight-event-data"
 _EVENT_FILE_RE = re.compile(r"flight_events_(\d{8})_(\d{8})\.parquet")
 
 
-def _download(url: str, dest: str, attempts: int = 5) -> str:
+def _download(url: str, dest: str, attempts: int = 10) -> str:
     """
     Download `url` to `dest`, verifying the full Content-Length arrived. The
     agent proxy occasionally truncates large transfers, so this retries with
@@ -47,37 +47,32 @@ def _download(url: str, dest: str, attempts: int = 5) -> str:
     if os.path.exists(dest) and os.path.getsize(dest) > 0:
         return dest
     os.makedirs(os.path.dirname(dest), exist_ok=True)
+    import subprocess
     import time
 
-    import requests
-
+    # Use curl rather than requests: through the agent proxy, requests' pooled
+    # streaming connections intermittently stall mid-file for minutes, whereas
+    # curl reliably pulls the same ~250 MB files in seconds. curl's own --retry
+    # handles transient errors; the outer loop re-checks the Parquet footer so a
+    # truncated download is caught (the server has no resume - Range -> 416).
     tmp = dest + ".part"
     last_err = None
+    print(f"  downloading {os.path.basename(dest)} ...", flush=True)
     for i in range(attempts):
         try:
-            with requests.get(url, stream=True, timeout=300) as r:
-                r.raise_for_status()
-                expected = int(r.headers.get("Content-Length", 0))
-                print(f"  downloading {os.path.basename(dest)} "
-                      f"({expected/1e6:.0f} MB){'' if i == 0 else f' [retry {i}]'} ...", flush=True)
-                got = 0
-                with open(tmp, "wb") as f:
-                    for chunk in r.iter_content(chunk_size=1 << 20):
-                        f.write(chunk)
-                        got += len(chunk)
-            if expected and got < expected:
-                raise IOError(f"truncated: {got}/{expected} bytes")
-            # Decisive integrity check: a truncated Parquet has no valid footer,
-            # so this raises if even one byte is missing - regardless of whether
-            # the (possibly proxy-rewritten) Content-Length matched.
-            if pq.ParquetFile(tmp).metadata.num_rows == 0:
+            subprocess.run(
+                ["curl", "-sSL", "--fail", "--max-time", "180",
+                 "--retry", "3", "--retry-delay", "2", "-o", tmp, url],
+                check=True, capture_output=True,
+            )
+            if pq.ParquetFile(tmp).metadata.num_rows == 0:  # footer intact?
                 raise IOError("parquet has 0 rows")
             os.replace(tmp, dest)
             return dest
-        except Exception as e:  # network / truncation / HTTP error
-            last_err = e
-            print(f"  download failed ({e}); retrying ...", flush=True)
-            time.sleep(2 ** i)
+        except Exception as e:
+            last_err = getattr(e, "stderr", b"") or e
+            print(f"  download failed ({e}); retry {i + 1} ...", flush=True)
+            time.sleep(min(2 ** i, 30))
     raise RuntimeError(f"could not download {url}: {last_err}")
 
 
