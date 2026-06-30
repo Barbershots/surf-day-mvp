@@ -1,0 +1,21 @@
+{
+  "arrivals_with_events": 891,
+  "large_jet_arrivals": 422,
+  "with_corridor_leveloff": 397,
+  "pct_with_corridor_leveloff": 44.6,
+  "lj_pct_with_corridor_leveloff": 50.2,
+  "leveloff_over_village": 216,
+  "pct_leveloff_over_village": 24.2,
+  "median_village_leveloff_ft": 2300.0000736,
+  "flights_with_gate_reading": 137,
+  "median_gate_alt_ft": 2450.0000784,
+  "gate_below_hard_floor": 19,
+  "gate_below_cda_profile": 112,
+  "expected_cda_alt_over_brockenhurst_ft": 3116,
+  "hard_floor_ft": 2000,
+  "period": {
+    "start": "2025-06-04",
+    "end": "2025-06-24",
+    "large_jet_only": false
+  }
+}

@@ -1,0 +1,10 @@
+# Raw OPDI data is large (150-400 MB per 10-day events file) - keep it local.
+data/
+*.parquet
+*.parquet.part
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
