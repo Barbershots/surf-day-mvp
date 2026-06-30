@@ -37,17 +37,48 @@ _EVENT_INDEX_PAGE = "https://www.opdi.aero/flight-event-data"
 _EVENT_FILE_RE = re.compile(r"flight_events_(\d{8})_(\d{8})\.parquet")
 
 
-def _download(url: str, dest: str) -> str:
+def _download(url: str, dest: str, attempts: int = 5) -> str:
+    """
+    Download `url` to `dest`, verifying the full Content-Length arrived. The
+    agent proxy occasionally truncates large transfers, so this retries with
+    exponential backoff and only commits a file that is byte-complete - across
+    140+ files in a full sweep a silent truncation would corrupt the analysis.
+    """
     if os.path.exists(dest) and os.path.getsize(dest) > 0:
         return dest
     os.makedirs(os.path.dirname(dest), exist_ok=True)
-    import urllib.request
+    import time
+
+    import requests
 
     tmp = dest + ".part"
-    print(f"  downloading {os.path.basename(dest)} ...", flush=True)
-    urllib.request.urlretrieve(url, tmp)
-    os.replace(tmp, dest)
-    return dest
+    last_err = None
+    for i in range(attempts):
+        try:
+            with requests.get(url, stream=True, timeout=300) as r:
+                r.raise_for_status()
+                expected = int(r.headers.get("Content-Length", 0))
+                print(f"  downloading {os.path.basename(dest)} "
+                      f"({expected/1e6:.0f} MB){'' if i == 0 else f' [retry {i}]'} ...", flush=True)
+                got = 0
+                with open(tmp, "wb") as f:
+                    for chunk in r.iter_content(chunk_size=1 << 20):
+                        f.write(chunk)
+                        got += len(chunk)
+            if expected and got < expected:
+                raise IOError(f"truncated: {got}/{expected} bytes")
+            # Decisive integrity check: a truncated Parquet has no valid footer,
+            # so this raises if even one byte is missing - regardless of whether
+            # the (possibly proxy-rewritten) Content-Length matched.
+            if pq.ParquetFile(tmp).metadata.num_rows == 0:
+                raise IOError("parquet has 0 rows")
+            os.replace(tmp, dest)
+            return dest
+        except Exception as e:  # network / truncation / HTTP error
+            last_err = e
+            print(f"  download failed ({e}); retrying ...", flush=True)
+            time.sleep(2 ** i)
+    raise RuntimeError(f"could not download {url}: {last_err}")
 
 
 def _available_event_windows():
@@ -101,6 +132,9 @@ def load_flight_events(window_start: date, window_end: date,
     url = config.OPDI_FLIGHT_EVENTS.format(start=s, end=e)
     path = _download(url, os.path.join(DATA_DIR, f"flight_events_{s}_{e}.parquet"))
     df = pq.read_table(path, columns=_EVENT_COLS).to_pandas()
+    # Flight ids are 19-digit values that overflow int64; keep them uint64 so a
+    # mixed-dtype merge never upcasts them to float64 and loses precision.
+    df["flight_id"] = df["flight_id"].astype("uint64")
     if only_ids is not None:
         df = df[df["flight_id"].isin(only_ids)].copy()
     if delete_after:
@@ -117,6 +151,10 @@ def arrivals(flight_list: pd.DataFrame, airport: str = None) -> pd.DataFrame:
 
     airport = airport or config.DEST_AIRPORT
     arr = flight_list[flight_list["ades"] == airport].copy()
+    # Some monthly files store `id` as int64, others as uint64; normalise so a
+    # later concat/merge across months can't upcast these 19-digit ids to
+    # float64 (which silently corrupts them and breaks the event join).
+    arr["id"] = arr["id"].astype("uint64")
     return classify.add_classification(arr)
 
 
