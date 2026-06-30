@@ -113,8 +113,8 @@ def per_flight(arrivals: pd.DataFrame, events: pd.DataFrame) -> pd.DataFrame:
     )
 
     base = (
-        arrivals[["id", "flt_id", "typecode", "icao_aircraft_class",
-                  "is_large_jet", "last_seen", "dof"]]
+        arrivals[["id", "flt_id", "typecode", "icao_aircraft_class", "category",
+                  "is_large_jet", "time_window", "last_seen", "dof"]]
         .rename(columns={"id": "flight_id"})
     )
     # Keep only flights we actually have events for.

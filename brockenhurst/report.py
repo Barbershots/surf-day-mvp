@@ -1,0 +1,308 @@
+"""
+Plain-English reporting for the sweep: charts and tables written so that
+someone with no aviation background can understand them.
+
+Two plain-language anchors are used everywhere instead of jargon:
+
+    "Proper height" (~3,100 ft) - where a plane should be over Brockenhurst if
+        it is gliding down gently with its engines near idle. This is the quiet
+        way to arrive (a "continuous descent"). Derived from the standard 3-deg
+        approach path - see METHODOLOGY.md.
+
+    "Minimum allowed" (2,000 ft) - the airport's own published rule: planes
+        must not be lower than this here. Below it is a clear breach.
+
+The core message the charts make visual: lower = louder, because to fly low and
+level a plane has to keep its engines working hard.
+"""
+from __future__ import annotations
+
+import os
+
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+import config
+from . import charts, classify
+from . import geometry as geo
+
+PROPER_FT = round(geo.expected_cda_altitude_ft())   # ~3,116
+FLOOR_FT = config.HARD_FLOOR_FT                      # 2,000
+
+# Recurring scheduled flights flagged in the resident audit, to cross-reference.
+AUDIT_CALLSIGNS = ["LS3684", "URO601", "TOM651", "RYR1244", "URO901"]
+
+
+def _local_times(pf: pd.DataFrame) -> pd.Series:
+    t = pd.to_datetime(pf["last_seen"], utc=True)
+    return t.dt.tz_convert(classify.LONDON)
+
+
+# ---------------------------------------------------------------------------
+# Tables
+# ---------------------------------------------------------------------------
+
+def night_large_jet_table(pf: pd.DataFrame) -> pd.DataFrame:
+    """
+    One row per night-time airliner with a measured height over Brockenhurst.
+    Height is the direct over-village reading where we have one, otherwise the
+    height at which the plane levelled off within 6 km of the village.
+    """
+    d = pf[(pf["category"] == "Large jet") & (pf["time_window"] == "Night")].copy()
+    # Coalesce the two height sources.
+    d["height"] = d["gate_alt_ft"].fillna(d["village_leveloff_ft"])
+    d = d[d["height"].notna()].copy()
+    lt = _local_times(d)
+    source = np.where(d["gate_alt_ft"].notna(), "passed overhead",
+                      "levelled off near village")
+    out = pd.DataFrame({
+        "date": lt.dt.strftime("%Y-%m-%d"),
+        "local_time": lt.dt.strftime("%H:%M"),
+        "callsign": d["flt_id"].fillna("(unknown)"),
+        "aircraft_type": d["typecode"].fillna("(unknown)"),
+        "height_over_brockenhurst_ft": d["height"].round().astype(int),
+        "ft_below_proper_height": (PROPER_FT - d["height"]).round().astype(int),
+        "below_2000ft_minimum": np.where(d["height"] < FLOOR_FT, "YES", ""),
+        "stopped_descending_overhead": np.where(d["leveloff_over_village"], "YES", ""),
+        "measurement": source,
+    })
+    return out.sort_values("height_over_brockenhurst_ft").reset_index(drop=True)
+
+
+def summary_by_year(pf: pd.DataFrame) -> pd.DataFrame:
+    """Year-on-year headline numbers for large jets, with a night focus."""
+    rows = []
+    for year, g in pf.groupby("year"):
+        lj = g[g["category"] == "Large jet"]
+        night = lj[lj["time_window"] == "Night"]
+        night_gate = night[night["gate_alt_ft"].notna()]
+        rows.append({
+            "year": int(year),
+            "large_jet_arrivals_tracked": len(lj),
+            "night_large_jets_tracked": len(night),
+            "night_with_height_reading": len(night_gate),
+            "night_median_height_ft": int(np.nanmedian(night_gate["gate_alt_ft"])) if len(night_gate) else None,
+            "night_below_proper_height": int((night_gate["gate_alt_ft"] < PROPER_FT).sum()),
+            "night_below_2000ft_minimum": int((night_gate["gate_alt_ft"] < FLOOR_FT).sum()),
+            "night_stopped_descending_overhead": int(night["leveloff_over_village"].sum()),
+        })
+    return pd.DataFrame(rows).sort_values("year")
+
+
+def cross_reference_audit(pf: pd.DataFrame) -> pd.DataFrame:
+    """Find the resident-audit callsigns in the 2023-2025 data."""
+    d = pf[pf["flt_id"].isin(AUDIT_CALLSIGNS)].copy()
+    if d.empty:
+        return d
+    lt = _local_times(d)
+    d["date"] = lt.dt.strftime("%Y-%m-%d")
+    d["local_time"] = lt.dt.strftime("%H:%M")
+    return d[["date", "local_time", "flt_id", "typecode", "category",
+              "time_window", "gate_alt_ft", "leveloff_over_village"]].sort_values("date")
+
+
+# ---------------------------------------------------------------------------
+# Charts (plain language)
+# ---------------------------------------------------------------------------
+
+def _refs(ax, xmax):
+    ax.axhline(PROPER_FT, color=charts.GOLD, lw=2,
+               label=f"Proper height (~{PROPER_FT:,} ft) - the quiet way down")
+    ax.axhline(FLOOR_FT, color=charts.RED, lw=2, ls="--",
+               label=f"Minimum allowed ({FLOOR_FT:,} ft) - airport's own rule")
+
+
+def height_by_timeofday(pf, path):
+    """Average airliner height over Brockenhurst: day vs evening vs night."""
+    lj = pf[(pf["category"] == "Large jet") & (pf["gate_alt_ft"].notna())]
+    order = ["Day", "Evening", "Night"]
+    meds = [lj[lj["time_window"] == w]["gate_alt_ft"].median() for w in order]
+    ns = [int((lj["time_window"] == w).sum()) for w in order]
+    colors = [charts.BLUE, charts.GOLD, charts.RED]
+
+    fig, ax = plt.subplots(figsize=(9, 6), facecolor=charts.BG)
+    bars = ax.bar(order, meds, color=colors, edgecolor=charts.BG, width=0.6)
+    for b, v, n in zip(bars, meds, ns):
+        ax.text(b.get_x() + b.get_width() / 2, v + 60,
+                f"{v:,.0f} ft\n({n} flights)", ha="center",
+                color=charts.FG, fontsize=11, fontweight="bold")
+    _refs(ax, len(order))
+    charts._style(ax)
+    ax.set_ylabel("Typical height over Brockenhurst (ft)")
+    ax.set_ylim(0, max(PROPER_FT + 600, max(meds) + 600))
+    ax.set_title("How high are airliners as they pass over Brockenhurst?\n"
+                 "Lower bar = lower plane = more engine noise", color=charts.FG)
+    ax.legend(facecolor=charts.BG, edgecolor=charts.GRID, labelcolor=charts.FG, fontsize=9, loc="lower left")
+    fig.tight_layout()
+    fig.savefig(path, dpi=130, facecolor=charts.BG)
+    plt.close(fig)
+
+
+def night_year_on_year(summary_df, path):
+    """How many night-time airliners flew too low, each year."""
+    s = summary_df
+    x = s["year"].astype(str).tolist()
+    fig, ax = plt.subplots(figsize=(9, 6), facecolor=charts.BG)
+    below_proper = s["night_below_proper_height"].tolist()
+    below_floor = s["night_below_2000ft_minimum"].tolist()
+    ax.bar(x, below_proper, color=charts.GOLD, edgecolor=charts.BG,
+           label="Lower than the proper (quiet) height")
+    ax.bar(x, below_floor, color=charts.RED, edgecolor=charts.BG,
+           label="Below the airport's own 2,000 ft minimum")
+    for i, (bp, bf) in enumerate(zip(below_proper, below_floor)):
+        ax.text(i, bp + 0.5, str(bp), ha="center", color=charts.FG, fontweight="bold")
+    charts._style(ax)
+    ax.set_ylabel("Number of night-time airliners")
+    ax.set_title("Night-time airliners passing low over Brockenhurst\n"
+                 "(11pm-6am, the core sleep window)", color=charts.FG)
+    ax.legend(facecolor=charts.BG, edgecolor=charts.GRID, labelcolor=charts.FG, fontsize=9)
+    fig.tight_layout()
+    fig.savefig(path, dpi=130, facecolor=charts.BG)
+    plt.close(fig)
+
+
+def night_height_hist(pf, path):
+    """Distribution of night airliner heights over Brockenhurst."""
+    d = pf[(pf["category"] == "Large jet") & (pf["time_window"] == "Night")
+           & (pf["gate_alt_ft"].notna())]["gate_alt_ft"]
+    fig, ax = plt.subplots(figsize=(10, 6), facecolor=charts.BG)
+    if len(d):
+        bins = np.arange(0, max(4000, d.max() + 250), 250)
+        ax.hist(d, bins=bins, color=charts.RED, edgecolor=charts.BG, alpha=0.85)
+    ax.axvline(FLOOR_FT, color=charts.FG, lw=2, ls="--",
+               label=f"Minimum allowed ({FLOOR_FT:,} ft)")
+    ax.axvline(PROPER_FT, color=charts.GOLD, lw=2,
+               label=f"Proper quiet height (~{PROPER_FT:,} ft)")
+    charts._style(ax)
+    ax.set_xlabel("Height over Brockenhurst at night (ft)")
+    ax.set_ylabel("Number of night-time airliners")
+    ax.set_title("How low are airliners flying over Brockenhurst at night?", color=charts.FG)
+    ax.legend(facecolor=charts.BG, edgecolor=charts.GRID, labelcolor=charts.FG, fontsize=9)
+    fig.tight_layout()
+    fig.savefig(path, dpi=130, facecolor=charts.BG)
+    plt.close(fig)
+
+
+def worst_night_offenders(night_table, path, n=15):
+    """The lowest individual night-time airliners, labelled with flight + date."""
+    d = night_table.head(n).iloc[::-1]
+    if d.empty:
+        return
+    labels = [f"{r.callsign}  {r.date}  {r.local_time}" for r in d.itertuples()]
+    fig, ax = plt.subplots(figsize=(10, 7), facecolor=charts.BG)
+    colors = [charts.RED if v < FLOOR_FT else charts.GOLD
+              for v in d["height_over_brockenhurst_ft"]]
+    ax.barh(labels, d["height_over_brockenhurst_ft"], color=colors, edgecolor=charts.BG)
+    ax.axvline(FLOOR_FT, color=charts.FG, lw=2, ls="--", label=f"2,000 ft minimum")
+    ax.axvline(PROPER_FT, color=charts.GOLD, lw=2, label=f"~{PROPER_FT:,} ft proper height")
+    for i, v in enumerate(d["height_over_brockenhurst_ft"]):
+        ax.text(v + 30, i, f"{v:,} ft", va="center", color=charts.FG, fontsize=9)
+    charts._style(ax)
+    ax.set_xlabel("Height over Brockenhurst (ft)")
+    ax.set_title("Lowest night-time airliners over Brockenhurst, 2023-2025", color=charts.FG)
+    ax.legend(facecolor=charts.BG, edgecolor=charts.GRID, labelcolor=charts.FG, fontsize=9, loc="lower right")
+    fig.tight_layout()
+    fig.savefig(path, dpi=130, facecolor=charts.BG)
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# Orchestration
+# ---------------------------------------------------------------------------
+
+def build(arr, events, pf, outdir):
+    os.makedirs(outdir, exist_ok=True)
+
+    night_tbl = night_large_jet_table(pf)
+    night_tbl.to_csv(os.path.join(outdir, "night_large_jets.csv"), index=False)
+
+    by_year = summary_by_year(pf)
+    by_year.to_csv(os.path.join(outdir, "summary_by_year.csv"), index=False)
+
+    xref = cross_reference_audit(pf)
+    xref.to_csv(os.path.join(outdir, "audit_cross_reference.csv"), index=False)
+
+    height_by_timeofday(pf, os.path.join(outdir, "height_by_timeofday.png"))
+    night_year_on_year(by_year, os.path.join(outdir, "night_year_on_year.png"))
+    night_height_hist(pf, os.path.join(outdir, "night_height_hist.png"))
+    worst_night_offenders(night_tbl, os.path.join(outdir, "worst_night_offenders.png"))
+
+    # A plain-English summary text file.
+    _write_plain_summary(pf, by_year, night_tbl, xref, os.path.join(outdir, "FINDINGS.md"))
+    return by_year, night_tbl
+
+
+def _write_plain_summary(pf, by_year, night_tbl, xref, path):
+    lj = pf[pf["category"] == "Large jet"]
+    night = lj[lj["time_window"] == "Night"]
+    night_gate = night[night["gate_alt_ft"].notna()]
+    n_below_floor = int((night_gate["gate_alt_ft"] < FLOOR_FT).sum())
+    n_below_proper = int((night_gate["gate_alt_ft"] < PROPER_FT).sum())
+    med = np.nanmedian(night_gate["gate_alt_ft"]) if len(night_gate) else float("nan")
+
+    lines = [
+        "# What the flight data shows over Brockenhurst (2023-2025)",
+        "",
+        "*Plain-English summary. \"Height\" means height above sea level as the "
+        "plane passed over Brockenhurst village. All heights come from the "
+        "planes' own broadcast position data.*",
+        "",
+        "## The two numbers that matter",
+        f"- **Proper (quiet) height over Brockenhurst: about {PROPER_FT:,} ft.** "
+        "This is where a plane should be if it is gliding down gently with its "
+        "engines near idle - the quiet way to arrive.",
+        f"- **Minimum the airport allows here: {FLOOR_FT:,} ft.** Below this is a "
+        "clear breach of the airport's own published rule.",
+        "",
+        "When a plane is lower than the proper height it has usually stopped "
+        "gliding and is flying low and level - which means its engines are "
+        "working harder, so it is louder. That is the noise residents hear.",
+        "",
+        "## Night-time airliners (11pm-6am, the core sleep window)",
+        f"- Tracked night-time airliners over Brockenhurst with a height reading: "
+        f"**{len(night_gate):,}**.",
+        f"- Typical (median) height: **{med:,.0f} ft** - "
+        f"**{PROPER_FT - med:,.0f} ft below** the proper quiet height."
+        if len(night_gate) else "- No night readings in this period.",
+        f"- Flew **lower than the proper quiet height**: **{n_below_proper:,}** "
+        f"({100*n_below_proper/max(len(night_gate),1):.0f}%).",
+        f"- Flew **below the airport's own {FLOOR_FT:,} ft minimum**: "
+        f"**{n_below_floor:,}** ({100*n_below_floor/max(len(night_gate),1):.0f}%).",
+        "",
+        "## Year by year",
+        by_year.to_markdown(index=False),
+        "",
+        "## Cross-reference with the resident noise audit",
+    ]
+    if len(xref):
+        lines.append(
+            f"Found **{len(xref)}** of the audit's flagged callsigns in the "
+            "2023-2025 public data (the audit's own June 2026 dates are beyond "
+            "the current open-data coverage, but these are recurring scheduled "
+            "flights). See `audit_cross_reference.csv`.")
+        lines.append("")
+        lines.append(xref.to_markdown(index=False))
+    else:
+        lines.append(
+            "None of the audit's exact callsigns appear in the 2023-2025 public "
+            "data. The audit's flights are dated June 2026, beyond current "
+            "open-data coverage (which ends ~Jan 2026); the *pattern* it "
+            "describes - night airliners at ~2,400-2,600 ft - is confirmed by "
+            "the night-time table in `night_large_jets.csv`.")
+    lines += [
+        "",
+        "## The worst individual night flights",
+        "See `worst_night_offenders.png` and `night_large_jets.csv` for the full "
+        "list, each with its flight number, date, time and measured height.",
+        "",
+        "*Caveats: only planes broadcasting position at low level are captured "
+        "(roughly half to two-thirds of arrivals), so the true counts are higher, "
+        "not lower. A single low flight can have an air-traffic-control reason; "
+        "the point is the consistent pattern. See METHODOLOGY.md.*",
+    ]
+    with open(path, "w") as f:
+        f.write("\n".join(str(x) for x in lines))

@@ -20,7 +20,8 @@ Files are cached in ./data so re-runs are free. Each 10-day events file is
 from __future__ import annotations
 
 import os
-from datetime import date, timedelta
+import re
+from datetime import date, datetime
 
 import pandas as pd
 import pyarrow.parquet as pq
@@ -29,8 +30,11 @@ import config
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
 
-# OPDI's fixed 10-day event windows are anchored on 2022-01-01.
-_EVENTS_ANCHOR = date(2022, 1, 1)
+# The OPDI 10-day event windows are NOT a fixed grid (each year starts on a
+# different day, e.g. 2025 starts 2025-01-05), so the real list of published
+# files is scraped from the download page rather than computed.
+_EVENT_INDEX_PAGE = "https://www.opdi.aero/flight-event-data"
+_EVENT_FILE_RE = re.compile(r"flight_events_(\d{8})_(\d{8})\.parquet")
 
 
 def _download(url: str, dest: str) -> str:
@@ -46,15 +50,33 @@ def _download(url: str, dest: str) -> str:
     return dest
 
 
+def _available_event_windows():
+    """All published (start, end) event windows, scraped once and cached."""
+    cache = os.path.join(DATA_DIR, "_event_windows.txt")
+    os.makedirs(DATA_DIR, exist_ok=True)
+    if not os.path.exists(cache):
+        import urllib.request
+
+        html = urllib.request.urlopen(_EVENT_INDEX_PAGE, timeout=60).read().decode("utf-8", "ignore")
+        pairs = sorted(set(_EVENT_FILE_RE.findall(html)))
+        with open(cache, "w") as f:
+            f.write("\n".join(f"{s}_{e}" for s, e in pairs))
+    out = []
+    for line in open(cache):
+        line = line.strip()
+        if not line:
+            continue
+        s, e = line.split("_")
+        out.append((datetime.strptime(s, "%Y%m%d").date(),
+                    datetime.strptime(e, "%Y%m%d").date()))
+    return out
+
+
 def event_windows(start: date, end: date):
-    """Yield (start, end) dates of every OPDI 10-day event window overlapping [start, end]."""
-    # Snap `start` back to the anchor's 10-day grid.
-    days = (start - _EVENTS_ANCHOR).days
-    w_start = _EVENTS_ANCHOR + timedelta(days=(days // 10) * 10)
-    while w_start < end:
-        w_end = w_start + timedelta(days=10)
-        yield w_start, w_end
-        w_start = w_end
+    """Yield every published 10-day event window overlapping [start, end)."""
+    for ws, we in _available_event_windows():
+        if ws < end and we > start:
+            yield ws, we
 
 
 def load_flight_list(year: int, month: int) -> pd.DataFrame:
@@ -64,21 +86,38 @@ def load_flight_list(year: int, month: int) -> pd.DataFrame:
     return pq.read_table(path).to_pandas()
 
 
-def load_flight_events(window_start: date, window_end: date) -> pd.DataFrame:
+_EVENT_COLS = ["flight_id", "type", "event_time", "longitude", "latitude", "altitude"]
+
+
+def load_flight_events(window_start: date, window_end: date,
+                       only_ids: set | None = None,
+                       delete_after: bool = False) -> pd.DataFrame:
+    """
+    Load one 10-day events file. For the multi-year sweep, pass `only_ids` (the
+    EGHH arrival ids) to keep just those rows and `delete_after=True` to remove
+    the ~200-400 MB raw file once filtered, so disk usage stays tiny.
+    """
     s, e = window_start.strftime("%Y%m%d"), window_end.strftime("%Y%m%d")
     url = config.OPDI_FLIGHT_EVENTS.format(start=s, end=e)
     path = _download(url, os.path.join(DATA_DIR, f"flight_events_{s}_{e}.parquet"))
-    # Only the columns we need, to keep memory sane on the big files.
-    cols = ["flight_id", "type", "event_time", "longitude", "latitude", "altitude"]
-    return pq.read_table(path, columns=cols).to_pandas()
+    df = pq.read_table(path, columns=_EVENT_COLS).to_pandas()
+    if only_ids is not None:
+        df = df[df["flight_id"].isin(only_ids)].copy()
+    if delete_after:
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+    return df
 
 
 def arrivals(flight_list: pd.DataFrame, airport: str = None) -> pd.DataFrame:
-    """EGHH arrivals, with a `is_large_jet` convenience flag."""
+    """EGHH arrivals with aircraft-category and day/evening/night classification."""
+    from . import classify
+
     airport = airport or config.DEST_AIRPORT
     arr = flight_list[flight_list["ades"] == airport].copy()
-    arr["is_large_jet"] = arr["icao_aircraft_class"].isin(config.LARGE_JET_CLASSES)
-    return arr
+    return classify.add_classification(arr)
 
 
 def load_period(start: date, end: date, large_jet_only: bool = False):
@@ -113,7 +152,8 @@ def load_period(start: date, end: date, large_jet_only: bool = False):
     events = pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
 
     # 3) Attach arrival metadata to each event.
-    meta = arr[["id", "flt_id", "typecode", "icao_aircraft_class", "is_large_jet",
-                "last_seen", "dof"]].rename(columns={"id": "flight_id"})
+    meta = arr[["id", "flt_id", "typecode", "icao_aircraft_class", "category",
+                "is_large_jet", "time_window", "last_seen", "dof"]].rename(
+        columns={"id": "flight_id"})
     events = events.merge(meta, on="flight_id", how="left")
     return arr, events
