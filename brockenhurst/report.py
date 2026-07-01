@@ -175,7 +175,9 @@ def _profile_frame(events, keep_years):
           & (e["altitude"] > 0) & (e["altitude"] <= 10000)
           & (e["year"].isin(list(keep_years)))]
     cat = e["category"] if "category" in e.columns else pd.Series("", index=e.index)
+    fid = e["flight_id"] if "flight_id" in e.columns else pd.Series(range(len(e)), index=e.index)
     return pd.DataFrame({
+        "flight_id": fid.values,
         "dist_thr_nm": e["dist_thr_nm"].values, "altitude": e["altitude"].values,
         "year": e["year"].values, "category": cat.values,
         "cda_profile_ft": e["cda_profile_ft"].values,
@@ -208,13 +210,21 @@ def descent_profile_by_year(profile_df, path, large_jet_only=False):
         ax.plot(x, geo.glideslope_altitude_ft(x), color=charts.GOLD, lw=2.2)
         ax.axhline(config.HARD_FLOOR_FT, color=charts.RED, lw=1.5, ls="--")
         ax.axvline(d_brock, color=charts.FG, lw=1, ls=":", alpha=0.85)
+        # Near-village band (8-12 NM) - all three quoted numbers come from here,
+        # so the % below, the average height and the aircraft count are consistent.
         zone = dd[dd["dist_thr_nm"].between(8, 12)]
         pct = (zone["altitude"] < zone["cda_profile_ft"]).mean() * 100 if len(zone) else 0
+        n_jets = zone["flight_id"].nunique()
+        avg_ft = zone["altitude"].mean() if len(zone) else 0
         ax.set_title(str(yr), color=charts.FG, fontsize=16, fontweight="bold")
-        ax.text(0.04, 0.955,
+        ax.text(0.04, 0.965,
                 f"{pct:.0f}% below the\nquiet-descent line\nover Brockenhurst",
                 transform=ax.transAxes, ha="left", va="top",
                 color="#f0c96b", fontsize=9.5, fontweight="bold")
+        ax.text(0.04, 0.70,
+                f"{n_jets:,} aircraft\navg height {avg_ft:,.0f} ft",
+                transform=ax.transAxes, ha="left", va="top",
+                color=charts.FG, fontsize=9, fontweight="bold")
         ax.text(d_brock - 0.25, 4600, "Brockenhurst", color=charts.FG, fontsize=8,
                 rotation=90, ha="right", va="center", alpha=0.9)
         charts._style(ax)
