@@ -7,15 +7,19 @@ direct altitude reading for *every single* arrival exactly as it passes over
 Brockenhurst (e.g. to publish a per-flight table), pull the raw ADS-B state
 vectors from OpenSky, which OPDI is itself derived from.
 
-This needs a free OpenSky account with Trino access. Install + configure:
+This needs an OpenSky account WITH Trino (historical database) access. Note the
+two credential systems are different:
+
+    * REST API (live/recent):  client_id + client_secret  (an "API client")
+    * Trino  (historical DB):  account username + password, AND access granted
+                               via My OpenSky -> Request Data Access
+
+Install + configure the historical path:
 
     pip install "pyopensky>=2.0"
-    # Credentials: create an API client at
-    #   opensky-network.org -> Account -> API clients
-    # and expose them as environment variables (pyopensky reads these directly,
-    # so nothing is written to disk or committed):
-    #   OPENSKY_CLIENT_ID, OPENSKY_CLIENT_SECRET
-    # (legacy accounts can instead set OPENSKY_USERNAME / OPENSKY_PASSWORD)
+    # expose the Trino credentials as environment variables (pyopensky reads
+    # these directly, so nothing is written to disk or committed):
+    #   OPENSKY_USERNAME  (lowercase), OPENSKY_PASSWORD
 
 Each state vector has barometric + geometric altitude on a ~10-second cadence,
 so closest-approach altitude to the village is essentially exact.

@@ -60,13 +60,20 @@ def main():
     else:
         if not (args.start and args.stop):
             raise SystemExit("provide --start and --stop for a historical run, or --live")
-        # Credentials come from env vars OPENSKY_CLIENT_ID / OPENSKY_CLIENT_SECRET
-        # (or OPENSKY_USERNAME / OPENSKY_PASSWORD). pyopensky reads them itself.
-        if not (os.environ.get("OPENSKY_CLIENT_ID") or os.environ.get("OPENSKY_USERNAME")):
+        # IMPORTANT: the historical database (Trino) uses the account USERNAME +
+        # PASSWORD, not the REST API client_id/secret. Trino access must also be
+        # granted separately (My OpenSky -> Request Data Access). pyopensky reads
+        # OPENSKY_USERNAME / OPENSKY_PASSWORD itself.
+        if not (os.environ.get("OPENSKY_USERNAME") and os.environ.get("OPENSKY_PASSWORD")):
             raise SystemExit(
-                "No OpenSky credentials found. Set OPENSKY_CLIENT_ID and "
-                "OPENSKY_CLIENT_SECRET (from opensky-network.org -> Account -> API "
-                "clients) as environment variables/secrets, then re-run. See README.")
+                "Historical data needs OpenSky Trino credentials, which are your "
+                "account USERNAME and PASSWORD (lowercase username) - NOT the REST "
+                "API client_id/secret.\n"
+                "  1. Apply once at opensky-network.org -> My OpenSky -> Request "
+                "Data Access (Trino).\n"
+                "  2. Set OPENSKY_USERNAME and OPENSKY_PASSWORD as environment "
+                "variables/secrets, then re-run.\n"
+                "(For a no-account live snapshot instead, use: run_opensky.py --live)")
         print(f"Querying OpenSky history in the Brockenhurst box "
               f"{args.start} .. {args.stop} ...")
         sv = opensky.fetch_box(args.start, args.stop)

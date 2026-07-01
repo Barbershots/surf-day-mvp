@@ -67,12 +67,15 @@ python run_opensky.py --live
 python run_opensky.py --start "2025-06-08 22:00" --stop "2025-06-09 06:00"
 ```
 
-Credentials for the historical path: create an **API client** at
-opensky-network.org → *Account → API clients*, then set `OPENSKY_CLIENT_ID` and
-`OPENSKY_CLIENT_SECRET` as **environment variables / secrets** (in Claude Code on
+Credentials for the historical path: the OpenSky **historical database (Trino)**
+uses your account **username + password** — *not* the REST API client_id/secret —
+and Trino access must be **granted separately** (opensky-network.org → *My
+OpenSky → Request Data Access*). Once granted, set `OPENSKY_USERNAME` (lowercase)
+and `OPENSKY_PASSWORD` as **environment variables / secrets** (in Claude Code on
 the web, add them to your environment's configuration —
 [docs](https://code.claude.com/docs/en/claude-code-on-the-web)). pyopensky reads
 them directly, so secrets are never written to a file or committed to git.
+(`run_opensky.py --live` needs no account at all.)
 
 ### Single-period detail (sample: 4–24 June 2025)
 
