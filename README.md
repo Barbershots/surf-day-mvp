@@ -54,12 +54,25 @@ Run it: `python sweep.py --start 2023-01-01 --end 2026-01-01`
 (+ `.png`) — a printable, plain-English summary for a complaint, council
 submission, MP letter, or consultation response.
 
-**Fuller coverage (optional):** only ~⅓–⅔ of arrivals broadcast a usable
-low-level event, so the night counts above are *minimums*. For an exact
-over-village height (plus speed) for essentially every night arrival, use
-`python run_opensky.py --start "2025-06-08 22:00" --stop "2025-06-09 06:00"`
-(reads raw OpenSky state vectors; needs a free OpenSky account — see
-`brockenhurst/opensky.py`).
+**Fuller coverage (optional, OpenSky):** only ~⅓–⅔ of arrivals broadcast a
+usable low-level event, so the night counts above are *minimums*. For an exact
+over-village height (plus speed and climb/descent rate) for essentially every
+night arrival, use the raw OpenSky state vectors:
+
+```bash
+# No account needed - live snapshot of aircraft over Brockenhurst right now:
+python run_opensky.py --live
+
+# Historical night analysis (needs an OpenSky account):
+python run_opensky.py --start "2025-06-08 22:00" --stop "2025-06-09 06:00"
+```
+
+Credentials for the historical path: create an **API client** at
+opensky-network.org → *Account → API clients*, then set `OPENSKY_CLIENT_ID` and
+`OPENSKY_CLIENT_SECRET` as **environment variables / secrets** (in Claude Code on
+the web, add them to your environment's configuration —
+[docs](https://code.claude.com/docs/en/claude-code-on-the-web)). pyopensky reads
+them directly, so secrets are never written to a file or committed to git.
 
 ### Single-period detail (sample: 4–24 June 2025)
 

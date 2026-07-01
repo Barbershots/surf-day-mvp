@@ -10,11 +10,18 @@ vectors from OpenSky, which OPDI is itself derived from.
 This needs a free OpenSky account with Trino access. Install + configure:
 
     pip install "pyopensky>=2.0"
-    # then put your credentials in ~/.config/pyopensky/settings.conf
-    # see https://opensky-network.org/data/trino
+    # Credentials: create an API client at
+    #   opensky-network.org -> Account -> API clients
+    # and expose them as environment variables (pyopensky reads these directly,
+    # so nothing is written to disk or committed):
+    #   OPENSKY_CLIENT_ID, OPENSKY_CLIENT_SECRET
+    # (legacy accounts can instead set OPENSKY_USERNAME / OPENSKY_PASSWORD)
 
 Each state vector has barometric + geometric altitude on a ~10-second cadence,
 so closest-approach altitude to the village is essentially exact.
+
+For a zero-credential sanity check, `fetch_live_box()` uses the anonymous live
+REST API to show aircraft over Brockenhurst right now (snapshot only).
 """
 from __future__ import annotations
 
@@ -38,7 +45,11 @@ BROCKENHURST_BBOX = (
 
 
 def fetch_box(start: datetime, stop: datetime, bbox=BROCKENHURST_BBOX) -> pd.DataFrame:
-    """All state vectors inside the Brockenhurst box between start and stop."""
+    """
+    Historical state vectors inside the Brockenhurst box between start and stop.
+    Uses OpenSky's Trino database (needs an account; credentials via the
+    OPENSKY_CLIENT_ID / OPENSKY_CLIENT_SECRET environment variables).
+    """
     from pyopensky.trino import Trino  # imported lazily; only needed for this path
 
     trino = Trino()
@@ -49,6 +60,40 @@ def fetch_box(start: datetime, stop: datetime, bbox=BROCKENHURST_BBOX) -> pd.Dat
             "baroaltitude", "geoaltitude", "velocity", "vertrate", "onground",
         ),
     )
+
+
+def fetch_live_box(bbox=None, radius_km=15.0):
+    """
+    Current aircraft in a box around Brockenhurst, via OpenSky's anonymous live
+    REST API (no account needed). Returns the same columns as fetch_box so the
+    rest of the pipeline is identical. Snapshot only - use fetch_box for history.
+    Default box is wider (radius_km) to catch aircraft on the approach, not only
+    those exactly overhead.
+    """
+    import requests
+
+    if bbox is None:
+        dlat = radius_km / 111.0
+        dlon = radius_km / (111.0 * np.cos(np.radians(config.BROCKENHURST[0])))
+        bbox = (config.BROCKENHURST[1] - dlon, config.BROCKENHURST[0] - dlat,
+                config.BROCKENHURST[1] + dlon, config.BROCKENHURST[0] + dlat)
+    west, south, east, north = bbox
+    url = ("https://opensky-network.org/api/states/all"
+           f"?lamin={south}&lamax={north}&lomin={west}&lomax={east}")
+    r = requests.get(url, timeout=30)
+    r.raise_for_status()
+    states = r.json().get("states") or []
+    # OpenSky /states/all column order:
+    cols = ["icao24", "callsign", "origin_country", "time_position", "last_contact",
+            "lon", "lat", "baroaltitude", "onground", "velocity", "heading",
+            "vertrate", "sensors", "geoaltitude", "squawk", "spi", "position_source"]
+    df = pd.DataFrame(states, columns=cols[:len(states[0])] if states else cols)
+    if df.empty:
+        return df
+    df["time"] = pd.to_datetime(df["last_contact"], unit="s", utc=True)
+    df["callsign"] = df["callsign"].astype(str).str.strip()
+    return df[["time", "icao24", "callsign", "lat", "lon",
+               "baroaltitude", "geoaltitude", "velocity", "vertrate", "onground"]]
 
 
 def overflight_altitudes(state_vectors: pd.DataFrame,

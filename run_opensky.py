@@ -43,26 +43,34 @@ def _dt(s: str) -> datetime:
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--start", required=True, type=_dt)
-    ap.add_argument("--stop", required=True, type=_dt)
+    ap.add_argument("--live", action="store_true",
+                    help="snapshot of aircraft over Brockenhurst RIGHT NOW via the "
+                         "anonymous live API (no account needed) - for a quick check")
+    ap.add_argument("--start", type=_dt, help="historical window start 'YYYY-MM-DD HH:MM'")
+    ap.add_argument("--stop", type=_dt, help="historical window stop")
     ap.add_argument("--out", default="outputs/opensky_overflights.csv")
     ap.add_argument("--arriving-icao24", default=None,
                     help="optional CSV/parquet with an 'icao24' column (e.g. sweep "
                          "arrivals.csv) to keep only EGHH arrivals and drop through-traffic")
     args = ap.parse_args()
 
-    try:
-        import pyopensky  # noqa: F401
-    except ImportError:
-        raise SystemExit(
-            "pyopensky is not installed. Run:  pip install 'pyopensky>=2.0'\n"
-            "then configure ~/.config/pyopensky/settings.conf with your OpenSky "
-            "Trino credentials (https://opensky-network.org/data/trino).")
-
-    print(f"Querying OpenSky state vectors in the Brockenhurst box "
-          f"{args.start} .. {args.stop} ...")
-    sv = opensky.fetch_box(args.start, args.stop)
-    print(f"  {len(sv):,} state vectors")
+    if args.live:
+        sv = opensky.fetch_live_box()
+        print(f"Live snapshot: {len(sv)} aircraft in the Brockenhurst area now")
+    else:
+        if not (args.start and args.stop):
+            raise SystemExit("provide --start and --stop for a historical run, or --live")
+        # Credentials come from env vars OPENSKY_CLIENT_ID / OPENSKY_CLIENT_SECRET
+        # (or OPENSKY_USERNAME / OPENSKY_PASSWORD). pyopensky reads them itself.
+        if not (os.environ.get("OPENSKY_CLIENT_ID") or os.environ.get("OPENSKY_USERNAME")):
+            raise SystemExit(
+                "No OpenSky credentials found. Set OPENSKY_CLIENT_ID and "
+                "OPENSKY_CLIENT_SECRET (from opensky-network.org -> Account -> API "
+                "clients) as environment variables/secrets, then re-run. See README.")
+        print(f"Querying OpenSky history in the Brockenhurst box "
+              f"{args.start} .. {args.stop} ...")
+        sv = opensky.fetch_box(args.start, args.stop)
+        print(f"  {len(sv):,} state vectors")
 
     keep = None
     if args.arriving_icao24:
