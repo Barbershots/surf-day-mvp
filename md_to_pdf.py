@@ -55,8 +55,14 @@ def _table(pdf: Doc, rows: list[list[str]]):
         return
     ncol = max(len(r) for r in rows)
     usable = pdf.w - pdf.l_margin - pdf.r_margin
-    # First column wider for label tables.
-    widths = ([usable * 0.62] + [usable * 0.38 / (ncol - 1)] * (ncol - 1)) if ncol > 1 else [usable]
+    # First column wider for the label; remaining columns share the rest evenly.
+    if ncol == 1:
+        widths = [usable]
+    elif ncol == 2:
+        widths = [usable * 0.62, usable * 0.38]
+    else:
+        w0 = usable * 0.34
+        widths = [w0] + [(usable - w0) / (ncol - 1)] * (ncol - 1)
     line_h = 6
     for i, row in enumerate(rows):
         head = i == 0
@@ -112,6 +118,17 @@ def render(md_path: str, pdf_path: str):
         elif stripped.startswith("# "):
             pdf.set_font(FONT, "B", 19); pdf.set_text_color(*INK)
             pdf.multi_cell(0, 9, _inline(stripped[2:])); pdf.ln(1.5)
+        elif stripped.startswith("!["):
+            m = re.match(r"!\[[^\]]*\]\(([^)]+)\)", stripped)
+            if m:
+                usable = pdf.w - pdf.l_margin - pdf.r_margin
+                from PIL import Image
+                iw, ih = Image.open(m.group(1)).size
+                h = usable * ih / iw
+                if pdf.get_y() + h > pdf.page_break_trigger:
+                    pdf.add_page()
+                pdf.image(m.group(1), x=pdf.l_margin, w=usable)
+                pdf.ln(2)
         elif stripped == "---":
             pdf.ln(1); pdf.set_draw_color(*RULE)
             y = pdf.get_y(); pdf.line(pdf.l_margin, y, pdf.w - pdf.r_margin, y); pdf.ln(2)

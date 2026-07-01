@@ -56,6 +56,11 @@ and look unverified.) Plain-English write-up: `outputs/sweep/FINDINGS.md`.
 
 Run it: `python sweep.py --start 2023-01-01 --end 2026-01-01`
 
+**Facts-only pack + case study:** `python make_facts_pack.py` writes
+`outputs/facts_and_case_study.pdf` — analysis restricted to flights with a
+*directly measured* over-village height (no inference), plus a worked example
+of a recent low night flight (`case_study.py`).
+
 **One-page evidence brief:** `python brief.py` composes `outputs/brief.pdf`
 (+ `.png`) — a printable, plain-English summary for a complaint, council
 submission, MP letter, or consultation response.
