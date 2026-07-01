@@ -157,9 +157,13 @@ means the aircraft is lower than a quiet descent would have it — usually flyin
 low and level under power, which is what makes the noise.
 
 **2,000 ft procedure floor** — Bournemouth's own published Noise Abatement rule
-states that turbo-powered / heavier aircraft "**shall not descend below 2000'**
-before intercepting the glideslope". Over Brockenhurst that is the hard minimum;
-below it is a clear breach. On the graphs this is the **red dashed line**.
+states that turbine-powered / heavier (>5,700 kg) aircraft "**shall not descend
+below 2000 FT QNH** before intercepting the glidepath, nor thereafter fly below
+it." (Source: UK AIP, EGHH AD 2.21, current AIRAC cycle — the official rule-book;
+also on the Jeppesen chart in `docs/`.) On the graphs this is the **red dashed
+line**. Note the airport tolerates *down to* 2,000 ft before the aircraft joins
+the final approach path, so being at ~2,300 ft is not itself a breach — the
+breach is **level flight** (see below), which the same rules prohibit.
 
 **Level-off (non-continuous descent)** — a recorded segment where the aircraft
 stops descending and flies level. A continuous descent has *no* level flight; to

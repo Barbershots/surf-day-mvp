@@ -6,17 +6,31 @@ challenged. It is written to stand up to scrutiny from the airport.
 
 ## 1. The obligation being tested
 
-Bournemouth Airport's published **Noise Abatement (Arrivals)** procedures (the
-page photographed in `docs/`, also in the UK AIP and on the Jeppesen plate) say,
-in the airport's own words:
+Bournemouth Airport's published **Noise Abatement Procedures** say, in the
+airport's own words (quoted **verbatim** below). Source: **UK AIP, EGHH AD 2.21**
+(Noise Abatement Procedures), AIRAC cycle effective **11 June 2026**, published by
+NATS on behalf of the CAA — the official rule-book that binds arriving pilots.
+The same text is reproduced on the Jeppesen "Noise Abatement (GEN, ARRS)" chart
+photographed in `docs/`. (Note: the Jeppesen wording differs trivially — e.g.
+"practicable" for the AIP's "practical", "GS" for "glidepath"; the AIP is the
+primary source and is quoted here.)
 
-- **Continuous Descent Approach** — *"Turbo-powered ACFT are expected to apply
+- **Continuous descent** — *"Turbine powered aircraft are expected to apply
   continuous descent, low power, low drag approach techniques **at all times**."*
-- *"inbound ACFT are to maintain **as high an altitude as practicable** and adopt
-  a low power, low drag, continuous descent approach profile … joining the GS at
-  the appropriate height for the distance **without level flight**."*
-- **ILS approaches** — turbo-powered / >5,700 kg aircraft *"shall **not descend
-  below 2000'** before intercepting the GS, nor thereafter fly below it."*
+- *"Subject to ATC instructions, inbound aircraft are to maintain **as high an
+  altitude as practical** and adopt a low power, low drag, continuous descent
+  approach profile."*
+- *"The object will be to join the glidepath at the appropriate height for the
+  distance **without level flight**."*
+- **ILS approaches** — *"all turbine powered aircraft and all other aircraft with
+  a MTWA of 5700 KG or more, **shall not descend below 2000 FT QNH** before
+  intercepting the glidepath, nor thereafter fly below it."*
+- **Night self-positioning** — *"Between 2130-0630 (2030-0530) all aircraft that
+  wish to self position for an ILS or a visual approach shall establish on final
+  approach at **no less than 8 DME and not below 2500 FT QNH**."*
+
+Live source URL: <https://www.aurora.nats.co.uk/htmlAIP/Publications/2026-06-11-AIRAC/html/eAIP/EG-AD-2.EGHH-en-GB.html>
+(search the page for "Noise Abatement"; verify the current AIRAC cycle when citing).
 
 The complaint is that aircraft are instead being brought in **low and level**,
 then using **high engine power** (including powered turns) over Brockenhurst —
