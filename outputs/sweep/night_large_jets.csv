@@ -1,0 +1,322 @@
+date,local_time,callsign,aircraft_type,height_over_brockenhurst_ft,ft_below_proper_height,below_2000ft_minimum,stopped_descending_overhead,measurement
+2023-05-15,23:27,MLT420  ,A332,1200,1916,YES,YES,levelled off near village
+2025-05-29,23:25,EXS34A  ,B738,1300,1816,YES,YES,passed overhead
+2024-07-23,23:33,RYR1241 ,A320,1350,1766,YES,YES,levelled off near village
+2025-12-19,23:02,LOG23PY ,E145,1400,1716,YES,YES,levelled off near village
+2025-05-26,00:22,EXS3618 ,B738,1425,1691,YES,YES,levelled off near village
+2025-07-05,23:49,EXS147L ,B738,1550,1566,YES,YES,passed overhead
+2025-06-08,00:54,EXS2LS  ,B738,1575,1541,YES,YES,levelled off near village
+2025-07-23,23:30,TOM5XY  ,B738,1600,1516,YES,YES,levelled off near village
+2025-05-12,00:19,EXS3618 ,B738,1600,1516,YES,YES,passed overhead
+2025-05-31,23:38,EXS043A ,B738,1700,1416,YES,YES,levelled off near village
+2025-06-27,23:29,EXS66Q  ,B738,1725,1391,YES,YES,passed overhead
+2024-09-12,23:40,TOM8BJ  ,B738,1750,1366,YES,YES,levelled off near village
+2025-07-25,23:15,EXS66Q  ,B738,1825,1291,YES,YES,passed overhead
+2025-05-23,23:32,EXS66Q  ,B738,1850,1266,YES,YES,levelled off near village
+2025-09-08,23:06,EXS68Z  ,B738,1850,1266,YES,YES,levelled off near village
+2025-09-08,23:52,TOM92D  ,B738,1875,1241,YES,YES,passed overhead
+2024-10-15,00:39,RYR5VE  ,B738,1875,1241,YES,YES,passed overhead
+2025-04-14,23:13,EXS68Z  ,B738,1875,1241,YES,YES,levelled off near village
+2024-07-25,00:14,TOM671  ,B38M,1900,1216,YES,YES,passed overhead
+2025-05-25,01:40,EXS2LS  ,B738,1950,1166,YES,YES,passed overhead
+2024-11-14,23:30,TOM6TM  ,B38M,2000,1116,,YES,levelled off near village
+2025-04-23,23:23,EXS15Q  ,B738,2025,1091,,YES,levelled off near village
+2025-07-04,00:42,EXS34A  ,B738,2025,1091,,YES,levelled off near village
+2023-04-01,23:30,TOM3MD  ,B738,2025,1091,,YES,passed overhead
+2025-10-12,23:31,TOM39M  ,B738,2025,1091,,YES,passed overhead
+2025-10-12,23:32,EXS3618 ,B738,2025,1091,,YES,passed overhead
+2023-08-11,00:03,TOM6TM  ,B738,2025,1091,,YES,levelled off near village
+2025-05-20,23:59,EXS66Q  ,B738,2075,1041,,YES,levelled off near village
+2024-08-11,00:12,TOM655  ,B738,2075,1041,,YES,levelled off near village
+2025-05-22,00:29,EXS2LS  ,B738,2100,1016,,YES,passed overhead
+2024-05-08,00:27,TOM6FX  ,B738,2100,1016,,YES,levelled off near village
+2023-09-18,01:16,TOM8EW  ,B738,2100,1016,,YES,levelled off near village
+2025-04-16,23:24,EXS15Q  ,B738,2125,991,,YES,levelled off near village
+2025-08-10,00:04,TOM6687 ,B738,2125,991,,YES,passed overhead
+2024-09-15,23:17,TOM4YH  ,B738,2125,991,,YES,passed overhead
+2024-12-30,23:43,RUK1133 ,B738,2125,991,,YES,passed overhead
+2025-06-05,00:34,EXS2LS  ,B738,2150,966,,YES,levelled off near village
+2025-12-19,23:49,RYR7779 ,B738,2150,966,,YES,levelled off near village
+2024-09-10,00:08,TOM3H   ,B738,2200,916,,YES,levelled off near village
+2025-06-29,23:36,EXS3618 ,B738,2200,916,,YES,passed overhead
+2025-06-28,01:06,TOM2TG  ,B738,2225,891,,YES,levelled off near village
+2025-07-09,23:19,EXS15Q  ,B738,2225,891,,YES,passed overhead
+2025-10-01,23:17,EXS15Q  ,B738,2225,891,,YES,levelled off near village
+2025-06-08,23:51,EXS3618 ,B738,2250,866,,YES,levelled off near village
+2025-07-05,00:47,TOM2TG  ,B738,2250,866,,YES,levelled off near village
+2025-06-01,23:42,EXS339E ,B738,2250,866,,YES,levelled off near village
+2024-07-27,23:01,RYR7UF  ,B738,2275,841,,YES,levelled off near village
+2023-05-08,00:24,TOM8EW  ,B738,2275,841,,YES,passed overhead
+2025-05-19,23:48,TOM6109 ,B738,2275,841,,YES,levelled off near village
+2025-08-23,00:07,TOM2TG  ,B738,2275,841,,YES,passed overhead
+2025-05-22,23:46,TOM6TM  ,B738,2275,841,,YES,passed overhead
+2025-07-25,00:23,TOM6TM  ,B738,2300,816,,YES,passed overhead
+2025-08-03,23:46,TOM6723 ,B738,2300,816,,YES,passed overhead
+2023-08-16,23:22,TOM57V  ,B738,2300,816,,YES,passed overhead
+2023-03-12,23:19,RYR9ZA  ,B738,2300,816,,YES,passed overhead
+2024-07-02,00:05,TOM3H   ,B738,2300,816,,YES,passed overhead
+2024-06-12,23:51,TOM57V  ,B738,2300,816,,YES,levelled off near village
+2025-06-15,00:17,TOM3XA  ,B738,2300,816,,YES,levelled off near village
+2025-06-15,00:44,EXS2LS  ,B738,2300,816,,YES,passed overhead
+2025-08-09,00:30,TOM2TG  ,B738,2300,816,,YES,levelled off near village
+2023-09-23,23:42,RYR9SA  ,B738,2325,791,,YES,levelled off near village
+2025-07-26,00:23,EXS68Z  ,B738,2325,791,,YES,passed overhead
+2025-08-25,00:10,EXS3618 ,B738,2325,791,,YES,passed overhead
+2024-06-06,23:37,TOM8BJ  ,B738,2325,791,,YES,passed overhead
+2024-11-02,00:39,TOM2TG  ,B38M,2325,791,,YES,passed overhead
+2025-07-29,23:05,EXS66Q  ,B738,2325,791,,YES,passed overhead
+2024-10-05,00:24,TOM2TG  ,B738,2325,791,,YES,levelled off near village
+2024-04-08,23:24,RYR42WP ,B738,2325,791,,YES,levelled off near village
+2025-08-06,23:40,TOM5XY  ,B738,2325,791,,YES,passed overhead
+2025-09-28,01:37,EXS2LS  ,B738,2350,766,,YES,passed overhead
+2025-07-12,00:29,TOM2TG  ,B738,2350,766,,YES,passed overhead
+2025-08-06,23:33,TOM57V  ,B738,2350,766,,YES,passed overhead
+2025-05-22,01:17,TOM57V  ,B738,2350,766,,YES,passed overhead
+2025-07-26,00:27,TOM2TG  ,B738,2350,766,,YES,passed overhead
+2025-07-25,23:26,TOM299  ,B738,2350,766,,YES,passed overhead
+2025-08-05,00:07,TOM793  ,B738,2375,741,,YES,passed overhead
+2024-09-14,00:10,TOM299  ,B738,2375,741,,YES,passed overhead
+2025-05-24,00:38,TOM2TG  ,B738,2375,741,,YES,passed overhead
+2024-10-27,01:03,TOM3XA  ,B738,2375,741,,YES,passed overhead
+2023-05-11,23:03,RYR86SZ ,B738,2375,741,,YES,passed overhead
+2024-06-24,23:48,TOM793  ,B738,2375,741,,YES,passed overhead
+2025-08-01,00:36,EXS34A  ,B738,2400,716,,YES,levelled off near village
+2024-08-15,01:47,TOM671  ,B738,2400,716,,YES,passed overhead
+2025-09-12,00:44,RYR8TF  ,B38M,2400,716,,YES,passed overhead
+2025-06-23,23:30,EXS68Z  ,B738,2400,716,,YES,passed overhead
+2024-05-18,00:08,TOM2TG  ,B738,2400,716,,YES,passed overhead
+2025-01-20,23:23,RYR7ZZ  ,B738,2400,716,,YES,passed overhead
+2023-08-20,23:17,RYR2269 ,B738,2425,691,,YES,passed overhead
+2025-08-04,23:07,EXS68Z  ,B738,2425,691,,YES,levelled off near village
+2024-07-11,23:33,TOM8BJ  ,B738,2425,691,,YES,passed overhead
+2023-05-10,23:40,TOM57V  ,B738,2425,691,,YES,passed overhead
+2025-08-13,23:24,TOM57V  ,B738,2425,691,,YES,passed overhead
+2023-04-04,23:45,TOM6FX  ,B738,2425,691,,YES,passed overhead
+2025-06-13,00:05,TOM6TM  ,B738,2450,666,,YES,levelled off near village
+2025-08-07,23:14,EXS34A  ,B738,2450,666,,YES,levelled off near village
+2023-09-29,23:02,RYR4QX  ,B738,2450,666,,YES,passed overhead
+2023-09-10,23:49,TOM8EW  ,B738,2450,666,,YES,passed overhead
+2024-09-21,23:53,TOM655  ,B738,2450,666,,YES,levelled off near village
+2025-05-27,23:26,TOM7KX  ,B738,2475,641,,YES,levelled off near village
+2024-08-28,23:28,RYR7NL  ,A320,2475,641,,YES,passed overhead
+2025-07-01,00:51,EXS9WF  ,B738,2475,641,,YES,passed overhead
+2023-05-06,00:36,TOM2TG  ,B738,2475,641,,YES,passed overhead
+2025-09-05,23:31,EXS68Z  ,B738,2475,641,,YES,passed overhead
+2025-07-04,00:36,RYR94FL ,B738,2475,641,,YES,passed overhead
+2025-05-27,00:00,TOM793F ,B738,2475,641,,YES,levelled off near village
+2025-08-09,23:16,RYR24GH ,B738,2500,616,,YES,passed overhead
+2024-06-02,23:00,TOM8EW  ,B738,2500,616,,YES,passed overhead
+2023-09-10,23:34,RYR2269 ,B738,2500,616,,YES,levelled off near village
+2023-08-15,00:04,TOM1YJ  ,B738,2500,616,,YES,passed overhead
+2025-06-22,23:07,EXS339E ,B738,2500,616,,YES,passed overhead
+2024-07-14,23:04,TOM8EW  ,B738,2500,616,,YES,passed overhead
+2024-05-06,23:41,TOM3H   ,B738,2500,616,,YES,passed overhead
+2024-06-18,00:38,TOM793  ,B38M,2500,616,,YES,passed overhead
+2024-08-01,00:32,TOM671  ,B738,2525,591,,YES,passed overhead
+2024-09-07,00:45,TOM2TG  ,B738,2525,591,,YES,passed overhead
+2024-06-30,01:02,TOM3XA  ,B738,2525,591,,YES,levelled off near village
+2024-08-14,23:32,TOM57V  ,B738,2550,566,,YES,passed overhead
+2024-09-03,00:20,TOM3H   ,B738,2550,566,,YES,passed overhead
+2024-06-29,23:03,RYR7UF  ,B738,2550,566,,YES,passed overhead
+2025-09-12,23:43,EXS68Z  ,B738,2550,566,,YES,passed overhead
+2025-12-14,23:01,ENT3032 ,B738,2550,566,,YES,passed overhead
+2025-09-20,23:54,TOM3XA  ,B738,2550,566,,YES,passed overhead
+2025-07-18,23:26,TOM299  ,B738,2575,541,,YES,passed overhead
+2025-05-25,00:41,TOM3XA  ,B738,2575,541,,YES,passed overhead
+2025-06-25,23:28,TOM5XY  ,B738,2575,541,,YES,passed overhead
+2025-06-25,23:41,TOM57V  ,B738,2575,541,,YES,passed overhead
+2025-10-27,23:37,EXS36LP ,B738,2575,541,,YES,passed overhead
+2025-07-06,23:12,TOM6723 ,B738,2600,516,,YES,levelled off near village
+2024-04-30,23:18,TOM6FX  ,B738,2600,516,,YES,passed overhead
+2023-06-19,01:25,TOM8EW  ,B738,2600,516,,YES,passed overhead
+2025-05-27,01:03,EXS9WF  ,B738,2600,516,,YES,levelled off near village
+2025-09-16,23:04,RYR59SF ,B738,2625,491,,YES,passed overhead
+2023-04-14,23:39,RYR4QX  ,B738,2625,491,,YES,levelled off near village
+2024-06-29,00:41,TOM2TG  ,B738,2625,491,,YES,passed overhead
+2023-08-19,00:19,TOM2TG  ,B738,2650,466,,YES,passed overhead
+2024-06-16,23:08,TOM8EW  ,B738,2650,466,,YES,passed overhead
+2024-09-24,23:31,TOM6FX  ,B738,2650,466,,YES,levelled off near village
+2024-07-10,23:34,TOM57V  ,B738,2650,466,,YES,passed overhead
+2025-07-22,00:14,EXS68Z  ,B738,2650,466,,YES,levelled off near village
+2023-07-01,00:57,TOM2TG  ,B738,2650,466,,YES,levelled off near village
+2025-11-01,23:52,EXS3AS  ,B738,2650,466,,YES,passed overhead
+2025-10-26,23:05,TOM7FT  ,B738,2675,441,,YES,levelled off near village
+2024-06-08,00:35,TOM2TG  ,B738,2675,441,,YES,passed overhead
+2024-08-25,23:34,RYR92SW ,B738,2675,441,,YES,passed overhead
+2024-08-13,00:34,TOM3H   ,B738,2675,441,,YES,passed overhead
+2025-06-25,23:28,EXS15Q  ,B738,2675,441,,YES,levelled off near village
+2024-07-16,00:49,TOM3H   ,B738,2700,416,,YES,passed overhead
+2025-06-06,00:46,TOM6TM  ,B738,2700,416,,YES,passed overhead
+2023-12-09,23:23,ENT3018 ,B738,2700,416,,YES,levelled off near village
+2024-08-18,00:09,TOM655  ,B738,2725,391,,YES,passed overhead
+2024-08-28,23:34,TOM671  ,B738,2725,391,,YES,passed overhead
+2023-07-27,23:24,RYR86SZ ,B38M,2725,391,,YES,levelled off near village
+2023-05-16,00:26,TOM6HJ  ,A320,2725,391,,YES,passed overhead
+2025-08-14,23:34,TOM6TM  ,B738,2725,391,,YES,passed overhead
+2025-09-02,00:14,TOM92D  ,B738,2725,391,,YES,passed overhead
+2025-09-15,23:30,RYR14VB ,B738,2750,366,,YES,passed overhead
+2025-08-27,23:44,TOM57V  ,B738,2750,366,,YES,passed overhead
+2025-07-15,00:29,TOM793  ,B738,2750,366,,YES,passed overhead
+2025-09-03,23:38,EXS15Q  ,B738,2750,366,,YES,passed overhead
+2024-08-22,23:34,TOM8BJ  ,B738,2750,366,,YES,passed overhead
+2024-06-13,23:46,TOM8BJ  ,B738,2750,366,,YES,passed overhead
+2024-11-25,23:16,URO901  ,A346,2775,341,,YES,passed overhead
+2023-05-22,00:04,RYR2269 ,B738,2775,341,,YES,passed overhead
+2023-03-29,23:22,RYR2269 ,B738,2775,341,,YES,passed overhead
+2025-09-16,00:16,TOM92D  ,B738,2775,341,,YES,passed overhead
+2025-07-20,00:55,TOM3XA  ,B738,2775,341,,YES,passed overhead
+2025-09-14,23:57,EXS3618 ,B738,2775,341,,YES,passed overhead
+2024-10-12,23:19,RYR7UF  ,B738,2800,316,,YES,passed overhead
+2023-06-17,00:54,TOM2TG  ,B738,2800,316,,YES,passed overhead
+2025-11-02,23:32,EXS47NK ,B738,2800,316,,YES,passed overhead
+2024-10-16,23:58,TOM57V  ,B738,2800,316,,YES,passed overhead
+2025-07-10,23:45,TOM6TM  ,B738,2800,316,,YES,passed overhead
+2024-06-16,01:05,TOM3XA  ,B738,2800,316,,YES,passed overhead
+2024-09-24,00:13,TOM3H   ,B738,2800,316,,YES,passed overhead
+2023-09-16,23:57,TOM3XA  ,B738,2825,291,,YES,passed overhead
+2025-08-24,23:23,TOM6723 ,B738,2825,291,,YES,passed overhead
+2023-10-01,23:05,RYR2269 ,B738,2825,291,,YES,passed overhead
+2024-05-13,23:29,TOM3H   ,B738,2825,291,,YES,passed overhead
+2024-07-06,00:18,TOM2TG  ,B738,2850,266,,YES,passed overhead
+2023-07-25,23:37,RYR34EB ,B738,2850,266,,YES,passed overhead
+2025-08-07,00:34,RYR24GH ,B738,2850,266,,YES,passed overhead
+2025-06-27,23:37,EXS68Z  ,B738,2850,266,,YES,passed overhead
+2024-09-21,23:47,TOM3XA  ,B738,2850,266,,YES,passed overhead
+2025-10-25,23:06,RYR24GH ,B738,2875,241,,YES,passed overhead
+2025-10-25,01:04,TOM2TG  ,B738,2875,241,,YES,passed overhead
+2025-06-14,23:41,RYR90UB ,B738,2875,241,,YES,levelled off near village
+2024-05-11,23:46,TOM3XA  ,B738,2875,241,,YES,passed overhead
+2025-05-29,23:13,RYR94FL ,B738,2875,241,,YES,passed overhead
+2025-09-15,23:37,EXS68Z  ,B738,2875,241,,YES,passed overhead
+2024-05-04,23:50,TOM3XA  ,B738,2875,241,,YES,passed overhead
+2025-07-21,00:28,EXS3618 ,B738,2875,241,,YES,levelled off near village
+2024-09-14,23:33,TOM3XA  ,B738,2900,216,,YES,passed overhead
+2023-06-14,23:22,RYR2269 ,B738,2900,216,,YES,passed overhead
+2025-10-31,23:19,TOM299  ,B38M,2900,216,,YES,levelled off near village
+2025-10-21,23:00,RYR3960 ,B738,2925,191,,YES,levelled off near village
+2023-09-09,23:46,TOM3XA  ,B738,2950,166,,YES,passed overhead
+2023-08-28,00:46,TOM8EW  ,B738,2950,166,,YES,passed overhead
+2025-05-25,23:57,TOM6723 ,B738,2950,166,,YES,passed overhead
+2023-07-27,00:24,TOM57V  ,B738,2950,166,,YES,passed overhead
+2025-08-07,23:50,TOM6TM  ,B738,2950,166,,YES,passed overhead
+2024-08-08,23:25,TOM8BJ  ,B738,2950,166,,YES,passed overhead
+2024-08-25,23:22,TOM4YH  ,B738,2950,166,,YES,passed overhead
+2025-06-03,00:07,TOM6109 ,B738,2975,141,,YES,passed overhead
+2025-06-22,00:23,RYR90UB ,B738,2975,141,,,passed overhead
+2024-06-07,23:51,TOM299  ,B738,2975,141,,YES,passed overhead
+2023-11-01,00:33,TOM6FX  ,B738,2975,141,,YES,levelled off near village
+2023-08-06,00:22,TOM3XA  ,B738,2975,141,,YES,passed overhead
+2024-08-29,23:53,TOM8BJ  ,B738,3000,116,,YES,levelled off near village
+2024-04-14,23:13,RYR92SW ,B738,3000,116,,YES,passed overhead
+2023-07-31,00:10,TOM8EW  ,B738,3025,91,,YES,passed overhead
+2025-08-31,23:11,TOM39M  ,B738,3025,91,,YES,passed overhead
+2025-08-13,23:13,EXS2LS  ,B738,3025,91,,YES,passed overhead
+2025-06-23,00:09,EXS3618 ,B738,3025,91,,YES,passed overhead
+2025-09-13,00:59,TOM2TG  ,B738,3050,66,,YES,passed overhead
+2024-10-21,23:57,TOM793  ,B738,3050,66,,YES,levelled off near village
+2025-09-21,00:07,TOM8KT  ,B738,3050,66,,YES,passed overhead
+2025-06-14,23:08,RYR24GH ,B738,3050,66,,YES,passed overhead
+2025-09-12,00:43,TOM6TM  ,B738,3050,66,,YES,passed overhead
+2025-09-11,00:28,TOM5XY  ,B738,3050,66,,YES,passed overhead
+2023-06-23,23:44,RYR36MM ,B738,3100,16,,YES,levelled off near village
+2025-07-11,00:41,TOM8BJ  ,B738,3100,16,,YES,levelled off near village
+2024-08-25,00:27,TOM3XA  ,B738,3100,16,,YES,passed overhead
+2023-07-23,23:32,TOM8EW  ,B738,3100,16,,YES,passed overhead
+2024-06-25,23:15,RYR7UF  ,B738,3100,16,,YES,passed overhead
+2024-09-26,23:38,TOM8BJ  ,B738,3100,16,,YES,passed overhead
+2025-09-28,00:06,TOM8KT  ,B738,3125,-9,,YES,passed overhead
+2025-10-01,23:32,TOM5XY  ,B738,3125,-9,,YES,levelled off near village
+2024-09-25,23:42,TOM57V  ,B738,3125,-9,,YES,passed overhead
+2024-07-16,00:43,TOM793  ,B738,3150,-34,,YES,passed overhead
+2024-08-07,23:39,TOM671  ,B738,3150,-34,,YES,passed overhead
+2023-04-11,23:54,TOM6FX  ,B738,3150,-34,,YES,passed overhead
+2024-09-02,23:02,RYR42WP ,B738,3150,-34,,YES,passed overhead
+2025-06-09,23:46,TOM6109 ,B738,3150,-34,,YES,passed overhead
+2024-09-04,23:33,TOM57V  ,B738,3175,-59,,YES,passed overhead
+2024-09-23,23:39,RYR42WP ,B738,3175,-59,,YES,passed overhead
+2024-05-22,23:31,TOM57V  ,B738,3175,-59,,YES,levelled off near village
+2025-10-28,23:02,RYR6FY  ,B738,3175,-59,,YES,passed overhead
+2025-08-08,23:36,EXS68Z  ,B738,3175,-59,,YES,levelled off near village
+2025-09-20,00:11,TOM299  ,B738,3200,-84,,YES,passed overhead
+2023-07-11,00:41,TOM1YJ  ,B738,3225,-109,,YES,passed overhead
+2025-06-05,23:08,RYR94FL ,B738,3225,-109,,YES,passed overhead
+2023-07-23,00:37,TOM3XA  ,B738,3250,-134,,YES,passed overhead
+2023-10-12,23:09,RYR86SZ ,B738,3250,-134,,YES,passed overhead
+2025-09-20,23:15,RYR90UB ,B738,3275,-159,,YES,passed overhead
+2024-08-28,23:31,TOM57V  ,B738,3275,-159,,YES,passed overhead
+2025-10-25,23:16,RYR90UB ,B738,3300,-184,,YES,passed overhead
+2024-07-01,00:15,TOM4YH  ,B738,3325,-209,,YES,levelled off near village
+2025-08-31,23:45,EXS3618 ,B738,3325,-209,,YES,passed overhead
+2025-06-05,00:47,TOM57V  ,B738,3325,-209,,YES,passed overhead
+2025-08-08,23:37,TOM299  ,B738,3325,-209,,YES,passed overhead
+2023-09-16,01:05,TOM2TG  ,B738,3325,-209,,YES,passed overhead
+2025-07-24,23:46,RYR94FL ,B738,3325,-209,,YES,levelled off near village
+2023-01-13,23:11,RYR8UE  ,B738,3350,-234,,YES,passed overhead
+2023-06-13,00:31,TOM1YJ  ,B738,3350,-234,,YES,passed overhead
+2025-09-05,23:32,TOM299  ,B738,3350,-234,,YES,passed overhead
+2024-09-03,00:02,TOM793  ,B738,3375,-259,,YES,levelled off near village
+2023-07-02,23:10,RYR2269 ,B738,3375,-259,,YES,passed overhead
+2025-05-25,00:07,TOM6687 ,B738,3375,-259,,YES,levelled off near village
+2024-07-03,23:54,TOM671  ,B738,3400,-284,,YES,passed overhead
+2025-07-30,23:33,TOM57V  ,B738,3400,-284,,YES,levelled off near village
+2025-09-01,23:17,EXS68Z  ,B738,3400,-284,,YES,passed overhead
+2025-06-04,23:45,EXS15Q  ,B738,3400,-284,,,passed overhead
+2024-07-28,23:13,RYR1241 ,B738,3400,-284,,YES,levelled off near village
+2025-07-07,00:19,EXS3618 ,B738,3425,-309,,,passed overhead
+2024-09-12,00:19,TOM671  ,B738,3425,-309,,YES,passed overhead
+2024-08-01,01:15,TOM57V  ,B738,3425,-309,,YES,levelled off near village
+2024-06-30,01:07,TOM655  ,B738,3425,-309,,YES,levelled off near village
+2025-07-05,23:51,TOM6687 ,B738,3450,-334,,YES,passed overhead
+2025-10-20,23:14,EXS68Z  ,B738,3450,-334,,,passed overhead
+2023-05-25,00:20,TOM57V  ,B738,3450,-334,,YES,levelled off near village
+2023-08-23,23:32,TOM57V  ,B738,3450,-334,,YES,levelled off near village
+2023-08-04,23:38,RYR36MM ,B738,3475,-359,,YES,passed overhead
+2025-09-11,23:22,TOM8BJ  ,B738,3475,-359,,YES,passed overhead
+2024-04-15,23:19,RYR42WP ,B738,3475,-359,,YES,passed overhead
+2025-10-21,23:05,EXS66Q  ,B738,3475,-359,,YES,passed overhead
+2023-07-04,00:45,TOM1YJ  ,B738,3475,-359,,YES,levelled off near village
+2023-11-03,23:08,RYR5QJ  ,B738,3500,-384,,YES,passed overhead
+2023-08-02,23:03,RYR2269 ,B738,3500,-384,,YES,passed overhead
+2024-09-05,23:40,TOM8BJ  ,B738,3525,-409,,YES,levelled off near village
+2025-10-27,23:50,TOM793  ,B38M,3525,-409,,YES,levelled off near village
+2024-06-27,01:25,TOM57V  ,B738,3575,-459,,YES,levelled off near village
+2025-10-29,23:05,TOM4EH  ,B38M,3575,-459,,YES,passed overhead
+2025-08-16,23:55,TOM3XA  ,B738,3600,-484,,YES,levelled off near village
+2025-09-28,00:11,TOM3XA  ,B738,3600,-484,,YES,levelled off near village
+2023-10-22,00:21,TOM3XA  ,B738,3600,-484,,YES,passed overhead
+2023-07-16,23:29,TOM8EW  ,B738,3650,-534,,YES,passed overhead
+2024-07-17,23:46,TOM57V  ,B738,3650,-534,,YES,passed overhead
+2024-07-07,00:42,TOM655  ,B738,3650,-534,,YES,passed overhead
+2023-09-25,23:38,TOM1YJ  ,B738,3650,-534,,YES,levelled off near village
+2025-05-11,23:25,TOM6723 ,B738,3675,-559,,YES,levelled off near village
+2024-09-01,23:30,TOM4YH  ,B738,3675,-559,,YES,levelled off near village
+2025-07-22,00:20,TOM793  ,B738,3675,-559,,YES,passed overhead
+2025-06-22,23:00,TOM6723 ,B738,3725,-609,,YES,levelled off near village
+2023-03-24,23:34,RYR8UE  ,B738,3775,-659,,YES,passed overhead
+2023-10-27,23:03,RYR25KE ,B738,3800,-684,,YES,passed overhead
+2025-09-03,23:38,TOM57V  ,B738,3800,-684,,YES,passed overhead
+2025-07-15,01:33,EXS9WF  ,B738,3825,-709,,YES,levelled off near village
+2025-10-23,23:25,RYR94FL ,B738,3825,-709,,YES,levelled off near village
+2024-06-20,23:38,TOM8BJ  ,B738,3825,-709,,YES,passed overhead
+2024-09-01,23:17,RYR92SW ,B738,3850,-734,,YES,levelled off near village
+2025-09-09,00:48,EXS9WF  ,B738,3850,-734,,YES,levelled off near village
+2023-10-19,00:41,RYR2269 ,B738,3875,-759,,YES,passed overhead
+2025-09-12,23:38,TOM299  ,B738,3900,-784,,YES,levelled off near village
+2025-07-06,00:34,EXS2LS  ,B738,3925,-809,,YES,passed overhead
+2024-09-23,23:59,TOM793  ,B738,3950,-834,,YES,levelled off near village
+2023-09-19,00:20,TOM1YJ  ,B738,3950,-834,,YES,levelled off near village
+2025-07-15,23:13,RYR59SF ,B738,3975,-859,,YES,levelled off near village
+2023-07-21,23:24,RYR36MM ,B738,4000,-884,,YES,levelled off near village
+2025-09-14,23:28,TOM39M  ,B738,4075,-959,,YES,levelled off near village
+2023-08-27,00:44,TOM3XA  ,B738,4150,-1034,,YES,levelled off near village
+2025-08-30,23:59,TOM8KT  ,B738,4225,-1109,,YES,passed overhead
+2025-09-11,23:52,RYR94FL ,B738,4250,-1134,,YES,levelled off near village
+2025-09-03,23:32,TOM5XY  ,B738,4250,-1134,,YES,levelled off near village
+2025-06-04,23:12,TOM5XY  ,B738,4350,-1234,,YES,levelled off near village
+2023-10-29,00:30,TOM3XA  ,B738,4925,-1809,,YES,levelled off near village
+2024-10-08,00:23,TOM793  ,B38M,5000,-1884,,,passed overhead
+2023-11-04,23:10,RYR8EH  ,B738,5000,-1884,,,passed overhead
+2024-09-29,23:47,TOM4YH  ,B738,5175,-2059,,YES,passed overhead
+2025-05-08,00:27,EXS2LS  ,B738,5775,-2659,,YES,levelled off near village
+2024-06-27,01:31,TOM671  ,B738,12475,-9359,,YES,levelled off near village
+2024-06-02,23:04,RYR1241 ,B738,18000,-14884,,YES,passed overhead

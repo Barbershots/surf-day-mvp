@@ -67,7 +67,11 @@ def collect_events(start, end, arr_ids) -> pd.DataFrame:
         if os.path.exists(cache):
             ev = pd.read_parquet(cache)
         else:
-            ev = opdi.load_flight_events(ws, we, only_ids=arr_ids, delete_after=True)
+            try:
+                ev = opdi.load_flight_events(ws, we, only_ids=arr_ids, delete_after=True)
+            except FileNotFoundError:
+                print(f"  [{i}/{len(windows)}] {s}->{e}: MISSING on server, skipped", flush=True)
+                continue
             ev.to_parquet(cache, index=False)
         parts.append(ev)
         print(f"  [{i}/{len(windows)}] {s}->{e}: {len(ev)} EGHH events", flush=True)

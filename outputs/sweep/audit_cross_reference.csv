@@ -1,0 +1,4 @@
+operator,night_flights_tracked,night_flights_below_proper_height,lowest_night_height_ft
+"Jet2 (audit 'LS' flights, e.g. LS3684 Ibiza)",225,50,1300
+"TUI (audit 'TOM' flights, e.g. TOM651)",583,131,1600
+"Ryanair (audit 'RYR' flights, e.g. RYR1244)",357,38,1350

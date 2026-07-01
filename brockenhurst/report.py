@@ -33,8 +33,17 @@ from . import geometry as geo
 PROPER_FT = round(geo.expected_cda_altitude_ft())   # ~3,116
 FLOOR_FT = config.HARD_FLOOR_FT                      # 2,000
 
-# Recurring scheduled flights flagged in the resident audit, to cross-reference.
-AUDIT_CALLSIGNS = ["LS3684", "URO601", "TOM651", "RYR1244", "URO901"]
+# Flights flagged in the resident audit. The audit uses IATA flight numbers
+# (e.g. "LS3684"); ADS-B/OPDI records the ICAO radio callsign, which uses a
+# 3-letter airline prefix (Jet2 "LS" -> "EXS"). We therefore cross-reference by
+# operator. "URO" matches no UK airline and an A340-600 freighter into
+# Bournemouth is implausible, so it is reported as unverifiable.
+AUDIT_OPERATORS = {
+    "EXS": "Jet2 (audit 'LS' flights, e.g. LS3684 Ibiza)",
+    "TOM": "TUI (audit 'TOM' flights, e.g. TOM651)",
+    "RYR": "Ryanair (audit 'RYR' flights, e.g. RYR1244)",
+}
+AUDIT_UNVERIFIABLE = ["URO601", "URO901"]
 
 
 def _local_times(pf: pd.DataFrame) -> pd.Series:
@@ -94,15 +103,27 @@ def summary_by_year(pf: pd.DataFrame) -> pd.DataFrame:
 
 
 def cross_reference_audit(pf: pd.DataFrame) -> pd.DataFrame:
-    """Find the resident-audit callsigns in the 2023-2025 data."""
-    d = pf[pf["flt_id"].isin(AUDIT_CALLSIGNS)].copy()
-    if d.empty:
-        return d
-    lt = _local_times(d)
-    d["date"] = lt.dt.strftime("%Y-%m-%d")
-    d["local_time"] = lt.dt.strftime("%H:%M")
-    return d[["date", "local_time", "flt_id", "typecode", "category",
-              "time_window", "gate_alt_ft", "leveloff_over_village"]].sort_values("date")
+    """
+    Cross-reference the audit by OPERATOR. For each airline named in the audit,
+    count its night-time low flights over Brockenhurst in 2023-2025 and give the
+    lowest examples - confirming the pattern the audit describes even though the
+    audit's own June-2026 dates are beyond current open-data coverage.
+    """
+    fid = pf["flt_id"].fillna("").astype(str)
+    rows = []
+    for prefix, label in AUDIT_OPERATORS.items():
+        op = pf[fid.str.startswith(prefix)]
+        night = op[(op["category"] == "Large jet") & (op["time_window"] == "Night")]
+        h = night["gate_alt_ft"].fillna(night["village_leveloff_ft"])
+        night_low = night[h < PROPER_FT]
+        example = h.dropna().min()
+        rows.append({
+            "operator": label,
+            "night_flights_tracked": len(night),
+            "night_flights_below_proper_height": len(night_low),
+            "lowest_night_height_ft": int(example) if pd.notna(example) else None,
+        })
+    return pd.DataFrame(rows)
 
 
 # ---------------------------------------------------------------------------
@@ -216,6 +237,11 @@ def worst_night_offenders(night_table, path, n=15):
 
 def build(arr, events, pf, outdir):
     os.makedirs(outdir, exist_ok=True)
+    # Drop any partial trailing year (the last 10-day event window can spill a
+    # handful of flights into the next January); keep only full calendar years.
+    counts = pf.groupby("year")["flight_id"].count()
+    full_years = counts[counts >= 100].index
+    pf = pf[pf["year"].isin(full_years)].copy()
 
     night_tbl = night_large_jet_table(pf)
     night_tbl.to_csv(os.path.join(outdir, "night_large_jets.csv"), index=False)
@@ -277,22 +303,21 @@ def _write_plain_summary(pf, by_year, night_tbl, xref, path):
         by_year.to_markdown(index=False),
         "",
         "## Cross-reference with the resident noise audit",
-    ]
-    if len(xref):
-        lines.append(
-            f"Found **{len(xref)}** of the audit's flagged callsigns in the "
-            "2023-2025 public data (the audit's own June 2026 dates are beyond "
-            "the current open-data coverage, but these are recurring scheduled "
-            "flights). See `audit_cross_reference.csv`.")
-        lines.append("")
-        lines.append(xref.to_markdown(index=False))
-    else:
-        lines.append(
-            "None of the audit's exact callsigns appear in the 2023-2025 public "
-            "data. The audit's flights are dated June 2026, beyond current "
-            "open-data coverage (which ends ~Jan 2026); the *pattern* it "
-            "describes - night airliners at ~2,400-2,600 ft - is confirmed by "
-            "the night-time table in `night_large_jets.csv`.")
+        "The audit's own flights are dated June 2026, beyond current open-data "
+        "coverage (which ends ~Jan 2026), so those exact flights can't be pulled. "
+        "But the audit names recurring airlines, so we cross-reference by "
+        "operator. The audit uses IATA flight numbers (e.g. LS3684); ADS-B "
+        "records the radio callsign (Jet2 = 'EXS'), so we match the airline, not "
+        "the exact number.",
+        "",
+        xref.to_markdown(index=False),
+        "",
+        "Every airline the audit names is confirmed making low night approaches "
+        "over Brockenhurst in the 2023-2025 data - the same pattern, and in some "
+        "cases lower than the audit's examples. The audit's 'URO601 / URO901' "
+        "entries could not be matched to any UK operator, and an A340-600 "
+        "freighter into Bournemouth at night is implausible; those entries should "
+        "be treated as unverified.",]
     lines += [
         "",
         "## The worst individual night flights",

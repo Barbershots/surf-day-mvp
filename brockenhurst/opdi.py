@@ -60,17 +60,25 @@ def _download(url: str, dest: str, attempts: int = 10) -> str:
     print(f"  downloading {os.path.basename(dest)} ...", flush=True)
     for i in range(attempts):
         try:
-            subprocess.run(
+            proc = subprocess.run(
                 ["curl", "-sSL", "--fail", "--max-time", "180",
                  "--retry", "3", "--retry-delay", "2", "-o", tmp, url],
-                check=True, capture_output=True,
+                capture_output=True,
             )
+            if proc.returncode == 22 and b"404" in proc.stderr:
+                # File is listed in the index but not present on the server.
+                # Nothing to retry - signal "missing" so the caller can skip it.
+                raise FileNotFoundError(url)
+            if proc.returncode != 0:
+                raise IOError(proc.stderr.decode("utf-8", "ignore").strip())
             if pq.ParquetFile(tmp).metadata.num_rows == 0:  # footer intact?
                 raise IOError("parquet has 0 rows")
             os.replace(tmp, dest)
             return dest
+        except FileNotFoundError:
+            raise
         except Exception as e:
-            last_err = getattr(e, "stderr", b"") or e
+            last_err = e
             print(f"  download failed ({e}); retry {i + 1} ...", flush=True)
             time.sleep(min(2 ** i, 30))
     raise RuntimeError(f"could not download {url}: {last_err}")
