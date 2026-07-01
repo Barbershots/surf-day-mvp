@@ -48,6 +48,25 @@ def build(sweep_dir="outputs/sweep", out="outputs/brief.pdf"):
     total_leveloff = int(by_year["night_stopped_descending_overhead"].sum())
     lowest = night.sort_values("height_over_brockenhurst_ft").iloc[0]
 
+    fig = _page1(by_year, night, y0, y1, sweep_dir,
+                 total_below_floor, total_leveloff, lowest)
+    fig2 = _page2(by_year, sweep_dir)
+
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    from matplotlib.backends.backend_pdf import PdfPages
+    with PdfPages(out) as pdf:
+        pdf.savefig(fig, dpi=200)
+        if fig2 is not None:
+            pdf.savefig(fig2, dpi=200)
+    fig.savefig(out.replace(".pdf", ".png"), dpi=170)
+    if fig2 is not None:
+        fig2.savefig(out.replace(".pdf", "_p2.png"), dpi=170)
+        plt.close(fig2)
+    plt.close(fig)
+    return out
+
+
+def _page1(by_year, night, y0, y1, sweep_dir, total_below_floor, total_leveloff, lowest):
     fig = plt.figure(figsize=(8.27, 11.69), facecolor="white")  # A4 portrait
 
     # --- Header ---
@@ -112,12 +131,57 @@ def build(sweep_dir="outputs/sweep", out="outputs/brief.pdf"):
     axf = fig.add_axes([0.06, 0.015, 0.88, 0.06]); axf.axis("off")
     axf.text(0, 1, foot, ha="left", va="top", fontsize=7.4, color=MUTE, wrap=True,
              transform=axf.transAxes, linespacing=1.35)
+    return fig
 
-    os.makedirs(os.path.dirname(out), exist_ok=True)
-    fig.savefig(out, dpi=200)
-    fig.savefig(out.replace(".pdf", ".png"), dpi=170)
-    plt.close(fig)
-    return out
+
+def _page2(by_year, sweep_dir):
+    """Second page: the year-on-year altitude-vs-descent-profile graph."""
+    p_all = os.path.join(sweep_dir, "descent_profile_by_year.png")
+    p_lj = os.path.join(sweep_dir, "descent_profile_by_year_large_jets.png")
+    if not os.path.exists(p_all):
+        return None
+
+    fig = plt.figure(figsize=(8.27, 11.69), facecolor="white")  # A4 portrait
+    fig.text(0.06, 0.965, "Aircraft are flying below the quiet descent",
+             fontsize=20, fontweight="bold", color=INK)
+    fig.text(0.06, 0.945, "Height over Brockenhurst vs. where a quiet descent should be, 2023–2025",
+             fontsize=12, color=MUTE)
+
+    explain = (
+        "Each blue dot is one arriving aircraft, plotted by how high it is (up the "
+        "side) and how far from the airport it is (along the bottom — Brockenhurst is "
+        "the dotted line, about 10 miles out). The orange line is where a quiet "
+        "'glide down' descent should be; the red dashed line is the airport's own "
+        "2,000 ft minimum. The mass of aircraft sits BELOW the orange line — lower "
+        "than a quiet descent — and the share below it grows every year."
+    )
+    ax = fig.add_axes([0.06, 0.855, 0.88, 0.075]); ax.axis("off")
+    ax.text(0, 1, explain, ha="left", va="top", fontsize=10.3, color=INK, wrap=True,
+            transform=ax.transAxes, linespacing=1.5)
+
+    fig.text(0.06, 0.83, "All arrivals", fontsize=12, fontweight="bold", color=INK)
+    a1 = fig.add_axes([0.05, 0.545, 0.90, 0.275]); a1.axis("off")
+    a1.imshow(mpimg.imread(p_all))
+
+    if os.path.exists(p_lj):
+        fig.text(0.06, 0.505, "Large passenger jets only (the airliners the case is about)",
+                 fontsize=12, fontweight="bold", color=INK)
+        a2 = fig.add_axes([0.05, 0.22, 0.90, 0.275]); a2.axis("off")
+        a2.imshow(mpimg.imread(p_lj))
+
+    foot = (
+        "Read the percentages in each panel: the share of aircraft already lower than "
+        "a quiet continuous descent as they pass over Brockenhurst — rising 83% → 87% "
+        "→ 87% for all arrivals and 66% → 73% → 74% for airliners. Flying low and "
+        "level (instead of gliding down) needs engine power, which is the noise "
+        "residents hear.  Source: aircraft's own broadcast (ADS-B) position data via "
+        "the OPDI / OpenSky open dataset. Prepared from public data — not affiliated "
+        "with the airport."
+    )
+    axf = fig.add_axes([0.06, 0.05, 0.88, 0.12]); axf.axis("off")
+    axf.text(0, 1, foot, ha="left", va="top", fontsize=8.2, color=MUTE, wrap=True,
+             transform=axf.transAxes, linespacing=1.4)
+    return fig
 
 
 if __name__ == "__main__":
