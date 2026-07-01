@@ -50,6 +50,17 @@ and look unverified.) Plain-English write-up: `outputs/sweep/FINDINGS.md`.
 
 Run it: `python sweep.py --start 2023-01-01 --end 2026-01-01`
 
+**One-page evidence brief:** `python brief.py` composes `outputs/brief.pdf`
+(+ `.png`) — a printable, plain-English summary for a complaint, council
+submission, MP letter, or consultation response.
+
+**Fuller coverage (optional):** only ~⅓–⅔ of arrivals broadcast a usable
+low-level event, so the night counts above are *minimums*. For an exact
+over-village height (plus speed) for essentially every night arrival, use
+`python run_opensky.py --start "2025-06-08 22:00" --stop "2025-06-09 06:00"`
+(reads raw OpenSky state vectors; needs a free OpenSky account — see
+`brockenhurst/opensky.py`).
+
 ### Single-period detail (sample: 4–24 June 2025)
 
 1,318 arrivals; median measured height over Brockenhurst ~2,450 ft vs the
@@ -90,6 +101,8 @@ brockenhurst/
   opensky.py              OPTIONAL: dense per-flight altitude from raw OpenSky state vectors
 run_opdi.py               CLI: single period → outputs/
 sweep.py                  CLI: full multi-year sweep, large-jet + night focus → outputs/sweep/
+run_opensky.py            CLI: dense per-flight over-village height (needs OpenSky account)
+brief.py                  compose the one-page evidence brief (PDF + PNG) from the sweep
 tests/test_geometry.py    geometry & threshold sanity checks
 docs/                     the airport's own source documents (noise abatement page, ILS plate, your dashboards)
 ```
