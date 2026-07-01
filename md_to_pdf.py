@@ -49,6 +49,25 @@ def _inline(t: str) -> str:
     return t.replace("**", "\0").replace("*", "").replace("\0", "**")
 
 
+def _callout(pdf: Doc, lines: list[str], accent=(31, 111, 196)):
+    """A shaded box with an accent left bar, for key facts / asks."""
+    txt = "\n".join(lines).strip()
+    usable = pdf.w - pdf.l_margin - pdf.r_margin
+    inner = usable - 12
+    pdf.set_font(FONT, "", 10)
+    n = len(pdf.multi_cell(inner, 5.6, _inline(txt), dry_run=True, output="LINES", markdown=True))
+    h = max(1, n) * 5.6 + 6
+    if pdf.get_y() + h > pdf.page_break_trigger:
+        pdf.add_page()
+    x, y = pdf.l_margin, pdf.get_y()
+    pdf.set_fill_color(238, 242, 247); pdf.rect(x, y, usable, h, style="F")
+    pdf.set_fill_color(*accent); pdf.rect(x, y, 2.4, h, style="F")
+    pdf.set_xy(x + 7, y + 3)
+    pdf.set_text_color(*INK)
+    pdf.multi_cell(inner, 5.6, _inline(txt), markdown=True)
+    pdf.set_y(y + h + 2.5)
+
+
 def _table(pdf: Doc, rows: list[list[str]]):
     rows = [r for r in rows if not set("".join(r)) <= {"-", " ", ":"}]  # drop |---| separator
     if not rows:
@@ -129,6 +148,15 @@ def render(md_path: str, pdf_path: str):
                     pdf.add_page()
                 pdf.image(m.group(1), x=pdf.l_margin, w=usable)
                 pdf.ln(2)
+        elif stripped.startswith(">"):
+            block = []
+            while i < len(lines) and lines[i].strip().startswith(">"):
+                block.append(lines[i].strip().lstrip(">").strip())
+                i += 1
+            # a callout that starts with "ASK" or an emoji flag gets a gold accent
+            accent = (200, 136, 31) if block and block[0].upper().startswith(("ASK", "PROPOS")) else (31, 111, 196)
+            _callout(pdf, block, accent)
+            continue
         elif stripped == "---":
             pdf.ln(1); pdf.set_draw_color(*RULE)
             y = pdf.get_y(); pdf.line(pdf.l_margin, y, pdf.w - pdf.r_margin, y); pdf.ln(2)
