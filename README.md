@@ -19,7 +19,7 @@ of the airport, the council, or a consultation response.
 
 ### Full 2023–2025 sweep — large jets, night-time focus
 
-33,533 Bournemouth arrivals over three years; 11,586 were large commercial jets.
+33,157 Bournemouth arrivals over three years; 11,453 were large commercial jets.
 Focusing on the core sleep window (**11pm–6am**):
 
 | Night-time airliners over Brockenhurst | 2023 | 2024 | 2025 |
@@ -60,8 +60,9 @@ Run it: `python sweep.py --start 2023-01-01 --end 2026-01-01`
 (+ `.png`) — a printable, plain-English summary for a complaint, council
 submission, MP letter, or consultation response.
 
-**Fuller coverage (optional, OpenSky):** only ~⅓–⅔ of arrivals broadcast a
-usable low-level event, so the night counts above are *minimums*. For an exact
+**Fuller coverage (optional, OpenSky):** ~97% of arrivals are tracked, but a
+precise over-village height exists for ~1 in 6 (the events are milestones, not a
+continuous track), so the night counts above are *minimums*. For an exact
 over-village height (plus speed and climb/descent rate) for essentially every
 night arrival, use the raw OpenSky state vectors:
 
@@ -128,6 +129,8 @@ brief.py                  compose the one-page evidence brief (PDF + PNG) from t
 tests/test_geometry.py    geometry & threshold sanity checks
 docs/                     the airport's own source documents (noise abatement page, ILS plate, your dashboards)
 ```
+
+**New to this? Start with [`DATA_AND_DEFINITIONS.md`](DATA_AND_DEFINITIONS.md)** (sources, completeness, caveats, glossary — also as `outputs/data_and_definitions.pdf`).
 
 **Read [`METHODOLOGY.md`](METHODOLOGY.md) before quoting any number** — it derives
 the geometry and thresholds, ties them to the airport's own published rules

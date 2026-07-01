@@ -122,11 +122,11 @@ def _page1(by_year, night, y0, y1, sweep_dir, total_below_floor, total_leveloff,
         f"off) directly over the village; {total_below_floor} dropped below the airport's "
         "own 2,000 ft minimum. Every airline named in the residents' audit (Jet2, TUI, "
         "Ryanair) is confirmed low at night in this data.  "
-        "Method & limits: only aircraft broadcasting position at low level are captured "
-        "(~half to two-thirds of arrivals), so these are minimum counts. A single flight "
-        "may have an air-traffic reason; the evidence is the consistent, worsening "
-        "pattern. Full method: METHODOLOGY.md.  Prepared from public data — not affiliated "
-        "with the airport."
+        "Method & limits: ~97% of arrivals are tracked, but a precise height directly "
+        "over the village exists for ~1 in 6, so these counts are minimums (the true "
+        "figures are higher). A single flight may have an air-traffic reason; the "
+        "evidence is the consistent, worsening pattern. Full detail: DATA_AND_DEFINITIONS.md "
+        "and METHODOLOGY.md.  Prepared from public data — not affiliated with the airport."
     )
     axf = fig.add_axes([0.06, 0.015, 0.88, 0.06]); axf.axis("off")
     axf.text(0, 1, foot, ha="left", va="top", fontsize=7.4, color=MUTE, wrap=True,

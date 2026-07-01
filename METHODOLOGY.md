@@ -134,10 +134,13 @@ aircraft, which is this group.
 
 ## 5. Honest limitations (read before quoting numbers)
 
-- **Coverage, not bias.** Only ~50–70% of arrivals produce usable low-level
-  events (ground-station ADS-B reception thins out at low altitude). The flights
-  we *can* see are a fair cross-section, not the loud ones cherry-picked — but
-  percentages are "of arrivals with usable data", stated as such.
+- **Coverage, not bias.** ~97% of arrivals are tracked (produce usable
+  trajectory events), so this is not a small or cherry-picked sample. A *precise
+  height directly over Brockenhurst* exists for a smaller subset (~15% of all
+  arrivals, ~18% of large jets), because the events are milestones rather than a
+  continuous track — so the exact-height counts are minimums, not overstatements.
+  The descent-profile scatter uses all ~100k corridor points and is unaffected.
+  See DATA_AND_DEFINITIONS.md for the full coverage table.
 - **Sparse events.** `flight_events` gives milestones, not a continuous track, so
   not every flight has an event exactly at the gate. The level-off counts (which
   don't need a gate event) are the robust core; the gate-altitude histogram uses
