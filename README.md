@@ -40,6 +40,12 @@ night flights are named airliners (Jet2, TUI, Ryanair, Air Malta) at
 ![Night airliners flying low, year on year](outputs/sweep/night_year_on_year.png)
 ![Lowest night-time airliners](outputs/sweep/worst_night_offenders.png)
 
+**Altitude vs the quiet-descent line, year on year** — the share of arrivals
+*below* where a continuous descent should have them (near Brockenhurst) rose
+**83% → 87% → 87%** (all arrivals) and **66% → 73% → 74%** (airliners):
+
+![Descent profile by year](outputs/sweep/descent_profile_by_year.png)
+
 **Cross-reference with the resident audit:** every airline the June-2026 audit
 named is confirmed making low night approaches in the 2023–2025 data — Jet2 down
 to 1,300 ft, Ryanair to 1,350 ft, TUI with 131 night flights below the proper

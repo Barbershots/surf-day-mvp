@@ -27,7 +27,7 @@ import numpy as np
 import pandas as pd
 
 import config
-from . import charts, classify
+from . import approach, charts, classify
 from . import geometry as geo
 
 PROPER_FT = round(geo.expected_cda_altitude_ft())   # ~3,116
@@ -163,6 +163,89 @@ def height_by_timeofday(pf, path):
     plt.close(fig)
 
 
+def _profile_frame(events, keep_years):
+    """Annotate raw events and reduce to the approach-corridor points for plotting."""
+    e = approach.annotate(events)
+    if "year" in e.columns:
+        yr = e["year"]
+    else:
+        yr = pd.to_datetime(e["event_time"]).dt.year
+    e = e.assign(year=yr)
+    e = e[(e["in_corridor"]) & (e["dist_thr_nm"].between(0, 18))
+          & (e["altitude"] > 0) & (e["altitude"] <= 10000)
+          & (e["year"].isin(list(keep_years)))]
+    cat = e["category"] if "category" in e.columns else pd.Series("", index=e.index)
+    return pd.DataFrame({
+        "dist_thr_nm": e["dist_thr_nm"].values, "altitude": e["altitude"].values,
+        "year": e["year"].values, "category": cat.values,
+        "cda_profile_ft": e["cda_profile_ft"].values,
+    })
+
+
+def descent_profile_by_year(profile_df, path, large_jet_only=False):
+    """
+    The altitude-vs-distance scatter (with the compliant 3-degree line and the
+    2,000 ft floor) split into one panel per year - showing the arrivals sitting
+    below where a quiet continuous descent would put them, and how the picture
+    has shifted since 2023. `profile_df` needs columns dist_thr_nm, altitude,
+    year, category, cda_profile_ft (already filtered to the approach corridor).
+    """
+    d = profile_df
+    if large_jet_only:
+        d = d[d["category"] == "Large jet"]
+    years = sorted(int(y) for y in d["year"].dropna().unique())
+    d_brock = geo.dist_from_threshold_nm(*config.BROCKENHURST)
+    x = np.linspace(0, 18, 120)
+
+    fig, axes = plt.subplots(1, len(years), figsize=(4.9 * len(years), 6.4),
+                             sharey=True, facecolor=charts.BG)
+    if len(years) == 1:
+        axes = [axes]
+    for ax, yr in zip(axes, years):
+        dd = d[d["year"] == yr]
+        ax.scatter(dd["dist_thr_nm"], dd["altitude"], s=5, alpha=0.14,
+                   color=charts.BLUE, edgecolors="none")
+        ax.plot(x, geo.glideslope_altitude_ft(x), color=charts.GOLD, lw=2.2)
+        ax.axhline(config.HARD_FLOOR_FT, color=charts.RED, lw=1.5, ls="--")
+        ax.axvline(d_brock, color=charts.FG, lw=1, ls=":", alpha=0.85)
+        zone = dd[dd["dist_thr_nm"].between(8, 12)]
+        pct = (zone["altitude"] < zone["cda_profile_ft"]).mean() * 100 if len(zone) else 0
+        ax.set_title(str(yr), color=charts.FG, fontsize=16, fontweight="bold")
+        ax.text(0.04, 0.955,
+                f"{pct:.0f}% below the\nquiet-descent line\nover Brockenhurst",
+                transform=ax.transAxes, ha="left", va="top",
+                color="#f0c96b", fontsize=9.5, fontweight="bold")
+        ax.text(d_brock - 0.25, 4600, "Brockenhurst", color=charts.FG, fontsize=8,
+                rotation=90, ha="right", va="center", alpha=0.9)
+        charts._style(ax)
+        ax.set_ylim(0, 8000)
+        ax.set_xlim(18, 0)
+        ax.set_xlabel("Distance from the airport (nautical miles)")
+    axes[0].set_ylabel("Height above sea level (ft)")
+
+    # Shared plain-language legend.
+    from matplotlib.lines import Line2D
+    handles = [
+        Line2D([0], [0], marker="o", color="none", markerfacecolor=charts.BLUE,
+               markersize=7, label="each dot = one arriving aircraft"),
+        Line2D([0], [0], color=charts.GOLD, lw=2.2,
+               label="where a quiet 'glide down' descent should be"),
+        Line2D([0], [0], color=charts.RED, lw=1.5, ls="--",
+               label="2,000 ft — the airport's own minimum"),
+    ]
+    fig.legend(handles=handles, loc="lower center", ncol=3, facecolor=charts.BG,
+               edgecolor=charts.GRID, labelcolor=charts.FG, fontsize=9.5,
+               bbox_to_anchor=(0.5, -0.005))
+    who = "Airliners" if large_jet_only else "Arrivals"
+    fig.suptitle(
+        f"{who} over Brockenhurst are flying below the quiet-descent line — "
+        "and more so each year",
+        color=charts.FG, fontsize=15.5, y=0.99)
+    fig.tight_layout(rect=[0, 0.05, 1, 0.96])
+    fig.savefig(path, dpi=135, facecolor=charts.BG)
+    plt.close(fig)
+
+
 def night_year_on_year(summary_df, path):
     """How many night-time airliners flew too low, each year."""
     s = summary_df
@@ -256,6 +339,13 @@ def build(arr, events, pf, outdir):
     night_year_on_year(by_year, os.path.join(outdir, "night_year_on_year.png"))
     night_height_hist(pf, os.path.join(outdir, "night_height_hist.png"))
     worst_night_offenders(night_tbl, os.path.join(outdir, "worst_night_offenders.png"))
+
+    # Year-on-year altitude-vs-distance profile (needs the raw events).
+    if events is not None and len(events):
+        prof = _profile_frame(events, full_years)
+        descent_profile_by_year(prof, os.path.join(outdir, "descent_profile_by_year.png"))
+        descent_profile_by_year(prof, os.path.join(outdir, "descent_profile_by_year_large_jets.png"),
+                                large_jet_only=True)
 
     # A plain-English summary text file.
     _write_plain_summary(pf, by_year, night_tbl, xref, os.path.join(outdir, "FINDINGS.md"))
