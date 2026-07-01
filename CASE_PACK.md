@@ -14,6 +14,17 @@ affiliated with the airport. Sources and full method are listed at the end.*
 > rules already ask for, route arrivals to one side of the village over open
 > forest, and limit night flights as the major UK airports do.
 
+> **Why now — there is a live consultation.** Bournemouth Airport is currently
+> redesigning its flight paths through the formal CAA process **(Airspace Change
+> ACP‑2019‑43, "FASI‑South")**. The new **satellite‑guided (PBN/RNAV)** routes are
+> hyper‑precise: instead of today's scattered flights, aircraft will follow the
+> **exact same line**. If that line is drawn over Brockenhurst it becomes a
+> **permanent, concentrated "noise highway."** This is the moment to get the
+> design right — and the airport has legal duties that help us: its **Section 106**
+> planning commitment to enforce continuous descent, and its duty under the
+> **Levelling‑up and Regeneration Act 2023 (s.245)** to *further* the National
+> Park's purposes (the "Sandford Principle" puts conservation first).
+
 ---
 
 ## First, three simple ideas (no aviation knowledge needed)
