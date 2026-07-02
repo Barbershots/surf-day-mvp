@@ -84,7 +84,7 @@ def smooth(x, y):
 
 
 def _draw(ax, a, from_se, box, zoom, lw, alpha_st, alpha_se, smooth_on=True,
-          min_pts=4, clip_margin=None):
+          min_pts=4, clip_margin=None, mono=False):
     lon0, lon1, lat0, lat1 = box
     x0, y0 = merc(lon0, lat0); x1, y1 = merc(lon1, lat1)
     ax.set_xlim(x0, x1); ax.set_ylim(y0, y1)
@@ -103,7 +103,8 @@ def _draw(ax, a, from_se, box, zoom, lw, alpha_st, alpha_se, smooth_on=True,
         n_se += se; n_st += (not se)
         mx, my = merc(g["longitude"].values, g["latitude"].values)
         sx, sy = smooth(mx, my) if smooth_on else (mx, my)
-        ax.plot(sx, sy, color=ORANGE if se else BLUE, lw=lw,
+        col = BLUE if (mono or not se) else ORANGE
+        ax.plot(sx, sy, color=col, lw=lw,
                 alpha=alpha_se if se else alpha_st, zorder=3, solid_capstyle="round")
     bx, by = merc(BLON, BLAT)
     ax.scatter([bx], [by], marker="^", s=150, color="red", edgecolors="white",
@@ -151,15 +152,14 @@ def build_zoom(out="outputs/sweep/brockenhurst_paths_village.png"):
     a, from_se = load()
     box = (BLON - VHL, BLON + VHL, BLAT - VHT, BLAT + VHT)
     fig, ax = plt.subplots(figsize=(13, 9.2))
-    n_st, n_se = _draw(ax, a, from_se, box, 14, 0.7, 0.10, 0.22, smooth_on=False,
-                       min_pts=2, clip_margin=0.02)
+    n_st, n_se = _draw(ax, a, from_se, box, 14, 0.7, 0.16, 0.16, smooth_on=False,
+                       min_pts=2, clip_margin=0.02, mono=True)
     tot = n_se + n_st
     ax.set_title("Every airliner's path directly over Brockenhurst (runway-26 arrivals, 2023-2025)\n"
-                 "each line is one flight · blue = straight in over the village · orange = curved up from the south",
+                 f"each line is one flight · {tot:,} large-jet approaches",
                  fontsize=12.5, fontweight="bold")
     ax.legend(handles=[
-        Line2D([0], [0], color=BLUE, lw=2.6, label="straight in over the village"),
-        Line2D([0], [0], color=ORANGE, lw=2.6, label="curved up from the south (Lymington / Sway side)")],
+        Line2D([0], [0], color=BLUE, lw=2.6, label="one airliner's path over the village")],
         loc="lower left", fontsize=10, framealpha=0.92)
     fig.text(0.5, 0.006,
              f"{tot:,} large-jet approaches, 2023-2025, showing the part of each track crossing the village, "
