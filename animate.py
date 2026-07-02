@@ -84,10 +84,26 @@ def _true_low_dates():
     return np.sort(pd.to_datetime(pf["last_seen"]).values)
 
 
+def _low_by_year():
+    """Per-year sorted dates of measured low airliners, split gold/red, for the
+    growing dot-tally."""
+    pf = pd.read_csv("outputs/sweep/per_flight.csv")
+    pf = pf[(pf["year"].isin([2023, 2024, 2025])) & (pf["category"] == "Large jet")
+            & (pf["gate_alt_ft"].notna()) & (pf["gate_alt_ft"] < PROPER)].copy()
+    pf["dt"] = pd.to_datetime(pf["last_seen"]).values
+    out = {}
+    for y in (2023, 2024, 2025):
+        yy = pf[pf["year"] == y]
+        out[y] = dict(gold=np.sort(yy[yy["gate_alt_ft"] >= FLOOR]["dt"].values),
+                      red=np.sort(yy[yy["gate_alt_ft"] < FLOOR]["dt"].values))
+    return out
+
+
 def build(out="outputs/sweep/arrivals_animation.gif", limit=None, frames=320, fps=12):
     flights = load_flights(limit)
     n = len(flights)
     low_dates = _true_low_dates()
+    by_year = _low_by_year()
     t0, t1 = flights[0]["t"], flights[-1]["t"]
     span = (t1 - t0).total_seconds() or 1
     release = frames - L
@@ -122,8 +138,30 @@ def build(out="outputs/sweep/arrivals_animation.gif", limit=None, frames=320, fp
     count_txt = ax.text(0.015, 0.905, "", transform=ax.transAxes, color="#ff6b6b",
                         fontsize=10.5, fontweight="bold", va="top")
 
+    # --- top-right growing dot-tally: low airliners per year ---
+    DOTV, NCOL, dx, gap = 15, 4, 1.0, 1.8   # 1 dot = DOTV flights
+    years = [2023, 2024, 2025]
+    year_x0 = {y: i * (NCOL * dx + gap) for i, y in enumerate(years)}
+    ax2 = fig.add_axes([0.675, 0.45, 0.305, 0.32])
+    ax2.set_facecolor((0, 0, 0, 0.35))
+    ax2.set_xlim(-0.8, max(year_x0.values()) + NCOL * dx)
+    ax2.set_ylim(-1.6, 13)
+    ax2.set_xticks([]); ax2.set_yticks([])
+    for sp in ax2.spines.values():
+        sp.set_color(GRID)
+    ax2.text(0.5, 1.02, "airliners low over the village, per year",
+             transform=ax2.transAxes, ha="center", va="bottom", color=FG, fontsize=8)
+    for y in years:
+        ax2.text(year_x0[y] + (NCOL * dx) / 2 - dx / 2, -1.5, str(y),
+                 ha="center", va="bottom", color=FG, fontsize=8.5, fontweight="bold")
+    ax2.text(0.5, -0.14, "each dot = 15 flights", transform=ax2.transAxes,
+             ha="center", va="top", color="#9a9aa2", fontsize=6.5)
+    tally = ax2.scatter([], [], s=16, zorder=5)
+    ytxt = {y: ax2.text(year_x0[y] + (NCOL * dx) / 2 - dx / 2, 12.4, "",
+                        ha="center", va="top", color=FG, fontsize=7.5, fontweight="bold")
+            for y in years}
+
     trail_lines, dot = [], ax.scatter([], [], s=0)
-    low_running = {"n": 0}
     # precompute per-frame active flights
     active_by_frame = {fr: [] for fr in range(frames)}
     for idx, f in enumerate(flights):
@@ -160,10 +198,25 @@ def build(out="outputs/sweep/arrivals_animation.gif", limit=None, frames=320, fp
         # date + counter
         frac = fr / max(1, release)
         cur = t0 + (t1 - t0) * min(1.0, frac)
+        cur = min(cur, pd.Timestamp("2025-12-31"))   # this is a 2023-2025 story
         date_txt.set_text(cur.strftime("%b %Y"))
         so_far = int(np.searchsorted(low_dates, np.datetime64(cur), side="right"))
         count_txt.set_text(f"airliners measured low over the village: {so_far:,} (running total)")
-        return [dot, date_txt, count_txt]
+        # update the per-year dot tally
+        curd = np.datetime64(cur)
+        pts, cols = [], []
+        for y in years:
+            ng = int(np.searchsorted(by_year[y]["gold"], curd, side="right"))
+            nr = int(np.searchsorted(by_year[y]["red"], curd, side="right"))
+            ndg, ndr = ng // DOTV, nr // DOTV
+            for i in range(ndg + ndr):
+                row, col = divmod(i, NCOL)
+                pts.append((year_x0[y] + col * dx, row * 1.0))
+                cols.append(GOLD if i < ndg else RED)
+            ytxt[y].set_text(f"{ng + nr}" if (ng + nr) else "")
+        tally.set_offsets(np.array(pts) if pts else np.empty((0, 2)))
+        tally.set_color(cols if cols else "none")
+        return [dot, date_txt, count_txt, tally]
 
     print(f"animating {n} flights over {frames} frames ...", flush=True)
     anim = animation.FuncAnimation(fig, update, frames=frames, interval=1000 / fps, blit=False)
