@@ -48,11 +48,12 @@ affiliated with the airport. Sources and full method are listed at the end.*
 
 When the wind is from the south‑west (which is most of the time), planes land
 towards the west and approach **from over the New Forest — straight over
-Brockenhurst.** The map below plots where arriving airliners actually flew over
-three years. The bright streak is the flight path, and it runs **right through
-the village.**
+Brockenhurst.** The map below draws the **actual flight path of every arriving
+airliner** over three years, each line built from the aircraft's own GPS. They
+funnel into one tight stream **straight over the village** and carry on to the
+runway.
 
-![Where aircraft actually fly over the New Forest](outputs/sweep/route_map.png)
+![The path of every airliner into Brockenhurst, 2023–2025](outputs/sweep/brockenhurst_paths.png)
 
 > **Fact:** About **76% of airliner arrivals** come in over Brockenhurst. (The
 > rest land the other way, from the coast side, and miss the village.)
@@ -125,6 +126,17 @@ Simply **doing what the airport's own rulebook already asks for**: keep arrivals
 needs **no change to any flight path** — it is about how the descent is flown, and
 it uses the airport's own published policy. Higher and smoother = quieter over the
 village, and it could begin straight away.
+
+The graph below shows the difference. On the left is how aircraft descend
+**today** — dropping low early and **levelling off** over the village (the flat
+shelf), typically about **2,725 ft** as they cross Brockenhurst. In the middle and
+right is where a steady, continuous glide would keep them: a **3.0° glide crosses
+at about 3,116 ft** (today **77%** of flights are lower than that), and a slightly
+steeper, still‑gentle **3.3° glide crosses at about 3,425 ft** (today **90%** are
+lower). Higher and smoother, with no level‑offs, is quieter — and it is the
+airport's own published rule.
+
+![Today's descent vs a 3.0° and 3.3° continuous glide](outputs/sweep/descent_options.png)
 
 ## Option B — Route arrivals to one side of the village (over open forest)
 
