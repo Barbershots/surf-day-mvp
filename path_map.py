@@ -121,7 +121,7 @@ def _draw(ax, a, from_se, box, zoom, lw, alpha_st, alpha_se, smooth_on=True,
 def build(out="outputs/sweep/brockenhurst_paths.png"):
     a, from_se = load()
     fig, ax = plt.subplots(figsize=(13, 8.8))
-    n_st, n_se = _draw(ax, a, from_se, (LON0, LON1, LAT0, LAT1), 12, 0.5, 0.05, 0.12)
+    n_st, n_se = _draw(ax, a, from_se, (LON0, LON1, LAT0, LAT1), 12, 0.5, 0.06, 0.06, mono=True)
     tx, ty = merc(TLON, TLAT)
     ax.scatter([tx], [ty], marker="*", s=240, color="#111", edgecolors="white",
                linewidths=1.1, zorder=7)
@@ -133,8 +133,7 @@ def build(out="outputs/sweep/brockenhurst_paths.png"):
                  f"~{100*n_se/tot:.0f}% curve up from the south",
                  fontsize=12.5, fontweight="bold")
     ax.legend(handles=[
-        Line2D([0], [0], color=BLUE, lw=2.4, label="straight in over the village"),
-        Line2D([0], [0], color=ORANGE, lw=2.4, label="curved up from the south (Lymington / Sway side)")],
+        Line2D([0], [0], color=BLUE, lw=2.4, label="one airliner's path (each line = one flight)")],
         loc="lower left", fontsize=10, framealpha=0.92)
     fig.text(0.5, 0.006,
              "Each line is one flight through its own recorded GPS fixes (median ~9 per approach), lightly smoothed. "
