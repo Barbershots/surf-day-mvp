@@ -62,7 +62,8 @@ def build(out="outputs/sweep/passenger_history.png"):
         ax.spines[s].set_visible(False)
     fig.text(0.5, 0.01,
              "Terminal passengers, calendar year, from CAA UK airport data and the airport's published figures. "
-             "The airport quotes 1.4m for the year to March 2026. Approved planning capacity is 3.0m.",
+             "The airport quotes 1.4m for the year to March 2026. Approved capacity is 3.0m passengers a year "
+             "(2007 and 2010 planning permissions).",
              ha="center", fontsize=8.3, color="#555")
     fig.tight_layout(rect=[0, 0.035, 1, 1])
     fig.savefig(out, dpi=150, bbox_inches="tight")
