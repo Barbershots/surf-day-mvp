@@ -121,7 +121,7 @@ def _draw(ax, a, from_se, box, zoom, lw, alpha_st, alpha_se, smooth_on=True,
 def build(out="outputs/sweep/brockenhurst_paths.png"):
     a, from_se = load()
     fig, ax = plt.subplots(figsize=(13, 8.8))
-    n_st, n_se = _draw(ax, a, from_se, (LON0, LON1, LAT0, LAT1), 12, 0.9, 0.06, 0.06, mono=True)
+    n_st, n_se = _draw(ax, a, from_se, (LON0, LON1, LAT0, LAT1), 12, 1.3, 0.06, 0.06, mono=True)
     tx, ty = merc(TLON, TLAT)
     ax.scatter([tx], [ty], marker="*", s=240, color="#111", edgecolors="white",
                linewidths=1.1, zorder=7)
@@ -151,7 +151,7 @@ def build_zoom(out="outputs/sweep/brockenhurst_paths_village.png"):
     a, from_se = load()
     box = (BLON - VHL, BLON + VHL, BLAT - VHT, BLAT + VHT)
     fig, ax = plt.subplots(figsize=(13, 9.2))
-    n_st, n_se = _draw(ax, a, from_se, box, 14, 1.2, 0.16, 0.16, smooth_on=False,
+    n_st, n_se = _draw(ax, a, from_se, box, 14, 1.7, 0.16, 0.16, smooth_on=False,
                        min_pts=2, clip_margin=0.02, mono=True)
     tot = n_se + n_st
     ax.set_title("Every airliner's path directly over Brockenhurst (runway-26 arrivals, 2023-2025)\n"
