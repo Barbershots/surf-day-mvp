@@ -1,0 +1,5 @@
+time,callsign,airline,type,height_ft,period
+00:23,EXS68Z  ,Jet2,B738,2325,Night
+00:27,TOM2TG  ,TUI,B738,2350,Night
+06:59,RYR2CT  ,Ryanair,A320,2575,Day
+22:43,RYR24GH ,Ryanair,B738,2350,Evening

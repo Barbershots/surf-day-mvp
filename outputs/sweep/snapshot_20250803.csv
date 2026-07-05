@@ -1,0 +1,10 @@
+time,callsign,airline,type,height_ft,period
+07:58,RYR94FL ,Ryanair,B38M,2275,Day
+12:18,RYR46HP ,Ryanair,B738,2325,Day
+12:51,TOM5JB  ,TUI,B738,2325,Day
+13:39,URO681  ,European Cargo,A346,2350,Day
+13:48,RYR611T ,Ryanair,B738,2325,Day
+13:50,EXS51Y  ,Jet2,B738,2325,Day
+18:56,RYR8TF  ,Ryanair,B738,2600,Day
+21:08,RYR59SF ,Ryanair,B38M,2775,Evening
+23:46,TOM6723 ,TUI,B738,2300,Night
