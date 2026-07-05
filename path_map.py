@@ -129,8 +129,8 @@ def build(out="outputs/sweep/brockenhurst_paths.png"):
                 xytext=(8, -14), textcoords="offset points", zorder=8)
     tot = n_se + n_st
     ax.set_title("The path each airliner flew into Brockenhurst (runway-26 arrivals, 2023-2025)\n"
-                 f"{tot:,} approaches · most come straight in over the village, "
-                 f"~{100*n_se/tot:.0f}% curve up from the south",
+                 f"{tot:,} approaches · they fan in from the north-east, east and south and "
+                 "converge onto one line over the village",
                  fontsize=12.5, fontweight="bold")
     ax.legend(handles=[
         Line2D([0], [0], color=BLUE, lw=2.4, label="one airliner's path (each line = one flight)")],
