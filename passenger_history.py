@@ -14,9 +14,12 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-# calendar-year terminal passengers (CAA / airport published figures)
+# Calendar-year terminal passengers, UK CAA airport statistics.
+# Cross-checked: every figure matches the CAA-sourced series; 2007-2012 also
+# corroborated by AirportWatch, and 2025 (1.38m) matches the airport's own
+# "1.4m for the year to March 2026" (financial-year basis).
 PAX = {
-    2007: 1_083_000, 2008: 1_079_000, 2009: 868_724, 2010: 751_331,
+    2007: 1_083_379, 2008: 1_078_941, 2009: 868_445, 2010: 751_331,
     2011: 613_755, 2012: 689_913, 2013: 660_272, 2014: 661_584,
     2015: 706_776, 2016: 667_981, 2017: 694_660, 2018: 674_972,
     2019: 803_307, 2020: 175_907, 2021: 200_640, 2022: 734_530,
