@@ -47,6 +47,33 @@ If a group member already runs a receiver for FlightAware, Flightradar24 or ADS-
 
 Sited well, it will record the exact low overflights this campaign is about.
 
+## Does it need to be under the flight path?
+
+No. The receiver is a listening post, not a camera. Every aircraft broadcasts
+its own GPS position, so it logs exactly where each plane is no matter where the
+antenna sits. One receiver in Brockenhurst records the low arrivals over the
+whole area, because it hears their broadcasts from miles off.
+
+The one thing that gets missed is aircraft that are both low and far away, which
+slip below the horizon behind trees and terrain. That is why sitting in the area
+where they fly low is ideal: a low plane passing overhead is the easiest signal
+of all to catch. So one well-sited receiver in the village covers the whole local
+corridor. There is no need to chase the exact line they fly.
+
+## Indoors, window, loft or outside?
+
+It does not have to be outdoors. Reception improves in steps, so this is about
+how much you catch, not pass or fail:
+
+- **Indoors in a room:** works, but walls and insulation weaken the signal. Still catches the low flights right overhead, which is our main goal.
+- **By a window:** better and easy. A window only sees the way it faces, so point it at open sky to the south or east. No need to put it outside.
+- **In the loft:** usually the best practical spot, elevated and out of the weather. **Important gotcha:** many modern roofs have a foil-backed membrane under the tiles that blocks the signal. If your roof has it, use a window instead. Older tile or plain-felt roofs are fine.
+- **Outside on the roof or a mast:** best performance, but means weatherproofing and a cable run. Overkill unless someone is keen.
+
+For our purposes a loft antenna (non-foil roof) or one by an upstairs south or
+east facing window is plenty. Quick loft check: if you can see daylight through
+gaps it will likely work; if you see a shiny foil membrane, go with a window.
+
 ## Setup, step by step (for whoever hosts it)
 
 The official instructions are at **opensky-network.org/feed/raspberry**. Follow those for the exact download and commands. Here is what each stage means so it is not a mystery:
