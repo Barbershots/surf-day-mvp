@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  :root{
+    --ink:#16202e; --muted:#5a6b7e; --blue:#1b4f8f; --deep:#0f335f;
+    --bright:#2c6fbb; --sky:#eef4fb; --line:#d9e3ef; --gold:#e8a020; --red:#c0392b;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{font-family:"Liberation Sans","DejaVu Sans",sans-serif; color:var(--ink); -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  @page{size:A4; margin:0;}
+  .page{width:210mm; height:297mm; position:relative; overflow:hidden; background:#fff; page-break-after:always;}
+  .page:last-child{page-break-after:auto;}
+  .pad{padding:14mm 15mm;}
+
+  /* banner + opener (reused) */
+  .banner{position:relative; background:linear-gradient(135deg,var(--deep) 0%,var(--blue) 55%,var(--bright) 130%); color:#fff; padding:14mm 15mm 15mm; overflow:hidden;}
+  .banner .mark{display:flex; align-items:center; gap:9px; font-size:10.5px; font-weight:700; letter-spacing:2.2px; text-transform:uppercase; opacity:.95;}
+  .banner .mark .disc{width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.16); display:flex; align-items:center; justify-content:center;}
+  .banner h1{font-size:40px; line-height:1.04; font-weight:800; letter-spacing:-.5px; margin:16px 0 12px;}
+  .banner .sub{font-size:14.5px; line-height:1.5; max-width:118mm; color:#dce8f6;}
+  .banner .bigplane{position:absolute; right:-18mm; top:-8mm; width:95mm; opacity:.10;}
+
+  .grid2{display:grid; grid-template-columns:1.32fr 1fr; gap:11mm; align-items:start;}
+  .kicker{display:inline-block; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--bright); margin-bottom:6px;}
+  h2.sec{font-size:24px; font-weight:800; letter-spacing:-.4px; line-height:1.1; margin-bottom:10px;}
+  h3.sub{font-size:15px; font-weight:800; margin:2px 0 7px; color:var(--deep);}
+  p.body{font-size:11.5px; line-height:1.62; color:#33414f; margin-bottom:9px;}
+  p.body.small{font-size:10.8px;}
+  .divider{height:3px; width:52px; background:var(--gold); border-radius:3px; margin:0 0 15px;}
+
+  .stats{display:flex; flex-direction:column; gap:9px;}
+  .stat{background:var(--sky); border:1px solid var(--line); border-radius:13px; padding:13px 15px;}
+  .stat .n{font-size:32px; font-weight:800; color:var(--deep); letter-spacing:-1px; line-height:1;}
+  .stat .n small{font-size:17px; font-weight:800;}
+  .stat .l{font-size:10.6px; line-height:1.35; color:var(--muted); margin-top:5px; font-weight:600;}
+  .stat.accent{background:var(--deep); border-color:var(--deep);}
+  .stat.accent .n{color:#fff;} .stat.accent .l{color:#bcd2ea;}
+
+  .ideas .row{display:grid; grid-template-columns:repeat(3,1fr); gap:8mm; margin-top:9px;}
+  .idea .ic,.card .ic{width:40px; height:40px; border-radius:11px; background:var(--sky); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; margin-bottom:9px;}
+  .idea h3{font-size:13px; font-weight:800; margin-bottom:5px; line-height:1.2;}
+  .idea p{font-size:10.6px; line-height:1.5; color:#48586a;}
+  svg.icn{width:22px; height:22px; fill:var(--blue);}
+
+  /* part divider */
+  .partband{background:linear-gradient(135deg,var(--deep),var(--blue)); color:#fff; border-radius:16px; padding:22px 26px; display:flex; align-items:center; gap:20px; margin-bottom:14px; position:relative; overflow:hidden;}
+  .partband .pnum{font-size:52px; font-weight:800; line-height:.9; opacity:.35;}
+  .partband .pt .k{font-size:11px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; color:#bcd2ea;}
+  .partband .pt h2{font-size:26px; font-weight:800; letter-spacing:-.4px; margin-top:3px;}
+  .partband .bigplane{position:absolute; right:-6mm; top:-10mm; width:60mm; opacity:.10;}
+
+  /* figure */
+  figure{margin:10px 0 12px; border:1px solid var(--line); border-radius:13px; overflow:hidden; background:#fff; break-inside:avoid;}
+  figure img{display:block; width:100%; height:auto;}
+  figcaption{font-size:9.7px; color:var(--muted); padding:8px 13px; background:#fafcff; border-top:1px solid var(--line); line-height:1.4;}
+
+  /* fact callout */
+  .fact{display:flex; gap:12px; align-items:flex-start; background:var(--sky); border:1px solid var(--line); border-left:4px solid var(--gold); border-radius:10px; padding:12px 15px; margin:9px 0 12px; break-inside:avoid;}
+  .fact .fi{flex:0 0 auto; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); padding-top:1px;}
+  .fact p{font-size:11.2px; line-height:1.55; color:#2c3947;}
+  .fact.blue{border-left-color:var(--bright);} .fact.blue .fi{color:var(--bright);}
+  .fact.red{border-left-color:var(--red);} .fact.red .fi{color:var(--red);}
+
+  .callout{background:linear-gradient(135deg,var(--deep),var(--blue)); color:#fff; border-radius:14px; padding:15px 18px; display:flex; gap:14px; align-items:flex-start; margin:6px 0 13px; break-inside:avoid;}
+  .callout .ci{flex:0 0 auto; width:34px; height:34px; border-radius:9px; background:rgba(255,255,255,.15); display:flex; align-items:center; justify-content:center;}
+  .callout .ci svg{width:19px; height:19px; fill:#fff;}
+  .callout p{font-size:11.2px; line-height:1.55; color:#e4eefa;} .callout b{color:#fff;}
+
+  /* steps */
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin:8px 0 4px;}
+  .step{position:relative; padding:0 6mm;} .step:first-child{padding-left:0;}
+  .step .num{width:32px; height:32px; border-radius:50%; background:var(--bright); color:#fff; font-weight:800; font-size:15px; display:flex; align-items:center; justify-content:center; margin-bottom:8px;}
+  .step h3{font-size:12.5px; font-weight:800; line-height:1.18; margin-bottom:5px;}
+  .step p{font-size:10.4px; line-height:1.5; color:#48586a;}
+  .step .arw{position:absolute; right:-2mm; top:4px; color:var(--line); font-size:20px;}
+
+  /* generic table */
+  table.t{width:100%; border-collapse:collapse; margin:6px 0 12px; font-size:10.4px; break-inside:avoid;}
+  table.t th,table.t td{border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; line-height:1.42;}
+  table.t th{background:var(--deep); color:#fff; font-weight:700; font-size:10px;}
+  table.t tr:nth-child(even) td{background:#f7faff;}
+  table.t td.k{font-weight:700; color:var(--deep); background:var(--sky);}
+  .verdict{font-weight:800; font-size:10px; padding:2px 7px; border-radius:20px; display:inline-block;}
+  .v-good{background:#e4f2e6; color:#1e7a37;} .v-part{background:#fdf1dc; color:#9a6212;} .v-bad{background:#fbe6e3; color:#b02a1c;}
+
+  .cards3 .row{display:grid; grid-template-columns:repeat(3,1fr); gap:7mm; margin-top:9px;}
+  .card{background:#fff; border:1px solid var(--line); border-radius:13px; padding:14px 15px; break-inside:avoid;}
+  .card h3{font-size:12.5px; font-weight:800; margin-bottom:5px;} .card p{font-size:10.4px; line-height:1.5; color:#48586a;}
+  .card .em{color:var(--blue); font-weight:700; overflow-wrap:break-word;}
+
+  .foot{position:absolute; left:15mm; right:15mm; bottom:9mm; display:flex; justify-content:space-between; align-items:center; font-size:9.2px; color:var(--muted); border-top:1px solid var(--line); padding-top:7px;}
+
+  /* complaint card */
+  .cc{background:linear-gradient(135deg,var(--deep),var(--blue)); color:#fff; border-radius:18px; padding:26px 28px; margin-bottom:14px; position:relative; overflow:hidden;}
+  .cc h2{font-size:30px; font-weight:800; letter-spacing:-.5px;}
+  .cc p{font-size:13px; color:#dce8f6; margin-top:8px; max-width:150mm; line-height:1.5;}
+  .cc .bigplane{position:absolute; right:-10mm; top:-12mm; width:72mm; opacity:.12;}
+  .qrrow{display:grid; grid-template-columns:1fr 1fr; gap:9mm; margin-top:4px; align-items:stretch;}
+  .qrbox{display:flex; flex-direction:column; align-items:center; border:1px solid var(--line); border-radius:14px; padding:16px 18px; text-align:center; background:#fff;}
+  .qrbox .tag{font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#fff; background:var(--bright); padding:3px 11px; border-radius:20px; margin-bottom:12px;}
+  .qrbox .qrimg{width:42mm; height:42mm; display:flex; align-items:center; justify-content:center; margin-bottom:11px;}
+  .qrbox .qrimg img{width:42mm; height:42mm; object-fit:contain;}
+  .qrbox h3{font-size:14px; font-weight:800; margin:0 0 5px;}
+  .qrbox p{font-size:10.5px; color:#48586a; line-height:1.5;}
+  .howto{background:var(--sky); border:1px solid var(--line); border-radius:13px; padding:15px 18px; margin-top:13px;}
+  .howto h3{font-size:13px; font-weight:800; color:var(--deep); margin-bottom:8px;}
+  .howto ol{margin-left:16px;} .howto li{font-size:11px; line-height:1.6; color:#33414f; margin-bottom:3px;}
+</style>
+</head>
+<body>
+
+<!-- ===== PAGE 1: OPENER ===== -->
+<section class="page">
+  <div class="banner">
+    <svg class="bigplane" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg>
+    <div class="mark"><span class="disc"><svg width="15" height="15" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg></span> Brockenhurst Community Action Group</div>
+    <h1>Aircraft noise<br>over Brockenhurst</h1>
+    <div class="sub">A residents' case pack on Bournemouth Airport arrivals, built entirely from the aircraft's own public flight data, 2023 to 2025. Not affiliated with the airport.</div>
+  </div>
+  <div class="pad">
+    <div class="grid2">
+      <div>
+        <span class="kicker">The problem</span>
+        <h2 class="sec">The situation is already unbearable for many.</h2>
+        <div class="divider"></div>
+        <p class="body">A recent spot survey drew over <b>255 responses in two days</b>, and more than <b>75% of residents</b> are concerned about the rising number of flights over Brockenhurst and the noise they bring.</p>
+        <p class="body">Many residents can no longer fully enjoy their homes and gardens. Conversations are interrupted indoors and out as aircraft pass over, and families are regularly woken by late-night flights. The impact reaches beyond residents, to tourists and campers and the wider tranquillity of the New Forest National Park.</p>
+        <p class="body">Brockenhurst sits <b>just under 10 nautical miles out, directly in line with the main runway</b>. It is made worse by aircraft arriving lower than the airport's own published rules, and often turning and levelling off right over the village, which needs extra engine power and extra noise. The numbers rise every year, and it is getting worse at night.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="n">75<small>%</small></div><div class="l">of residents concerned, from a poll of 270 people</div></div>
+        <div class="stat accent"><div class="n">77<small>%</small></div><div class="l">of arrivals cross the village below the quiet-descent height</div></div>
+        <div class="stat"><div class="n">+65<small>%</small></div><div class="l">more large jets in just three years (2023 to 2025)</div></div>
+      </div>
+    </div>
+    <div class="ideas" style="margin-top:11mm;">
+      <span class="kicker">Three simple ideas, no aviation knowledge needed</span>
+      <div class="row">
+        <div class="idea"><div class="ic"><svg class="icn" viewBox="0 0 512 512"><path d="M32 384h448v40H32zM40 300l120-16 92-150 40 4-44 156 118-16 34-52 34 6-26 92-352 48z"/></svg></div><h3>A quiet approach is a gentle glide</h3><p>The most efficient landing is one smooth glide with the engines close to idle. It keeps the plane higher for longer, and quieter.</p></div>
+        <div class="idea"><div class="ic"><svg class="icn" viewBox="0 0 512 512"><path d="M16 236h360l70-40 40 8-30 44 30 44-40 8-70-40H16zM120 300l40 60h34l-22-60zM120 172l40-60h34l-22 60z"/></svg></div><h3>Turning and levelling off is the loud bit</h3><p>When a plane stops gliding, turns and flies level, it must add engine power and drag. That surge is the noise you hear overhead.</p></div>
+        <div class="idea"><div class="ic"><svg class="icn" viewBox="0 0 384 512"><path d="M192 0C86 0 0 86 0 192c0 141 192 320 192 320s192-179 192-320C384 86 298 0 192 0zm0 272a80 80 0 110-160 80 80 0 010 160z"/></svg></div><h3>We sit right in the firing line</h3><p>Brockenhurst is 9.7 nautical miles in a straight line off the runway, and over 75% of arrivals pass directly overhead.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Brockenhurst Community Action Group &nbsp;·&nbsp; Working draft</span><span>1</span></div>
+</section>
+
+<!-- ===== PAGE 2: OPENER 2 ===== -->
+<section class="page"><div class="pad">
+  <span class="kicker">What we can do</span>
+  <h2 class="sec" style="font-size:26px;">Can we do anything about this?<br><span style="color:var(--bright)">Yes, and the time is now.</span></h2>
+  <div class="divider"></div>
+  <p class="body">Bournemouth Airport is redrawing its flight paths right now, through the formal CAA process (Airspace Change ACP-2019-43). The new satellite-guided routes are hyper precise: instead of today's scattered flights, aircraft will follow the exact same line. If that line is drawn over Brockenhurst as it is today, it becomes a permanent, concentrated noise highway. That is the threat, and it is also the opportunity to move it.</p>
+  <div class="callout"><span class="ci"><svg viewBox="0 0 512 512"><path d="M256 0l208 96v128c0 128-86 232-208 288C134 456 48 352 48 224V96zM224 320l160-160-34-34-126 126-58-58-34 34z"/></svg></span><p><b>The law is on our side.</b> The airport has a Section 106 planning commitment to continuous descent approaches, and a duty under the Levelling Up and Regeneration Act 2023 to further the National Park's purposes, the Sandford Principle, which puts conservation first.</p></div>
+  <span class="kicker">What we need</span>
+  <h2 class="sec" style="margin-bottom:2px;">Three changes that would make a real difference.</h2>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><h3>Stick to continuous descent</h3><p>Hold every arrival to a smooth, engine-idle glide, no early descents and no levelling off over the village. It is already in the airport's own rulebook.</p><div class="arw">&rarr;</div></div>
+    <div class="step"><div class="num">2</div><h3>Raise the height over Brockenhurst</h3><p>Fly the standard 3-degree descent, or steeper, so aircraft are meaningfully higher and quieter as they cross the village.</p><div class="arw">&rarr;</div></div>
+    <div class="step"><div class="num">3</div><h3>Route the new paths around us</h3><p>As the satellite routes are drawn, place the line to avoid Brockenhurst, without shifting the burden onto other communities.</p></div>
+  </div>
+  <div class="cards3" style="margin-top:12mm;">
+    <span class="kicker">How you can get involved</span>
+    <h2 class="sec" style="margin-bottom:2px;">Your voice genuinely counts.</h2>
+    <p class="body small" style="max-width:172mm;">In the past, Brockenhurst residents did not take part in the consultation, and the flights came our way. This time can be different.</p>
+    <div class="row">
+      <div class="card"><div class="ic"><svg class="icn" viewBox="0 0 512 512"><path d="M64 32h384v64H64zM64 160h384v64H64zM64 288h256v64H64z"/></svg></div><h3>Understand and share</h3><p>Read this pack, then tell your neighbours what is happening and why the coming consultation matters.</p></div>
+      <div class="card"><div class="ic"><svg class="icn" viewBox="0 0 512 512"><path d="M256 256a96 96 0 100-192 96 96 0 000 192zM32 480c0-97 100-160 224-160s224 63 224 160z"/></svg></div><h3>Join the campaign</h3><p>Get on the Aircraft Noise WhatsApp group. Email <span class="em">aircraft@<wbr>yourbrockenhurst.org</span></p></div>
+      <div class="card"><div class="ic"><svg class="icn" viewBox="0 0 512 512"><path d="M48 64h416v288H180L80 440V352H48zM128 160h256v32H128zm0 80h192v32H128z"/></svg></div><h3>Complain when disturbed</h3><p>Every complaint is logged. Use the one-tap complaint card at the back of this pack.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Brockenhurst Community Action Group &nbsp;·&nbsp; Working draft</span><span>2</span></div>
+</div></section>
+
+<!-- ===== PAGE 3: PART 1 ===== -->
+<section class="page"><div class="pad">
+  <div class="partband"><svg class="bigplane" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg><div class="pnum">01</div><div class="pt"><div class="k">Part one</div><h2>The problem, and the data behind it</h2></div></div>
+  <h3 class="sub">1. More flights, and permission for far more</h3>
+  <p class="body">Bournemouth carried about 1.08 million passengers in 2007-08. It fell back through the 2010s, crashed in COVID, and has recovered fast to a record <b>1.38 million in 2025</b>, up 27% in a year. The airport holds permission to <b>more than double again, to 3 million</b>, aiming for 2043, so further steady growth should be expected.</p>
+  <figure><img src="../sweep/passenger_history.png"><figcaption>Passengers through Bournemouth Airport, 2007 to 2025, against the approved 3 million cap. Source: UK CAA statistics, cross-checked against two further sources.</figcaption></figure>
+  <div class="fact blue"><div class="fi">Fact</div><p>Our own flight data shows the same climb. Between 2023 and 2025, arrivals into Bournemouth rose <b>28%</b> (9,819 to 12,574), and large-jet arrivals rose <b>65%</b> (2,943 to 4,854), more than twice as fast as flights overall.</p></div>
+  <div class="foot"><span>Part 1 &nbsp;·&nbsp; The problem</span><span>3</span></div>
+</div></section>
+
+<!-- ===== PAGE 4 ===== -->
+<section class="page"><div class="pad">
+  <h3 class="sub">2. Concentrated at the worst times, and set to double</h3>
+  <p class="body">The flights are not spread evenly. Summer has roughly <b>three times</b> the traffic of January, and the day has two peaks: around midday and in the late evening, with the <b>11pm hour the busiest of all</b> and traffic continuing after midnight.</p>
+  <figure><img src="../sweep/flights_profile.png"><figcaption>Large-jet arrivals by month and by hour of day, 2025. The late-evening peak is when open windows and sleep make the noise hurt most.</figcaption></figure>
+  <div class="fact"><div class="fi">Fact</div><p>At the summer peak (the 11pm hour) about <b>2 large jets an hour</b> arrive, the great majority routing over the village. This is a summer average, and on busy evenings it already bunches to <b>one every 12 to 15 minutes</b>. Under the approved growth it could roughly double.</p></div>
+  <div class="foot"><span>Part 1 &nbsp;·&nbsp; The problem</span><span>4</span></div>
+</div></section>
+
+<!-- ===== PAGE 5 ===== -->
+<section class="page"><div class="pad">
+  <h3 class="sub">3. By design, Brockenhurst sits directly under the flight path</h3>
+  <p class="body">When the wind is from the south-west, which is most of the time, planes land towards the west and approach over the New Forest, currently straight over Brockenhurst. The map plots where arriving airliners actually flew across three years.</p>
+  <figure><img src="../sweep/brockenhurst_paths.png"><figcaption>Every reconstructed arrival track, 2023 to 2025. The strands fan in from the north-east, east and south and converge onto a single line over the village.</figcaption></figure>
+  <div class="fact blue"><div class="fi">Fact</div><p>About <b>76% of arrivals come in over Brockenhurst</b>. The rest land the other way, from the coast side, and miss the village entirely.</p></div>
+  <div class="foot"><span>Part 1 &nbsp;·&nbsp; The problem</span><span>5</span></div>
+</div></section>
+
+<!-- ===== PAGE 6 ===== -->
+<section class="page"><div class="pad">
+  <h3 class="sub">4. The planes are flying lower than they should, and getting lower</h3>
+  <p class="body">The gold line below is where a plane should be on the quiet 3-degree glide, roughly 3,100 ft as it passes Brockenhurst. Each dot is one aircraft. Most sit <b>below the line</b>: lower than a quiet descent, which means louder.</p>
+  <figure><img src="../sweep/descent_profile_by_year_large_jets.png"><figcaption>Measured height of each large jet over the village against the quiet-descent line, by year. Lower dots are louder aircraft.</figcaption></figure>
+  <div class="fact red"><div class="fi">Fact</div><p>The share of flights below the quiet-descent height rose from <b>70% (2023) to 74% (2024) to 81% (2025)</b>. The average height is falling, from about 2,775 ft to 2,700 ft, and there are more flights each year.</p></div>
+  <div class="foot"><span>Part 1 &nbsp;·&nbsp; The problem</span><span>6</span></div>
+</div></section>
+
+<!-- ===== PAGE 7 ===== -->
+<section class="page"><div class="pad">
+  <h3 class="sub">5. They turn and level off over the village</h3>
+  <p class="body">The recommended continuous descent is frequently not followed. Many arrivals stop their descent, turn, and fly level right over Brockenhurst, using extra engine power and making extra noise. Here is one real, recent example, built entirely from the aircraft's own recorded positions.</p>
+  <figure><img src="../sweep/case_study.png"><figcaption>A single arrival from cruise to touchdown. The gold line is the quiet descent; the blue line is the actual descent, showing the stepped, levelled approach over the village.</figcaption></figure>
+  <div class="fact red"><div class="fi">Real flight</div><p>A Jet2 flight flew <b>level at about 2,050 ft over Brockenhurst at 23:28</b>, roughly 1,000 ft below a quiet descent. A stepped approach, not a gentle glide, and very noisy at night. This is not uncommon.</p></div>
+  <div class="foot"><span>Part 1 &nbsp;·&nbsp; The problem</span><span>7</span></div>
+</div></section>
+
+<!-- ===== PAGE 8 ===== -->
+<section class="page"><div class="pad">
+  <h3 class="sub">6. It is getting worse, and worst at night</h3>
+  <p class="body">Night is when it hurts most: windows open in summer, everyone asleep. Night-time flights over Brockenhurst have <b>more than doubled in three years</b>, and more of them drop below the airport's own minimum height.</p>
+  <figure><img src="../sweep/night_chart.png"><figcaption>Night arrivals over Brockenhurst (21:30 to 06:30) and how many fall below the height floors, by year. Both the count and the lowest flights are rising.</figcaption></figure>
+  <div class="fact red"><div class="fi">Fact</div><p>Between 21:30 and 06:30 the airport's own rule is to join final no closer than 8 nautical miles and no lower than 2,500 ft. Over Brockenhurst, the data shows this is often not happening.</p></div>
+  <div class="foot"><span>Part 1 &nbsp;·&nbsp; The problem</span><span>8</span></div>
+</div></section>
+
+<!-- ===== PAGE 9 ===== -->
+<section class="page"><div class="pad">
+  <h3 class="sub">7. Aircraft are banking over Brockenhurst by design</h3>
+  <p class="body">Arrivals from the north, the east and many from the south are converged onto Brockenhurst by air traffic control. Rather than routing to reduce noise over the National Park, ATC defaults to tactical vectoring, and flights frequently bank close to the village to take a shortcut to the runway.</p>
+  <table class="t"><tr><th style="width:38%">What banking does</th><th>Ground-noise impact</th></tr>
+    <tr><td class="k">Noise is aimed sideways</td><td>A banked aircraft exposes one side of the ground more directly to engine and airframe noise, so people off the centreline hear a louder event than expected.</td></tr>
+    <tr><td class="k">Thrust increases</td><td>Holding altitude through a turn needs more lift and more power, which means more engine noise.</td></tr>
+    <tr><td class="k">Paths concentrate</td><td>If many aircraft turn at the same point, the noise repeats over the same neighbourhoods instead of spreading out.</td></tr></table>
+  <p class="body small">A banking turn keeps the aircraft audible for longer, shifts the loudest point sideways, and its changing engine tone makes each event more noticeable. Repeated turns over one area build a strong annoyance effect even when each single event is within limits. This is exactly what the west of Brockenhurst experiences: straight overflights from the east, plus banking flights from the north and south, over an area with very little background noise.</p>
+  <div class="foot"><span>Part 1 &nbsp;·&nbsp; The problem</span><span>9</span></div>
+</div></section>
+
+<!-- ===== PAGE 10 ===== -->
+<section class="page"><div class="pad">
+  <h3 class="sub">8. This is measured against the airport's own rules</h3>
+  <p class="body">We are not inventing a standard. Bournemouth's published rules (UK AIP, EGHH AD 2.21) say arrivals should fly a continuous descent at all times, stay as high as practical, and join the approach without level flight.</p>
+  <div class="callout"><span class="ci"><svg viewBox="0 0 512 512"><path d="M256 0l208 96v128c0 128-86 232-208 288C134 456 48 352 48 224V96zM224 320l160-160-34-34-126 126-58-58-34 34z"/></svg></span><p><b>Their own Noise Action Plan (2024)</b> mandates that all aircraft be operated to minimise disturbance, and confirms that when aircraft are forced into level flight they use greater engine power and do not achieve a continuous descent.</p></div>
+  <table class="t"><tr><th style="width:32%">Rule</th><th>What it requires</th></tr>
+    <tr><td class="k">AIP AD 2.21</td><td>Continuous descent, as high as practical, join the approach without level flight.</td></tr>
+    <tr><td class="k">Night rule</td><td>Between 21:30 and 06:30, join final no closer than 8 NM and no lower than 2,500 ft.</td></tr>
+    <tr><td class="k">Section 106</td><td>A binding planning obligation to operate so as to cause the least disturbance practicable to residents.</td></tr>
+    <tr><td class="k">Levelling Up Act 2023</td><td>With the Sandford Principle, a duty to put conservation first and further the National Park's aims.</td></tr></table>
+  <div class="fact red"><div class="fi">The gap</div><p>The airport argues these duties apply only to self-positioning aircraft, not the radar-vectored traffic that ATC shortcuts across the National Park. That exempts the majority of arrivals from the very rules meant to protect us.</p></div>
+  <div class="foot"><span>Part 1 &nbsp;·&nbsp; The problem</span><span>10</span></div>
+</div></section>
+
+<!-- ===== PAGE 11: PART 2 ===== -->
+<section class="page"><div class="pad">
+  <div class="partband"><svg class="bigplane" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg><div class="pnum">02</div><div class="pt"><div class="k">Part two</div><h2>What are the solutions?</h2></div></div>
+  <p class="body">The live consultation is the moment. As the new satellite-guided routes are drawn, a few clear rules could deliver a win for the airport, wildlife, tourists and residents alike. For people on the ground, the biggest drivers of noise are altitude, engine thrust, how close the path is, and how often it repeats.</p>
+  <p class="body">The airport claims its noise duties apply only to self-positioning aircraft, not the radar-vectored majority. We accept genuine exceptions for safety or severe weather, but an exception rate above 70% is the rule, not the exception. We ask that the following are considered.</p>
+  <span class="kicker" style="margin-top:6px;">Our three proposals</span>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><h3>Strict continuous descent</h3><p>Already in the airport's rulebook. It keeps aircraft higher, avoids level flight and thrust, and burns less fuel. It should be mandated for all flights bar genuine exceptions.</p><div class="arw">&rarr;</div></div>
+    <div class="step"><div class="num">2</div><h3>Increase heights via a steeper descent</h3><p>The standard is 3 degrees (about 3,100 ft here). Applying it would put 77% of flights higher. Going to 3.3 or 3.5 degrees would help more still.</p><div class="arw">&rarr;</div></div>
+    <div class="step"><div class="num">3</div><h3>Revised paths that avoid us</h3><p>Use the precision of the new routes to place the line away from Brockenhurst, without shifting the burden onto other communities.</p></div>
+  </div>
+  <div class="fact blue"><div class="fi">Status</div><p>The consultation is at Stage 2 (Develop and Assess). The airport's latest proposals appear paused by the CAA pending fuller information. A 12-week public consultation will follow, which is our window to be heard.</p></div>
+  <div class="foot"><span>Part 2 &nbsp;·&nbsp; The solutions</span><span>11</span></div>
+</div></section>
+
+<!-- ===== PAGE 12: direction ===== -->
+<section class="page"><div class="pad">
+  <h3 class="sub">Arrival profile: where the flights come from</h3>
+  <p class="body">To choose the best solution we need to know where arrivals come from. Our historic data gives a strong steer, pending the airport's own per-envelope volumes.</p>
+  <figure><img src="../sweep/envelope_split.png"><figcaption>Where runway-26 arrivals approach from, measured about 15 miles out, split by side of the village line and by design-envelope direction.</figcaption></figure>
+  <div class="fact"><div class="fi">The robust figure</div><p><b>Over 60% of arrivals come in from the south side</b> of the village line. A rough three-way split is about 40% north-east, 40% south and 20% east-south-east, but treat those as approximate: they shift with where you measure, and the south share is understated, because southern flights blur into the other buckets as they turn onto final.</p></div>
+  <div class="foot"><span>Part 2 &nbsp;·&nbsp; The solutions</span><span>12</span></div>
+</div></section>
+
+<!-- ===== PAGE 13: envelopes + cross ===== -->
+<section class="page"><div class="pad">
+  <h3 class="sub">The airport's design envelopes, and a warning sign</h3>
+  <p class="body">The airport is focused on three arrival directions, or design envelopes: North-East, East-South-East and South. On the North-East map below, the point where arrivals line up on final, the alignment cross, has moved inward to about 7 nautical miles from the runway.</p>
+  <figure><img src="../envelope/ne_alignment_cross_vs_brockenhurst.png"><figcaption>The North-East arrivals envelope, georeferenced. The alignment cross sits at about 7 NM; Brockenhurst is at 9.7 NM, so the village would fall outside the join, in the wider dispersed swathe.</figcaption></figure>
+  <table class="t"><tr><th>Option</th><th>Effect on Brockenhurst</th></tr>
+    <tr><td class="k">A26-NE-Do Min</td><td>Benefit: routes traffic north of the village and does not bank until about 7 NM. Still tight to the north, so keeping flights to the centre or north of the corridor would help more.</td></tr>
+    <tr><td class="k">A26-ESE-Do Min / B</td><td>Do Min gives limited benefit; B is better for us but likely impacts other, more populated communities.</td></tr>
+    <tr><td class="k">A26-S-Do Min</td><td>Significant benefit, and avoids Brockenhurst.</td></tr></table>
+  <div class="fact red"><div class="fi">Watch</div><p>If the alignment point moving inward also lowers the joining height, the compliant height over the village could drop by up to about 860 ft. We need the airport's vertical profile to confirm this before it is locked in.</p></div>
+  <div class="foot"><span>Part 2 &nbsp;·&nbsp; The solutions</span><span>13</span></div>
+</div></section>
+
+<!-- ===== PAGE 14: night quota ===== -->
+<section class="page"><div class="pad">
+  <h3 class="sub">Avoid repetition, and review the night regime</h3>
+  <p class="body">The precision of satellite routes risks a permanent noise corridor if every flight follows one line. Where routes pass close to homes, they should be varied periodically so no single area carries all the impact.</p>
+  <p class="body">Britain's largest airports run strict night limits. Heathrow, Gatwick and Stansted have a government night quota for 23:30 to 06:00: a cap on movements, a noise budget, and a ban on the noisiest aircraft. Bournemouth is smaller and outside that scheme, but it could adopt similar measures itself, as many regional airports do through their planning agreements.</p>
+  <table class="t"><tr><th style="width:34%">Southampton Airport today</th><th>How night is managed</th></tr>
+    <tr><td class="k">Night window</td><td>23:00 to 06:00 (Mon to Sat), to 07:30 on Sunday. The terminal generally closes at 23:00.</td></tr>
+    <tr><td class="k">Movement cap</td><td>A strict limit of 10 night movements per month, up to 100 a year, for medical flights and genuine disruption only.</td></tr>
+    <tr><td class="k">Mechanism</td><td>Managed by limiting scheduled night flights, understood to have been set via a Section 106 agreement at residents' request.</td></tr></table>
+  <div class="fact blue"><div class="fi">We would welcome</div><p>Bournemouth Airport to publish its continuous-descent rules and its own compliance over Brockenhurst, and to review the night quota, curfew and exceptions with the local planning authority.</p></div>
+  <div class="foot"><span>Part 2 &nbsp;·&nbsp; The solutions</span><span>14</span></div>
+</div></section>
+
+<!-- ===== PAGE 15: PART 3 ===== -->
+<section class="page"><div class="pad">
+  <div class="partband"><svg class="bigplane" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg><div class="pnum">03</div><div class="pt"><div class="k">Part three</div><h2>The airport's design-envelope assessment</h2></div></div>
+  <p class="body">Bournemouth submitted these design envelopes to the CAA. They were rejected and are being revisited, so they may change, but the airport's own assessment is a useful insight. Summarised below are the design principles that matter most to residents. On the airport's own scoring, <b>not one option reduces noise or overflight</b> for existing communities.</p>
+  <table class="t"><tr><th style="width:20%">Direction</th><th style="width:26%">Option</th><th>The airport's own verdict on overflight, noise and tranquillity</th></tr>
+    <tr><td class="k" rowspan="2">North-East</td><td>Do Min</td><td><span class="verdict v-part">Partially met</span> Same number of people overflown as today.</td></tr>
+    <tr><td>A26-NE-A</td><td><span class="verdict v-part">Partially met</span> Same number overflown, but different communities affected.</td></tr>
+    <tr><td class="k" rowspan="2">East-South-East</td><td>Do Min</td><td><span class="verdict v-part">Partially met</span> Same number of people overflown as today.</td></tr>
+    <tr><td>A26-ESE-B</td><td><span class="verdict v-bad">Not met</span> More people overflown, of much greater population density.</td></tr>
+    <tr><td class="k" rowspan="2">South</td><td>Do Min</td><td><span class="verdict v-part">Partially met</span> Same number of people overflown as today.</td></tr>
+    <tr><td>A26-S-A</td><td><span class="verdict v-bad">Not met</span> Significantly more communities overflown due to the wrap-around.</td></tr></table>
+  <div class="fact"><div class="fi">Takeaway</div><p>The Noise Footprint principle asks the design to reduce noise where practicable. Every option is scored only "partially met", because it keeps the same overflight as today. The redesign is an opportunity to do better for the National Park, not just hold the line.</p></div>
+  <p class="body small">Summarised from the airport's own design-principle assessment. The full principle-by-principle tables are available on request.</p>
+  <div class="foot"><span>Part 3 &nbsp;·&nbsp; Design envelopes</span><span>15</span></div>
+</div></section>
+
+<!-- ===== PAGE 16: PART 4 data ===== -->
+<section class="page"><div class="pad">
+  <div class="partband"><svg class="bigplane" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg><div class="pnum">04</div><div class="pt"><div class="k">Part four</div><h2>Where we get our data</h2></div></div>
+  <p class="body"><b>Independent data.</b> Every height, route and count comes from the aircraft's own broadcast GPS (ADS-B), via two public datasets (OPDI and OpenSky). It relies on nothing the airport tells us, and every chart can be reproduced.</p>
+  <p class="body"><b>Solid where it matters.</b> Detailed height and route evidence covers three full years, 2023 to 2025. Passenger history (2007 to 2025) is from CAA statistics, cross-checked against two further sources. The 3 million cap is from the airport's 2007 and 2010 planning permissions.</p>
+  <div class="fact blue"><div class="fi">We under-claim on purpose</div><p>We can pin an exact height over the village for about <b>1 in 5 arrivals</b> (it depends on when each aircraft happened to broadcast a position). So our counts are minimums: the real numbers are higher, not lower.</p></div>
+  <p class="body"><b>What we deliberately do not claim.</b> We do not say every low flight breaks a rule. We do not rely on European Cargo (now in administration). We do not use pre-2022 flight-track data, because reliable low-level tracking did not exist then. If a number cannot be verified, it is not in here.</p>
+  <table class="t"><tr><th style="width:34%">Source</th><th>Used for</th></tr>
+    <tr><td class="k">UK CAA airport statistics</td><td>Passenger numbers and the growth trajectory.</td></tr>
+    <tr><td class="k">Planning permissions (2007, 2010)</td><td>The 3 million passenger cap.</td></tr>
+    <tr><td class="k">OPDI (EUROCONTROL) and OpenSky</td><td>Aircraft GPS tracks and heights, 2023 to 2025.</td></tr></table>
+  <p class="body small">Full method and definitions available on request.</p>
+  <div class="foot"><span>Part 4 &nbsp;·&nbsp; Our data</span><span>16</span></div>
+</div></section>
+
+<!-- ===== PAGE 17: COMPLAINT CARD ===== -->
+<section class="page"><div class="pad">
+  <div class="cc"><svg class="bigplane" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg>
+    <h2>One-tap complaint card</h2>
+    <p>Every complaint is logged and counts in the record. The whole thing takes about a minute from your phone. Scan, check, send.</p></div>
+  <div class="qrrow">
+    <div class="qrbox"><span class="tag">Step 1 · Check</span><div class="qrimg"><img src="../complain/qr_webtrak.png"></div><h3>See the flight on WebTrak</h3><p>Scan to open the airport's live map. Find the aircraft that disturbed you and note its flight number and time.</p></div>
+    <div class="qrbox"><span class="tag">Step 2 · Send</span><div class="qrimg"><img src="../complain/qr_email.png"></div><h3>Send a pre-filled complaint</h3><p>Scan to open a ready-written email to the airport. Add the flight number and time, then hit send.</p></div>
+  </div>
+  <div class="howto"><h3>How to complain in under a minute</h3>
+    <ol>
+      <li>Scan the first code and find your flight on WebTrak (or note the time you were disturbed).</li>
+      <li>Scan the second code to open the pre-filled email to <b>environment@bournemouthairport.com</b>.</li>
+      <li>Drop in the flight number and time, add a line on how it affected you, and send.</li>
+      <li>It helps our case if you also forward it to the Aircraft Noise group.</li>
+    </ol>
+  </div>
+  <p class="body small" style="margin-top:12px;">Why it matters: the airport and the CAA weigh the volume and consistency of complaints. A steady, evidenced record from Brockenhurst is one of the strongest things we can build ahead of the consultation. If in doubt, complain.</p>
+  <div class="foot"><span>Brockenhurst Community Action Group &nbsp;·&nbsp; Complaint card</span><span>17</span></div>
+</div></section>
+
+</body>
+</html>
