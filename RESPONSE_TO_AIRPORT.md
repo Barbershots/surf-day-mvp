@@ -12,23 +12,37 @@ Thank you for your response setting out the distinction between "self-positionin
 and "radar vectoring." We understand the point. However, our concern does not rest
 on that distinction, and there are three matters your response does not address.
 
-## 1. A blanket rule that applies to every airliner, and is being breached
+## 1. Your enforceable Section 106 obligation, which has no vectoring exemption
 
-AD 2.21 states that **"all turbine powered aircraft and all other aircraft with a
-MTWA of 5700 kg or more shall not descend below 2000 ft QNH before intercepting the
-glidepath."** This applies to **every** arriving airliner. It contains **no**
-self-positioning qualification and **no** radar-vectoring exemption.
+Your own Section 106 planning agreement (Second Schedule, "Landing Noise") requires
+that:
 
-Brockenhurst is 9.7 nautical miles from the runway. On a standard ILS the glidepath
-is not intercepted until approximately 6 miles, so a compliant aircraft crosses the
-village at 2,000 ft or above. Our data shows:
+> *"Aircraft making an approach to land at the Airport shall follow a descent path
+> which will not result in their being lower at any time than the descent path that
+> would be followed by aircraft using the Instrument Landing System."*
 
-- **50 large jets crossed Brockenhurst below 2,000 ft**, of which **12 were at
-  night**, and the number is rising: **8 (2023), 16 (2024), 26 (2025).**
+This is a binding planning obligation. It applies to **every** aircraft making an
+approach to land. It contains **no** distinction between self-positioning and radar
+vectoring, and the airport is required (Second Schedule, paragraph 1) to use
+reasonable endeavours to ensure it is complied with **at all times**. The Instrument
+Landing System descent path is the 3-degree glidepath, which crosses Brockenhurst
+(9.7 miles out) at approximately 3,100 ft.
 
-Each of these aircraft was below 2,000 ft well before the glidepath intercept point.
-On the plain wording of AD 2.21, that is a breach, and it is one your distinction
-does not explain.
+The published AD 2.21 procedure carries the same floor in the same terms: turbine
+aircraft and aircraft above 5,700 kg **"shall not descend below 2000 ft QNH before
+intercepting the glidepath."** Again, no self-positioning qualification.
+
+Our data shows this is routinely not met:
+
+- **77% of arrivals are below the 3-degree ILS descent path** as they cross the
+  village (median height 2,725 ft), so the majority are "lower ... than the descent
+  path that would be followed by aircraft using the Instrument Landing System."
+- **50 large jets crossed below 2,000 ft**, of which **12 at night**, and rising:
+  **8 (2023), 16 (2024), 26 (2025)** — each well before the glidepath intercept
+  point.
+
+These are breaches of an enforceable obligation, and of AD 2.21, that your
+self-positioning distinction does not touch.
 
 ## 2. The "sequencing" justification cannot apply where there is no traffic
 
