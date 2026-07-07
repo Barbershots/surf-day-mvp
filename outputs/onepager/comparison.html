@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><style>
+  :root{--ink:#16202e;--muted:#5a6b7e;--blue:#1b4f8f;--deep:#0f335f;--bright:#2c6fbb;--sky:#eef4fb;--line:#d9e3ef;--gold:#e8a020;--red:#c0392b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{font-family:"Liberation Sans","DejaVu Sans",sans-serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  @page{size:A4;margin:0;}
+  .page{width:210mm;height:297mm;position:relative;overflow:hidden;background:#fff;}
+  .pad{padding:14mm 15mm;}
+  .kicker{display:inline-block;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--bright);margin-bottom:6px;}
+  h2.sec{font-size:23px;font-weight:800;letter-spacing:-.4px;line-height:1.12;margin-bottom:10px;}
+  .divider{height:3px;width:52px;background:var(--gold);border-radius:3px;margin:0 0 14px;}
+  p.body{font-size:11.4px;line-height:1.6;color:#33414f;margin-bottom:9px;}
+  p.small{font-size:9.6px;line-height:1.45;color:var(--muted);}
+  figure{margin:6px 0 12px;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#fff;}
+  figure img{display:block;width:100%;height:auto;}
+  figcaption{font-size:9.6px;color:var(--muted);padding:8px 13px;background:#fafcff;border-top:1px solid var(--line);line-height:1.4;}
+  table.t{width:100%;border-collapse:collapse;margin:4px 0 12px;font-size:10.2px;}
+  table.t th,table.t td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top;line-height:1.4;}
+  table.t th{background:var(--deep);color:#fff;font-weight:700;font-size:9.8px;}
+  table.t tr:nth-child(even) td{background:#f7faff;}
+  table.t td.k{font-weight:800;color:var(--deep);}
+  table.t tr.us td{background:#fef6e6;}
+  table.t tr.us td.k{color:#9a6212;}
+  .verdict{font-weight:800;font-size:9.6px;padding:2px 8px;border-radius:20px;display:inline-block;}
+  .v-none{background:#fbe6e3;color:#b02a1c;}
+  .callout{background:linear-gradient(135deg,var(--deep),var(--blue));color:#fff;border-radius:14px;padding:15px 18px;display:flex;gap:14px;align-items:flex-start;margin:2px 0 12px;}
+  .callout .ci{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;}
+  .callout .ci svg{width:19px;height:19px;fill:#fff;}
+  .callout p{font-size:11.3px;line-height:1.55;color:#e4eefa;}.callout b{color:#fff;}
+  .fact{background:var(--sky);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:10px;padding:13px 16px;margin:2px 0 12px;}
+  .fact .fi{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:7px;}
+  .fact ul{margin:0 0 0 17px;}.fact li{font-size:10.9px;line-height:1.55;color:#2c3947;margin-bottom:3px;}
+  .foot{position:absolute;left:15mm;right:15mm;bottom:9mm;display:flex;justify-content:space-between;font-size:9.2px;color:var(--muted);border-top:1px solid var(--line);padding-top:7px;}
+</style></head><body>
+<section class="page"><div class="pad">
+  <span class="kicker">How other communities are treated</span>
+  <h2 class="sec">We are asking for less than places like us already have.</h2>
+  <div class="divider"></div>
+  <p class="body">Comparable communities under concentrated flight paths have won real, named mitigation. Brockenhurst, a village of the same size under a National Park, has none. This is not a request for anything novel.</p>
+
+  <figure><img src="airport_volumes.png"><figcaption>Arrivals per year, 2025, from our own Europe-wide dataset. Bournemouth is almost the same size of operation as Farnborough, and a tenth of Gatwick.</figcaption></figure>
+
+  <table class="t">
+    <tr><th style="width:15%">Airport</th><th style="width:20%">Village (population)</th><th style="width:13%">Arrivals / yr</th><th style="width:19%">Protected landscape</th><th>Mitigation secured</th></tr>
+    <tr class="us"><td class="k">Bournemouth</td><td>Brockenhurst (3,488)</td><td>12,574</td><td>New Forest National Park</td><td><span class="verdict v-none">None</span></td></tr>
+    <tr><td class="k">Farnborough</td><td>Chiddingfold (2,960)</td><td>14,460</td><td>Surrey Hills AONB / South Downs NP</td><td>Formal CAA post-implementation review after the 2020 airspace change.</td></tr>
+    <tr><td class="k">Gatwick</td><td>Newdigate (1,749)</td><td>132,718</td><td>Rural Surrey</td><td>Independent Arrivals Review (23 recommendations, all accepted); a standing Noise Management Board; raised continuous-descent height; noise insulation grants up to £4,300.</td></tr>
+    <tr><td class="k">Southampton</td><td>Nearby villages</td><td>18,265</td><td>—</td><td>Night movements capped at 10 a month via a Section 106 planning agreement.</td></tr>
+  </table>
+
+  <div class="callout"><span class="ci"><svg viewBox="0 0 512 512"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 128a40 40 0 110 80 40 40 0 010-80zm56 240H200v-32h32v-96h-32v-32h80v128h32z"/></svg></span>
+    <p><b>What makes Brockenhurst different is concentration, not raw numbers.</b> Our own track data for the busiest month (July 2025) shows a far higher share of Bournemouth's arrivals route directly over Brockenhurst (about 76%) than reach any comparator village. Where Gatwick and Farnborough spread their traffic across many communities, Bournemouth funnels almost its entire arrival stream over one National Park village, 9.7 miles out.</p></div>
+
+  <div class="fact"><div class="fi">The mitigation menu others have won, and Bournemouth lacks</div>
+    <ul>
+      <li><b>An independent arrivals review</b> — Gatwick's led to 23 recommendations, all accepted by the airport.</li>
+      <li><b>A standing Noise Management Board</b> with an independent chair and community seats.</li>
+      <li><b>A raised continuous-descent height</b> — keeping aircraft higher over communities, exactly our ask.</li>
+      <li><b>Noise insulation grants</b> — up to £4,300 at Gatwick, around £3,000 at Heathrow.</li>
+      <li><b>Night limits through planning</b> — Southampton caps night flights at 10 a month via Section 106.</li>
+    </ul>
+  </div>
+
+  <p class="small">Airport volumes: arrival counts from our Europe-wide dataset (OPDI / OpenSky), 2025, close to published movement figures. Overflight share measured from the same track data (busiest month). Populations: 2011 and 2021 censuses. Mitigation: each airport's published noise material.</p>
+  <div class="foot"><span>Brockenhurst Community Action Group &nbsp;·&nbsp; How other communities are treated</span><span>Comparison</span></div>
+</div></section>
+</body></html>
