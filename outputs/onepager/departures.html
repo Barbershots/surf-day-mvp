@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><style>
+  :root{--ink:#16202e;--muted:#5a6b7e;--blue:#1b4f8f;--deep:#0f335f;--bright:#2c6fbb;--sky:#eef4fb;--line:#d9e3ef;--gold:#e8a020;--red:#c0392b;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{font-family:"Liberation Sans","DejaVu Sans",sans-serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  @page{size:A4;margin:0;}
+  .page{width:210mm;height:297mm;position:relative;overflow:hidden;background:#fff;}
+  .pad{padding:14mm 15mm;}
+  .kicker{display:inline-block;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--bright);margin-bottom:6px;}
+  h2.sec{font-size:23px;font-weight:800;letter-spacing:-.4px;line-height:1.12;margin-bottom:10px;}
+  .divider{height:3px;width:52px;background:var(--gold);border-radius:3px;margin:0 0 13px;}
+  p.body{font-size:11.4px;line-height:1.6;color:#33414f;margin-bottom:9px;}
+  figure{margin:6px 0 12px;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#fff;}
+  figure img{display:block;width:100%;height:auto;}
+  figcaption{font-size:9.6px;color:var(--muted);padding:8px 13px;background:#fafcff;border-top:1px solid var(--line);line-height:1.4;}
+  .statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 12px;}
+  .stat{background:var(--sky);border:1px solid var(--line);border-radius:12px;padding:12px 14px;}
+  .stat .n{font-size:26px;font-weight:800;color:var(--deep);letter-spacing:-.5px;line-height:1;}
+  .stat .n small{font-size:14px;}
+  .stat .l{font-size:10px;line-height:1.35;color:var(--muted);margin-top:5px;font-weight:600;}
+  .callout{background:linear-gradient(135deg,var(--deep),var(--blue));color:#fff;border-radius:14px;padding:15px 18px;display:flex;gap:14px;align-items:flex-start;margin:2px 0 12px;}
+  .callout .ci{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;}
+  .callout .ci svg{width:19px;height:19px;fill:#fff;}
+  .callout p{font-size:11.3px;line-height:1.55;color:#e4eefa;}.callout b{color:#fff;}
+  .fact{background:var(--sky);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:10px;padding:12px 15px;margin:2px 0 12px;display:flex;gap:12px;align-items:flex-start;}
+  .fact .fi{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);}
+  .fact p{font-size:11.2px;line-height:1.55;color:#2c3947;}
+  .foot{position:absolute;left:15mm;right:15mm;bottom:9mm;display:flex;justify-content:space-between;font-size:9.2px;color:var(--muted);border-top:1px solid var(--line);padding-top:7px;}
+</style></head><body>
+<section class="page"><div class="pad">
+  <span class="kicker">The other half of the story</span>
+  <h2 class="sec">It is not only arrivals. Departures cross us too.</h2>
+  <div class="divider"></div>
+  <p class="body">Brockenhurst sits on the extended centreline of runway 08/26, so it is overflown <b>both ways</b>: by arrivals landing in from the east when the airport works westerly (about 77% of the time), and by departures climbing out east on the other 23%. We measured both from our own track data for the busiest month.</p>
+
+  <figure><img src="arr_vs_dep_height.png"><figcaption>Height over Brockenhurst, July 2025. Arrivals come in low, mostly below the quiet-descent line. Runway-08 departures pass higher, but on full climb power.</figcaption></figure>
+
+  <div class="statrow">
+    <div class="stat"><div class="n">23<small>%</small></div><div class="l">of departures use runway 08 (easterly ops), climbing out towards the village</div></div>
+    <div class="stat"><div class="n">71</div><div class="l">runway-08 departures crossed the village in July, about 2.3 a day on easterly days</div></div>
+    <div class="stat"><div class="n">~6,900<small> ft</small></div><div class="l">median departure height, higher than arrivals, but under full climb thrust</div></div>
+  </div>
+
+  <div class="fact"><div class="fi">Fact</div><p>The AIP already routes runway-08 departures on a <b>075° track, straight at Brockenhurst</b>, out to 5.6 DME before they turn. Today they turn before reaching the village (5.6 versus 9.7 miles), which spreads the noise out. Their height is less of an issue than arrivals, but the full-power climb makes each one loud.</p></div>
+
+  <div class="callout"><span class="ci"><svg viewBox="0 0 512 512"><path d="M256 32l-32 288h-96l160 160 160-160h-96L288 32z" transform="rotate(180 256 256)"/><path d="M480 448H32v32h448z"/></svg></span>
+    <p><b>The risk under the new design.</b> Satellite (PBN) routes are hyper-precise. A fixed departure route locked on that 075° line would remove today's dispersion and concentrate a full-power departure stream directly over the village, on top of the arrivals. As the airspace is redrawn through UKADS, our ask is simple: <b>no concentrated PBN departure route over Brockenhurst on easterly ops.</b></p></div>
+
+  <p class="body" style="font-size:10.4px;color:#5a6b7e;">Method: runway-08 departures identified from their easterly climb track, and counted where they pass within 3 km of the village. Heights are measured minimums. The handful of very low departures are light aircraft or circuit traffic, not airliners.</p>
+  <div class="foot"><span>Brockenhurst Community Action Group &nbsp;·&nbsp; Departures: the other half of the story</span><span>Departures</span></div>
+</div></section>
+</body></html>
