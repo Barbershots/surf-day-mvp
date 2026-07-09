@@ -23,7 +23,8 @@ def log(*a):
 
 
 def to_u64(s):
-    return s.view("uint64") if s.dtype == np.int64 else s.astype("uint64")
+    a = np.asarray(s)
+    return a.view("uint64") if a.dtype == np.int64 else a.astype("uint64")
 
 
 def dep_id_set():
