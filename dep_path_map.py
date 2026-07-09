@@ -37,9 +37,12 @@ def merc(lon, lat):
 
 
 def load():
-    a = pd.read_parquet("/tmp/dep_events_2023_2024.parquet")
-    b = pd.read_parquet("/tmp/dep_events_july.parquet"); b["year"] = 2025
-    ev = pd.concat([a, b], ignore_index=True)
+    import glob
+    ev = pd.concat([pd.read_parquet(f) for f in glob.glob("data/eghh_dep_events_*.parquet")],
+                   ignore_index=True)
+    ev = ev.dropna(subset=["latitude", "longitude", "altitude"])
+    for c in ("latitude", "longitude", "altitude"):
+        ev[c] = pd.to_numeric(ev[c], errors="coerce")
     ev = ev.dropna(subset=["latitude", "longitude", "altitude"])
     # keep the near-airport departure fan (drop distant cruise fixes)
     ev["d_ap"] = geo.haversine_km(ev["latitude"], ev["longitude"], ALAT, ALON)
@@ -58,7 +61,7 @@ def build(out="outputs/sweep/brockenhurst_departures.png"):
             continue
         g = g.sort_values("d_ap")               # order outbound
         mx, my = merc(g["longitude"].values, g["latitude"].values)
-        ax.plot(mx, my, color=BLUE, lw=1.2, alpha=0.10, solid_capstyle="round", zorder=3)
+        ax.plot(mx, my, color=BLUE, lw=0.5, alpha=0.015, solid_capstyle="round", zorder=3)
         ndrawn += 1
     # markers
     for (lo, la, name, dx, dy, ha) in [
@@ -77,7 +80,7 @@ def build(out="outputs/sweep/brockenhurst_departures.png"):
     except Exception as e:
         print("basemap failed:", e)
     ax.set_title("Every Bournemouth departure fans out over Brockenhurst on easterly ops\n"
-                 f"July of 2023, 2024 and 2025 ({ndrawn:,} departures) - their own GPS tracks",
+                 f"2023 to 2025 ({ndrawn:,} departures) - their own GPS tracks",
                  fontsize=14, fontweight="bold", pad=12)
     ax.legend([Line2D([0], [0], color=BLUE, lw=3)],
               ["one departure's path"], loc="lower left", fontsize=10, framealpha=0.9)
