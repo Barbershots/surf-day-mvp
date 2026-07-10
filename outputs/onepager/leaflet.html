@@ -1,106 +1,118 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><style>
-  :root{--ink:#16202e;--muted:#5a6b7e;--blue:#1b4f8f;--deep:#0f335f;--bright:#2c6fbb;--sky:#eef4fb;--line:#d9e3ef;--gold:#e8a020;--red:#c0392b;}
+  :root{--ink:#16202e;--muted:#5a6b7e;--blue:#1b4f8f;--deep:#0f335f;--bright:#2c6fbb;--sky:#eef4fb;--line:#d9e3ef;--gold:#e8a020;--red:#c0392b;--green:#1f8f7f;}
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{font-family:"Liberation Sans","DejaVu Sans",sans-serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   @page{size:A4;margin:0;}
   .page{width:210mm;height:297mm;position:relative;overflow:hidden;background:#fff;page-break-after:always;}
   .page:last-child{page-break-after:auto;}
-  .pad{padding:13mm 15mm;}
-  .banner{position:relative;background:linear-gradient(135deg,var(--deep) 0%,var(--blue) 55%,var(--bright) 130%);color:#fff;padding:13mm 15mm 13mm;overflow:hidden;}
-  .banner .mark{display:flex;align-items:center;gap:9px;font-size:10.5px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;}
-  .banner .mark .disc{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;}
-  .banner .tag{font-size:9.5px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#bcd2ea;margin-top:3px;}
-  .banner h1{font-size:39px;line-height:1.04;font-weight:800;letter-spacing:-.5px;margin:12px 0 11px;}
-  .banner .sub{font-size:13.5px;line-height:1.5;max-width:120mm;color:#dce8f6;}
-  .banner .bigplane{position:absolute;right:-18mm;top:-8mm;width:92mm;opacity:.10;}
-  .kicker{display:inline-block;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--bright);margin-bottom:6px;}
-  h2.sec{font-size:24px;font-weight:800;letter-spacing:-.4px;line-height:1.12;margin-bottom:10px;}
-  .divider{height:3px;width:52px;background:var(--gold);border-radius:3px;margin:0 0 13px;}
-  p.body{font-size:11.6px;line-height:1.62;color:#33414f;margin-bottom:9px;}
-  /* big stat band */
-  .bigstats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:14px;}
-  .bs{border:1px solid var(--line);border-radius:14px;padding:16px 15px;background:var(--sky);}
+  .pad{padding:12mm 15mm;}
+  .banner{position:relative;background:linear-gradient(135deg,var(--deep) 0%,var(--blue) 55%,var(--bright) 130%);color:#fff;padding:12mm 15mm;overflow:hidden;}
+  .banner .mark{display:flex;align-items:center;gap:9px;font-size:10px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;}
+  .banner .mark .disc{width:25px;height:25px;border-radius:50%;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;}
+  .banner .tag{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#bcd2ea;margin-top:3px;}
+  .banner h1{font-size:35px;line-height:1.04;font-weight:800;letter-spacing:-.5px;margin:10px 0 9px;}
+  .banner .sub{font-size:13px;line-height:1.5;max-width:120mm;color:#dce8f6;}
+  .banner .bigplane{position:absolute;right:-18mm;top:-8mm;width:88mm;opacity:.10;}
+  .kicker{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--bright);margin-bottom:5px;}
+  h2.sec{font-size:22px;font-weight:800;letter-spacing:-.4px;line-height:1.12;margin-bottom:9px;}
+  .divider{height:3px;width:50px;background:var(--gold);border-radius:3px;margin:0 0 11px;}
+  p.body{font-size:11.2px;line-height:1.58;color:#33414f;margin-bottom:8px;}
+  figure{margin:8px 0 10px;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#fff;}
+  figure img{display:block;width:100%;height:auto;}
+  figcaption{font-size:9.7px;color:var(--muted);padding:8px 13px;background:#fafcff;border-top:1px solid var(--line);line-height:1.4;}
+  .bigstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px;}
+  .bs{border:1px solid var(--line);border-radius:13px;padding:13px 13px;background:var(--sky);}
   .bs.a{background:var(--deep);border-color:var(--deep);}
-  .bs .n{font-size:38px;font-weight:800;letter-spacing:-1.5px;line-height:1;color:var(--deep);}
-  .bs .n small{font-size:20px;}
+  .bs .n{font-size:33px;font-weight:800;letter-spacing:-1.3px;line-height:1;color:var(--deep);}
+  .bs .n small{font-size:17px;}
   .bs.a .n{color:#fff;}
-  .bs .l{font-size:11px;font-weight:800;color:var(--ink);margin-top:8px;line-height:1.25;}
+  .bs .l{font-size:10.5px;font-weight:800;color:var(--ink);margin-top:7px;line-height:1.22;}
   .bs.a .l{color:#fff;}
-  .bs .s{font-size:9.8px;color:var(--muted);margin-top:3px;line-height:1.3;}
+  .bs .s{font-size:9.3px;color:var(--muted);margin-top:3px;line-height:1.28;}
   .bs.a .s{color:#bcd2ea;}
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:8px 0 4px;}
-  .step{position:relative;padding:0 6mm;}.step:first-child{padding-left:0;}
-  .step .num{width:34px;height:34px;border-radius:50%;background:var(--bright);color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;}
-  .step h3{font-size:13.5px;font-weight:800;line-height:1.18;margin-bottom:6px;}
-  .step p{font-size:10.8px;line-height:1.5;color:#48586a;}
-  .step .arw{position:absolute;right:-3mm;top:5px;color:var(--line);font-size:22px;}
-  .callout{background:linear-gradient(135deg,var(--deep),var(--blue));color:#fff;border-radius:14px;padding:15px 18px;display:flex;gap:14px;align-items:flex-start;margin:6px 0 13px;}
-  .callout .ci{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;}
-  .callout .ci svg{width:19px;height:19px;fill:#fff;}
-  .callout p{font-size:11.4px;line-height:1.55;color:#e4eefa;}.callout b{color:#fff;}
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:9mm;margin-top:6px;}
+  .panel h3{font-size:14px;font-weight:800;color:var(--deep);margin-bottom:6px;}
+  .panel .fig{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;}
+  .panel .fig img{display:block;width:100%;height:auto;}
+  .panel p{font-size:10.4px;line-height:1.5;color:#48586a;margin-top:7px;}
+  .note{background:var(--sky);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:10px;padding:11px 15px;margin:10px 0 0;}
+  .note b{color:var(--deep);} .note p{font-size:10.8px;line-height:1.5;color:#2c3947;}
+  .callout{background:linear-gradient(135deg,var(--deep),var(--blue));color:#fff;border-radius:14px;padding:14px 18px;display:flex;gap:13px;align-items:flex-start;margin:12px 0;}
+  .callout .ci{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;}
+  .callout .ci svg{width:18px;height:18px;fill:#fff;}
+  .callout p{font-size:11px;line-height:1.5;color:#e4eefa;}.callout b{color:#fff;}
   .cards .row{display:grid;grid-template-columns:repeat(3,1fr);gap:7mm;margin-top:9px;}
   .card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px 15px;}
   .card .ic{width:38px;height:38px;border-radius:10px;background:var(--sky);display:flex;align-items:center;justify-content:center;margin-bottom:9px;}
   .card .ic svg{width:21px;height:21px;fill:var(--blue);}
-  .card h3{font-size:12.5px;font-weight:800;margin-bottom:5px;}.card p{font-size:10.6px;line-height:1.5;color:#48586a;}
+  .card h3{font-size:12.5px;font-weight:800;margin-bottom:5px;}.card p{font-size:10.5px;line-height:1.5;color:#48586a;}
   .card .em{color:var(--blue);font-weight:700;overflow-wrap:break-word;}
-  .foot{position:absolute;left:15mm;right:15mm;bottom:9mm;display:flex;justify-content:space-between;font-size:9.3px;color:var(--muted);border-top:1px solid var(--line);padding-top:7px;}
+  .foot{position:absolute;left:15mm;right:15mm;bottom:9mm;display:flex;justify-content:space-between;font-size:9.2px;color:var(--muted);border-top:1px solid var(--line);padding-top:7px;}
 </style></head><body>
 
-<!-- PAGE 1 -->
+<!-- PAGE 1: THE PROBLEM -->
 <section class="page">
   <div class="banner">
     <svg class="bigplane" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg>
-    <div class="mark"><span class="disc"><svg width="15" height="15" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg></span> Brockenhurst Community Action Group</div>
+    <div class="mark"><span class="disc"><svg width="14" height="14" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg></span> Brockenhurst Community Action Group</div>
     <div class="tag">Aircraft Noise Mitigation</div>
-    <h1>Aircraft noise<br>over Brockenhurst</h1>
+    <h1>Aircraft noise over Brockenhurst</h1>
     <div class="sub">A residents' case pack on Bournemouth Airport arrivals, built entirely on the aircraft's own public flight data, 2023 to 2025.</div>
   </div>
-
   <div class="pad">
     <span class="kicker">The problem</span>
     <h2 class="sec">The situation is already unbearable for many, and it is getting worse.</h2>
     <div class="divider"></div>
-    <p class="body">We are not against aircraft, nor the expansion of Bournemouth Airport. But we are not alone in finding the rising noise a real concern, and we want to work with the authorities to reduce it. We believe that can be done <b>without harming others, the airport, or its growth</b>.</p>
-    <p class="body">Many residents can no longer fully enjoy their homes and gardens. Conversations are interrupted indoors and out as aircraft pass over, and families are regularly woken by late-night flights. The impact reaches beyond residents, to tourists and campers and the wider tranquillity of the New Forest National Park.</p>
-    <p class="body">Brockenhurst sits <b>just under 10 nautical miles out, directly in line with the main runway</b>. It is made worse by aircraft arriving lower than the airport's own published rules, and often turning and levelling off right over the village, which needs extra engine power and extra noise. The numbers rise every year, and it is getting worse at night.</p>
+    <p class="body">We are not against aircraft, nor the expansion of Bournemouth Airport, but the rising noise is a real concern and we want to work with the authorities to reduce it, without harming others or the airport. Many residents can no longer fully enjoy their homes and gardens, and families are woken by late-night flights.</p>
+    <p class="body">Brockenhurst sits <b>just under 10 nautical miles out, directly in line with the main runway.</b> Flights from the north, east and south are funnelled together and join the landing line right by the village, often lower than the airport's own rules and turning and levelling off overhead, which is the loud bit.</p>
+
+    <img src="../sweep/brockenhurst_paths.png" style="display:block;max-height:74mm;max-width:100%;margin:8px auto 4px;border:1px solid var(--line);border-radius:12px;">
+    <p style="font-size:9.6px;color:var(--muted);text-align:center;line-height:1.4;margin-bottom:9px;">Every arrival over three years, drawn from each aircraft's own GPS. Flights from the north, east and south converge onto the landing line just west of Brockenhurst. Each blue line is one flight's path.</p>
 
     <div class="bigstats">
-      <div class="bs"><div class="n">+65<small>%</small></div><div class="l">More large jets</div><div class="s">in just three years (28% more arrivals overall)</div></div>
-      <div class="bs a"><div class="n">77<small>%</small></div><div class="l">Arrivals flying too low</div><div class="s">below the quiet-descent height over the village</div></div>
-      <div class="bs"><div class="n">+137<small>%</small></div><div class="l">More night flights</div><div class="s">arrivals after 11pm have more than doubled</div></div>
-      <div class="bs"><div class="n">75<small>%</small></div><div class="l">Residents concerned</div><div class="s">based on a poll of 270 residents</div></div>
+      <div class="bs"><div class="n">+65<small>%</small></div><div class="l">More large jets</div><div class="s">in three years (28% more arrivals)</div></div>
+      <div class="bs a"><div class="n">77<small>%</small></div><div class="l">Arrivals flying too low</div><div class="s">below the quiet-descent height</div></div>
+      <div class="bs"><div class="n">+137<small>%</small></div><div class="l">More night flights</div><div class="s">after-11pm arrivals have more than doubled</div></div>
+      <div class="bs"><div class="n">75<small>%</small></div><div class="l">Residents concerned</div><div class="s">from a poll of 270 residents</div></div>
     </div>
   </div>
   <div class="foot"><span>Brockenhurst Community Action Group &nbsp;·&nbsp; Aircraft Noise Mitigation</span><span>1</span></div>
 </section>
 
-<!-- PAGE 2 -->
+<!-- PAGE 2: WHAT WE CAN DO -->
 <section class="page"><div class="pad">
   <span class="kicker">What we can do</span>
-  <h2 class="sec" style="font-size:26px;">Can we do anything about this?<br><span style="color:var(--bright)">Yes, and the time is now.</span></h2>
+  <h2 class="sec" style="font-size:25px;">Can we do anything about this?<br><span style="color:var(--bright)">Yes, and the time is now.</span></h2>
   <div class="divider"></div>
-  <p class="body">Bournemouth Airport is redrawing its flight paths right now, through the formal CAA process. The new satellite-guided routes are hyper precise: instead of today's scattered flights, aircraft will follow the exact same line. If that line is drawn over Brockenhurst as it is today, it becomes a permanent, concentrated noise highway. That is the threat, and it is also the opportunity to move it.</p>
+  <p class="body">Bournemouth Airport is redrawing its flight paths right now, through the formal CAA process. The new satellite-guided routes are hyper precise: instead of today's scattered flights, aircraft will follow the exact same line. If that line is drawn over Brockenhurst, it becomes a permanent noise highway. That is the threat, and also the opportunity to move it.</p>
 
   <span class="kicker" style="margin-top:6px;">What we are asking for</span>
-  <h2 class="sec" style="margin-bottom:2px;">Three simple changes.</h2>
-  <div class="steps">
-    <div class="step"><div class="num">1</div><h3>Continuous descent, and stay higher</h3><p>Hold every arrival to a smooth, engine-idle glide at a steeper angle, so aircraft are higher and quieter over the village, with no levelling off.</p><div class="arw">&rarr;</div></div>
-    <div class="step"><div class="num">2</div><h3>Avoid Brockenhurst</h3><p>Use the precision of the new routes to place the line away from the village, without shifting the burden onto other communities.</p><div class="arw">&rarr;</div></div>
-    <div class="step"><div class="num">3</div><h3>No fixed noise corridor</h3><p>Keep the design simple, but do not lock every flight onto one line. Vary the routes so no single area carries all the impact.</p></div>
+  <div class="panels">
+    <div class="panel">
+      <h3>1. Continuous descent, and stay higher</h3>
+      <div class="fig"><img src="cda_schematic.png"></div>
+      <p>The most efficient landing is one smooth glide with the engines near idle. It keeps aircraft higher for longer, and quieter. Levelling off, the stepped approach, needs extra thrust and is the loud bit.</p>
+    </div>
+    <div class="panel">
+      <h3>2. Avoid Brockenhurst</h3>
+      <div class="fig"><img src="avoid_concept.png"></div>
+      <p>Use the precision of the new satellite routes to place the line away from the village, for example routed to the south, without shifting the burden onto other communities.</p>
+    </div>
   </div>
+
+  <div class="note"><p><b>3. No fixed noise corridor.</b> Keep the design simple, but do not lock every flight onto one line. Vary the routes so that no single area carries all the impact, day after day.</p></div>
 
   <div class="callout"><span class="ci"><svg viewBox="0 0 512 512"><path d="M256 0l208 96v128c0 128-86 232-208 288C134 456 48 352 48 224V96zM224 320l160-160-34-34-126 126-58-58-34 34z"/></svg></span><p><b>The law is on our side.</b> The airport has a Section 106 commitment to continuous descent, and a duty under the Levelling Up and Regeneration Act 2023 to further the National Park's purposes, putting conservation first.</p></div>
 
-  <div class="cards" style="margin-top:11mm;">
+  <div class="cards">
     <span class="kicker">Get involved, it makes a difference</span>
     <h2 class="sec" style="margin-bottom:2px;">Your voice genuinely counts.</h2>
-    <p class="body" style="font-size:11px;">In the past, Brockenhurst residents did not take part in the consultation, and the flights came our way. This time can be different.</p>
+    <p class="body" style="font-size:10.6px;">In the past, Brockenhurst residents did not take part in the consultation, and the flights came our way. This time can be different.</p>
     <div class="row">
-      <div class="card"><div class="ic"><svg viewBox="0 0 512 512"><path d="M256 256a96 96 0 100-192 96 96 0 000 192zM32 480c0-97 100-160 224-160s224 63 224 160z"/></svg></div><h3>Join the campaign</h3><p>Get on the Aircraft Noise WhatsApp group. Email <span class="em">aircraft@<wbr>yourbrockenhurst.org</span></p></div>
-      <div class="card"><div class="ic"><svg viewBox="0 0 512 512"><path d="M48 64h416v288H180L80 440V352H48zM128 160h256v32H128zm0 80h192v32H128z"/></svg></div><h3>Complain when disturbed</h3><p>Every complaint is logged and counts. Email <span class="em">environment@<wbr>bournemouthairport.com</span>, ideally with the flight and time.</p></div>
-      <div class="card"><div class="ic"><svg viewBox="0 0 512 512"><path d="M64 32h384v64H64zM64 160h384v64H64zM64 288h256v64H64z"/></svg></div><h3>Understand and share</h3><p>Read this, tell your neighbours, and take part when the consultation opens. Numbers matter.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 512 512"><path d="M256 256a96 96 0 100-192 96 96 0 000 192zM32 480c0-97 100-160 224-160s224 63 224 160z"/></svg></div><h3>Join the campaign</h3><p>Get on the Aircraft Noise group. Email <span class="em">aircraft@<wbr>yourbrockenhurst.org</span></p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 512 512"><path d="M48 64h416v288H180L80 440V352H48zM128 160h256v32H128zm0 80h192v32H128z"/></svg></div><h3>Complain when disturbed</h3><p>Every complaint is logged. Email <span class="em">environment@<wbr>bournemouthairport.com</span> with the flight and time.</p></div>
+      <div class="card"><div class="ic"><svg viewBox="0 0 512 512"><path d="M64 32h384v64H64zM64 160h384v64H64zM64 288h256v64H64z"/></svg></div><h3>Understand and share</h3><p>Read this, tell your neighbours, and take part when the consultation opens.</p></div>
     </div>
   </div>
   <div class="foot"><span>Brockenhurst Community Action Group &nbsp;·&nbsp; aircraft@yourbrockenhurst.org</span><span>2</span></div>
