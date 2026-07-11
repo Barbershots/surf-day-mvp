@@ -9,3 +9,7 @@ __pycache__/
 venv/
 .DS_Store
 *_run.log
+
+# chart bundle (originals already tracked in outputs/sweep etc.)
+outputs/charts_export/*.png
+outputs/charts_export.zip
