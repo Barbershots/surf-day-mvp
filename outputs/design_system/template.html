@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<!-- Inline design_system.css into a <style> block for a fully self-contained file,
+     or link it while developing as below. -->
+<link rel="stylesheet" href="design_system.css">
+</head><body>
+
+<!-- The reusable plane silhouette (banner watermark + logo mark). Reuse this path. -->
+<!-- <path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/> -->
+
+<!-- ================= PAGE 1: banner + text + stats + a "three ideas" row ============ -->
+<section class="page">
+  <div class="banner">
+    <svg class="bigplane" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg>
+    <div class="mark"><span class="disc"><svg width="15" height="15" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg></span> Organisation name</div>
+    <div class="tag">Optional tagline</div>
+    <h1>Two-line headline<br>goes here</h1>
+    <div class="sub">One or two sentences of standfirst that say what this document is.</div>
+  </div>
+
+  <div class="pad">
+    <div style="display:grid;grid-template-columns:1.32fr 1fr;gap:11mm;align-items:start;">
+      <div>
+        <span class="kicker">Section label</span>
+        <h2 class="sec">A strong section heading.</h2>
+        <div class="divider"></div>
+        <p class="body">Body copy. Use <b>bold</b> for the numbers and phrases you want to land. Keep paragraphs short.</p>
+        <p class="body">A second paragraph of supporting copy.</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="n">75<small>%</small></div><div class="l">what this number means</div></div>
+        <div class="stat accent"><div class="n">77<small>%</small></div><div class="l">the dark card draws the eye</div></div>
+        <div class="stat"><div class="n">+65<small>%</small></div><div class="l">a third supporting stat</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:11mm;">
+      <span class="kicker">A three-up explainer row</span>
+      <div class="row3">
+        <div class="idea"><div class="ic"><svg class="icn" viewBox="0 0 512 512"><path d="M32 384h448v40H32zM40 300l120-16 92-150 40 4-44 156 118-16 34-52 34 6-26 92-352 48z"/></svg></div><h3>Idea one</h3><p>One or two sentences.</p></div>
+        <div class="idea"><div class="ic"><svg class="icn" viewBox="0 0 384 512"><path d="M192 0C86 0 0 86 0 192c0 141 192 320 192 320s192-179 192-320C384 86 298 0 192 0zm0 272a80 80 0 110-160 80 80 0 010 160z"/></svg></div><h3>Idea two</h3><p>One or two sentences.</p></div>
+        <div class="idea"><div class="ic"><svg class="icn" viewBox="0 0 512 512"><path d="M64 32h384v64H64zM64 160h384v64H64zM64 288h256v64H64z"/></svg></div><h3>Idea three</h3><p>One or two sentences.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Organisation name &nbsp;·&nbsp; Working draft</span><span>1</span></div>
+</section>
+
+<!-- ================= PAGE 2: part band + figure + fact + callout + steps + table ===== -->
+<section class="page"><div class="pad">
+  <div class="partband"><svg class="bigplane" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg><div class="pnum">01</div><div class="pt"><div class="k">Part one</div><h2>A numbered part heading</h2></div></div>
+
+  <h3 class="sub">A sub-heading for a chart</h3>
+  <p class="body">Lead-in text for the figure below.</p>
+  <figure><img src="chart.png"><figcaption>Caption: source and what the reader is looking at.</figcaption></figure>
+  <div class="fact"><div class="fi">Fact</div><p>A highlighted fact. Variants: <code>fact blue</code> and <code>fact red</code>.</p></div>
+
+  <div class="callout"><span class="ci"><svg viewBox="0 0 512 512"><path d="M256 0l208 96v128c0 128-86 232-208 288C134 456 48 352 48 224V96zM224 320l160-160-34-34-126 126-58-58-34 34z"/></svg></span><p><b>The strongest point</b> goes in a dark callout so it cannot be missed.</p></div>
+
+  <span class="kicker">A process / asks row</span>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><h3>Step one</h3><p>Short copy.</p><div class="arw">&rarr;</div></div>
+    <div class="step"><div class="num">2</div><h3>Step two</h3><p>Short copy.</p><div class="arw">&rarr;</div></div>
+    <div class="step"><div class="num">3</div><h3>Step three</h3><p>Short copy.</p></div>
+  </div>
+
+  <table class="t">
+    <tr><th>Column A</th><th>Column B</th></tr>
+    <tr class="us"><td class="k">Highlighted row</td><td><span class="verdict v-none">None</span> use the <code>us</code> class to spotlight your own row.</td></tr>
+    <tr><td class="k">Label</td><td><span class="verdict v-part">Partial</span> verdict pills: v-good / v-part / v-bad.</td></tr>
+  </table>
+  <div class="foot"><span>Organisation name &nbsp;·&nbsp; Part 1</span><span>2</span></div>
+</div></section>
+
+</body></html>
