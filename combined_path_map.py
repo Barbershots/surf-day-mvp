@@ -15,6 +15,7 @@ matplotlib.use("Agg")
 import contextily as cx
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from matplotlib.lines import Line2D
 
 import config
@@ -32,10 +33,14 @@ DEP = "#e8720c"   # departures: orange
 
 
 def build(out="outputs/sweep/brockenhurst_combined.png"):
-    # ---- arrivals ----
+    # ---- arrivals (large jets, runway 26) ----
     a, _ = pm.load()
     # ---- departures ----
     ev = dm.load()
+    # like-for-like: keep only large-jet departures, matching the arrivals filter,
+    # so we are not comparing big jets against all the light aircraft / helicopters.
+    lj = pd.read_csv("outputs/sweep/dep_large_jet_ids.csv")["flight_id"].astype("uint64")
+    ev = ev[ev["flight_id"].astype("uint64").isin(set(lj))]
 
     x0, y0 = pm.merc(LON0, LAT0); x1, y1 = pm.merc(LON1, LAT1)
     fig, ax = plt.subplots(figsize=(13, 13 * (y1 - y0) / (x1 - x0)))
@@ -48,7 +53,7 @@ def build(out="outputs/sweep/brockenhurst_combined.png"):
             continue
         g = g.sort_values("d_ap")
         mx, my = pm.merc(g["longitude"].values, g["latitude"].values)
-        ax.plot(mx, my, color=DEP, lw=0.6, alpha=0.018, solid_capstyle="round", zorder=3)
+        ax.plot(mx, my, color=DEP, lw=0.9, alpha=0.04, solid_capstyle="round", zorder=3)
         n_dep += 1
 
     n_arr = 0
@@ -79,9 +84,9 @@ def build(out="outputs/sweep/brockenhurst_combined.png"):
     except Exception as e:
         print("basemap failed:", e)
 
-    ax.set_title("Arrivals and departures over Brockenhurst, 2023 to 2025\n"
-                 f"{n_arr:,} large-jet arrivals (blue) fan in and converge over the village; "
-                 f"{n_dep:,} departures (orange) climb out",
+    ax.set_title("Large-jet arrivals and departures over Brockenhurst, 2023 to 2025\n"
+                 f"{n_arr:,} arrivals (blue) fan in and converge over the village; "
+                 f"{n_dep:,} departures (orange) mostly climb out to the west",
                  fontsize=13, fontweight="bold", pad=12)
     ax.legend(handles=[
         Line2D([0], [0], color=ARR, lw=3, label="Arrivals (landing in over the village)"),
@@ -89,7 +94,7 @@ def build(out="outputs/sweep/brockenhurst_combined.png"):
         loc="lower left", fontsize=10.5, framealpha=0.93)
     fig.text(0.5, 0.006,
              "Each line is one flight through its own recorded GPS fixes, via OPDI / OpenSky. "
-             "Arrivals: runway-26 large jets. Departures: all types. Approximate between fixes.",
+             "Large jets only, both directions, for a like-for-like comparison. Approximate between fixes.",
              ha="center", va="bottom", fontsize=9, color="#333")
     fig.tight_layout(rect=[0, 0.02, 1, 1])
     fig.savefig(out, dpi=150, bbox_inches="tight")
