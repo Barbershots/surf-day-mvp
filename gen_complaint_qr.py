@@ -24,28 +24,26 @@ WEBTRAK = "https://webtrak.emsbk.com/boh"
 qr(WEBTRAK, "outputs/complain/qr_webtrak.png")
 
 # 2) Pre-filled complaint email (mailto)
+# Kept short and minimal on purpose: the target reader is someone who rarely
+# complains, so the barrier must be low. It is generic to any aircraft over the
+# village (arrival or departure). A copy goes to the campaign so every complaint
+# counts toward our total. The fuller, evidence-heavy version is a later option.
+CC = "aircraft@yourbrockenhurst.org"
 subject = "Aircraft noise complaint - Brockenhurst"
 body = (
-    "Dear Bournemouth Airport Environment Team,\n\n"
-    "I wish to make a formal complaint about aircraft noise over Brockenhurst.\n\n"
+    "Dear Bournemouth Airport,\n\n"
+    "I wish to make a complaint about aircraft noise over Brockenhurst.\n\n"
     "Date: \n"
     "Approximate time: \n"
-    "My location (road/postcode): \n"
-    "What I experienced (e.g. very low, loud, woke me): \n\n"
-    "Brockenhurst sits about 9.7 nautical miles from the runway, directly under the arrivals path "
-    "and inside the New Forest National Park. Arrivals over the village are frequently lower than a "
-    "continuous 3-degree descent (about 3,100 ft here) and often level off overhead, which is when "
-    "the engine noise is worst. At night your own rule is that aircraft should not be below 2,500 ft "
-    "until within 8 nautical miles.\n\n"
-    "Please investigate this flight against your published noise-abatement procedures (UK AIP EGHH "
-    "AD 2.21) and your Section 106 continuous-descent obligation, and confirm the aircraft, its "
-    "height over Brockenhurst, and whether it flew a continuous descent. Please log this as a formal "
-    "noise complaint and send me your response.\n\n"
+    "My location (road or postcode): \n\n"
+    "Please log this as a formal noise complaint and confirm which aircraft it was.\n\n"
     "Name: \n"
     "Address: \n"
 )
 mailto = (
-    "mailto:environment@bournemouthairport.com?subject="
+    "mailto:environment@bournemouthairport.com?cc="
+    + urllib.parse.quote(CC)
+    + "&subject="
     + urllib.parse.quote(subject)
     + "&body="
     + urllib.parse.quote(body)
