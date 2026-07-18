@@ -27,7 +27,7 @@
   /* Timeline */
   .tl{position:relative; margin-top:3mm; padding-left:32mm;}
   .tl:before{content:""; position:absolute; left:30mm; top:2mm; bottom:2mm; width:3px; background:linear-gradient(var(--bright),var(--line)); border-radius:2px;}
-  .ev{position:relative; margin-bottom:3.8mm;}
+  .ev{position:relative; margin-bottom:3.1mm;}
   .ev .when{position:absolute; left:-32mm; width:28mm; text-align:right; font-weight:800; font-size:10.3px; color:var(--deep); top:1mm;}
   .ev .dot{position:absolute; left:-2.4mm; top:1.5mm; width:11px; height:11px; border-radius:50%; background:var(--bright); border:2.5px solid #fff; box-shadow:0 0 0 1.5px var(--bright);}
   .ev.act .dot{background:var(--gold); box-shadow:0 0 0 1.5px var(--gold);}
@@ -79,6 +79,17 @@
   .note b{color:var(--deep);}
   .callout{background:linear-gradient(135deg,var(--deep),var(--blue)); color:#fff; border-radius:9px; padding:3.4mm 4mm; font-size:11px; line-height:1.5;}
   .callout b{color:#ffe6b8;}
+  .subtle{font-size:9.4px; color:var(--muted); margin:1mm 0 3mm; font-style:italic;}
+
+  /* Fresh-ideas cards */
+  .ideas{display:grid; grid-template-columns:1fr 1fr; gap:3.6mm; margin-top:2mm;}
+  .icard{border:1px solid var(--line); border-radius:9px; padding:3mm 3.4mm 2.6mm; background:#fcfdff; position:relative;}
+  .icard h4{font-size:11.2px; font-weight:800; color:var(--deep); margin-bottom:1.2mm; line-height:1.2;}
+  .icard h4 .num{display:inline-block; min-width:15px; height:15px; line-height:15px; text-align:center; background:var(--gold); color:#fff; border-radius:50%; font-size:9px; margin-right:5px;}
+  .icard p{font-size:9.6px; line-height:1.38; color:#33404d;}
+  .icard .own{display:inline-block; font-size:8.6px; font-weight:800; color:var(--deep); background:var(--sky); border:1px solid var(--line); border-radius:10px; padding:0 7px; margin-top:2mm;}
+  .also{margin-top:3.4mm; background:var(--sky); border:1px solid var(--line); border-left:3px solid var(--gold); border-radius:7px; padding:2.8mm 3.4mm; font-size:9.9px; line-height:1.5; color:#26333f;}
+  .also b{color:var(--deep);}
 </style></head><body>
 
 <!-- reusable plane path -->
@@ -108,15 +119,15 @@
     <div class="tl">
       <div class="ev big">
         <div class="when">Now · Jul 2026</div><span class="dot"></span>
-        <div class="card"><h3>Where we are</h3><p>BCAG active and organised. Residents pack at v3.4, poll of the village (about 290 responses from 781 asked), complaints rising. Russell has met the airport (Nicole) and its design consultants (Anderson).</p></div>
+        <div class="card"><h3>Where we are</h3><p>BCAG active and organised. Residents pack at v3.4, a WhatsApp poll (about 290 responses from 781 asked), complaints rising. Russell has met the airport (Nicole) and its design consultants (Anderson).</p></div>
       </div>
       <div class="ev act">
         <div class="when">Thu 23 Jul</div><span class="dot"></span>
-        <div class="card"><h3>Airport Consultative Committee meets (at the airport)</h3><p>The body that sees airport information early. Priority action: secure a BCAG seat, residents' groups and parish councils commonly sit on these.</p></div>
+        <div class="card"><h3>Airport Consultative Committee meets (at the airport)</h3><p>The body that sees airport information early. Priority action: secure a BCAG seat, residents' groups and parish councils can sit on these.</p></div>
       </div>
       <div class="ev act">
-        <div class="when">Late Jul</div><span class="dot"></span>
-        <div class="card"><h3>Parish Council presentment · next BCAG meeting</h3><p>Inform the PC (Avery on the BCP route as a courtesy, John on the leaflet). Then BCAG meets to agree a coordinated 6-month plan and roles.</p></div>
+        <div class="when">Late Jul&ndash;Aug</div><span class="dot"></span>
+        <div class="card"><h3>Parish Council presentment · next BCAG meeting</h3><p>Inform the PC next week (Avery on the BCP route as a courtesy, John on the leaflet). BCAG then meets the week after, once John is back from a week away, to agree a coordinated 6-month plan and roles.</p></div>
       </div>
       <div class="ev">
         <div class="when">Summer 2026</div><span class="dot"></span>
@@ -131,8 +142,8 @@
         <div class="card"><h3>Public consultation (best estimate)</h3><p>The formal CAP 1616 "Consult" stage, our main chance for resident input into the actual design. Everything we build now is to be ready and credible for this.</p></div>
       </div>
       <div class="ev">
-        <div class="when">2033&ndash;2035</div><span class="dot"></span>
-        <div class="card"><h3>New airspace deployed (target)</h3><p>The airport's position: no approved route changes before this. The redesign aims to route around Brockenhurst, so the fight is to protect that outcome and win interim relief in the meantime.</p></div>
+        <div class="when">2032&ndash;2035</div><span class="dot"></span>
+        <div class="card"><h3>New airspace deployed (target)</h3><p>The government's target window (the airport also cites 2033-35). Its position: no approved route changes before this. The redesign aims to route around Brockenhurst, so the fight is to protect that outcome and win interim relief in the meantime.</p></div>
       </div>
     </div>
 
@@ -249,7 +260,8 @@
   <h2 class="sec">The plan: what we do, and when</h2>
   <div class="divider"></div>
 
-  <div class="callout" style="margin-bottom:4mm;"><b>Two campaigns, run in parallel, kept distinct.</b> A) The flight paths, height and continuous descent, our current track, aimed at CAA / UKADS / the airport. B) Night operations and the Section 106, led by Avery through BCP planning. They support each other but must not dilute each other.</div>
+  <div class="callout" style="margin-bottom:3mm;"><b>Two campaigns, run in parallel, kept distinct.</b> A) The flight paths, height and continuous descent, our current track, aimed at CAA / UKADS / the airport. B) Night operations and the Section 106, led by Avery through BCP planning. They support each other but must not dilute each other.</div>
+  <p class="subtle">Owners shown in gold are suggestions to start the conversation, not fixed assignments.</p>
 
   <div class="hz h1">
     <div class="hd"><span class="n">1</span><span class="t">Now</span><span class="dt">next 4 weeks</span></div>
@@ -294,6 +306,61 @@
   <div class="note"><b>Guiding principles:</b> stay evidence-led and accurate; we are not against the airport or its reasonable growth; do not push the noise onto other communities; keep Russell as the measured voice; and keep the two campaigns coordinated but distinct.</div>
 
   <div class="foot"><span>BCAG · Aircraft noise strategy · internal working document</span><span>4</span></div>
+</div></section>
+
+<!-- ============================ PAGE 5: FRESH IDEAS ============================ -->
+<section class="page"><div class="pad">
+  <span class="kicker">Deliverable 3 · extension</span>
+  <h2 class="sec">Ideas not yet on the table</h2>
+  <div class="divider"></div>
+  <p class="body">New angles beyond what the group has already discussed, each with a suggested owner to get it moving. All are for discussion, not decisions.</p>
+
+  <div class="ideas">
+    <div class="icard">
+      <h4><span class="num">1</span>Use the Environmental Information Regulations, not just FOI</h4>
+      <p>Environmental information is harder for a public body to withhold than an ordinary FOI. Use it to force out the Solent&ndash;airport handover Letter of Agreement, the airport's Noise and Track Keeping (NTK) radar logs for named flights, and its CDA compliance figures, which it does not publish.</p>
+      <span class="own">Suggested: Avery + Sue</span>
+    </div>
+    <div class="icard">
+      <h4><span class="num">2</span>Attack the redesign's "baseline"</h4>
+      <p>The CAA has already told the airport its baseline scenario was weak. Get our independent data recognised as the true baseline, so a future claim of "no significant change" cannot be measured against a flattering starting point.</p>
+      <span class="own">Suggested: Michael + Guy</span>
+    </div>
+    <div class="icard">
+      <h4><span class="num">3</span>Get a protective "Design Principle" adopted</h4>
+      <p>The CAP 1616 process lets communities shape the principles the new design must meet. Push for one that protects the National Park, for example no routine overflight of Brockenhurst or the NFNP below a set height. Avery has already found the Design Principles material.</p>
+      <span class="own">Suggested: Avery + Russell</span>
+    </div>
+    <div class="icard">
+      <h4><span class="num">4</span>Lobby the airlines directly</h4>
+      <p>The airlines, not only the airport, choose how they descend. Use their own environmental pledges and the airport's own line that it "engages airline safety teams" to send each carrier a data-backed note on its worst Brockenhurst flights.</p>
+      <span class="own">Suggested: Steve + Michael</span>
+    </div>
+    <div class="icard">
+      <h4><span class="num">5</span>Runway-08 complaint alerts</h4>
+      <p>Auto-detect from the flight data when the airport switches to easterly operations and ping the group, so complaints land in coordinated bursts on the worst days instead of trickling in one at a time.</p>
+      <span class="own">Suggested: Michael</span>
+    </div>
+    <div class="icard">
+      <h4><span class="num">6</span>Frame it as public health</h4>
+      <p>World Health Organisation guidance puts recommended night-noise limits well below what residents are getting. Brief the council and Hampshire public-health teams and local GPs, and lean on the council's public-health duty, not just planning.</p>
+      <span class="own">Suggested: Sue</span>
+    </div>
+    <div class="icard">
+      <h4><span class="num">7</span>Build a cross-parish alliance</h4>
+      <p>One village is easy to dismiss; a bloc is not. Federate with Sway, Burley and other affected communities plus the National Park Authority, and present to UKADS as a single voice, without diluting our own asks.</p>
+      <span class="own">Suggested: John</span>
+    </div>
+    <div class="icard">
+      <h4><span class="num">8</span>Get a preliminary legal opinion, crowdfunded</h4>
+      <p>As Luton's group did, a short opinion on whether the airport is meeting its Section 106 "all reasonable endeavours" duty would sharpen every ask and could be crowdfunded across the affected villages.</p>
+      <span class="own">Suggested: Dave + Avery</span>
+    </div>
+  </div>
+
+  <div class="also"><b>Also worth exploring:</b> engage the airport's corporate owner and its published sustainability goals, above the operations team (owner to be confirmed); pursue a Deed of Variation to the Section 106 to create a Brockenhurst-claimable community noise fund and a penalty for low or off-course flights (as at some other airports); and publish a simple live "flights and complaints" dashboard on the website to keep momentum visible and give the press a hook.</div>
+
+  <div class="foot"><span>BCAG · Aircraft noise strategy · internal working document</span><span>5</span></div>
 </div></section>
 
 </body></html>
