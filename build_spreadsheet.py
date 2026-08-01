@@ -101,48 +101,85 @@ for y in years:
             cell.font = cell_font
     ws.row_dimensions[1].height = 30
 
-# ---- Summary tab (live formulas so the group can audit the headline numbers) ----
+# ---- Summary tab (values computed from the year-tab data; recompute recipe given) ----
+def metrics(df):
+    lj = df['Aircraft class'] == 'Large jet'
+    night = df['Time of day'] == 'Night'
+    ping = df['GPS ping over Brockenhurst'] == 'Yes'
+    below = df['Below standard 3° descent height'] == 'Yes'
+    ov_yes = (df['Approached over village (rwy 26)'] == 'Yes').sum()
+    ov_no = (df['Approached over village (rwy 26)'] == 'No').sum()
+    lj_ping = (lj & ping).sum()
+    lj_below = (lj & below).sum()
+    h = pd.to_numeric(df.loc[lj & ping, 'Height over Brockenhurst (ft)'], errors='coerce')
+    return {
+        'Total arrivals': len(df),
+        'Large jets': int(lj.sum()),
+        'Night arrivals (23:00-06:00)': int(night.sum()),
+        '  large jets at night': int((lj & night).sum()),
+        'Approached over village (rwy 26) *': int(ov_yes),
+        '  % over village of classified (floor *)': (ov_yes/(ov_yes+ov_no)) if (ov_yes+ov_no) else None,
+        'Large jets over the village (measured)': int(lj_ping),
+        '  below the standard 3° descent height': int(lj_below),
+        '  % below 3° (large jets over village)': (lj_below/lj_ping) if lj_ping else None,
+        'Avg height of large jets over village (ft)': float(h.mean()) if len(h) else None,
+        'Levelled off over the village': int((df['Levelled off over village'] == 'Yes').sum()),
+    }
+M = {y: metrics(data[y]) for y in years}
+PCT = {'  % over village of classified (floor *)', '  % below 3° (large jets over village)'}
+
 sm = wb.create_sheet('Summary', 0)
 title_font = Font(name=ARIAL, bold=True, size=13, color='0F335F')
 lbl_font = Font(name=ARIAL, size=10)
 bold = Font(name=ARIAL, bold=True, size=10)
-sm['A1'] = 'Brockenhurst arrivals — headline figures (computed live from the year tabs)'
+sm['A1'] = 'Brockenhurst arrivals — headline figures'
 sm['A1'].font = title_font
-sm['A2'] = 'Every number below is a formula reading the raw rows in the 2023/2024/2025 tabs. Change or filter the data and these update.'
+sm['A2'] = 'Computed directly from the raw rows in the 2023 / 2024 / 2025 tabs. To re-audit any figure yourself, use the formula shown in the last column against the relevant year tab.'
 sm['A2'].font = Font(name=ARIAL, italic=True, size=9, color='5A6B7E')
-hdr = ['Metric', '2023', '2024', '2025', 'Change 23→25']
+sm['A2'].alignment = Alignment(wrap_text=False)
+hdr = ['Metric', '2023', '2024', '2025', 'Change 23→25', 'Recompute in Excel (put = in front; 2025 tab shown)']
 for j, h in enumerate(hdr, 1):
     c = sm.cell(row=4, column=j, value=h); c.font = hdr_font; c.fill = hdr_fill
-    c.alignment = Alignment(horizontal='center')
-cols = {2023: 'B', 2024: 'C', 2025: 'D'}
-# (label, formula-template, number-format)  {s} = sheet name
-rows = [
- ('Total arrivals',            "=COUNTA('{s}'!A:A)-1", '#,##0'),
- ('Large jets',                "=COUNTIF('{s}'!G:G,\"Large jet\")", '#,##0'),
- ('Approached over village (rwy 26)', "=COUNTIF('{s}'!H:H,\"Yes\")", '#,##0'),
- ('  classified by runway',    "=COUNTIF('{s}'!H:H,\"Yes\")+COUNTIF('{s}'!H:H,\"No\")", '#,##0'),
- ('  % over village (of classified)', "=IFERROR(COUNTIF('{s}'!H:H,\"Yes\")/(COUNTIF('{s}'!H:H,\"Yes\")+COUNTIF('{s}'!H:H,\"No\")),\"\")", '0%'),
- ('With a GPS ping over Brockenhurst', "=COUNTIF('{s}'!I:I,\"Yes\")", '#,##0'),
- ('  below the standard 3° descent height', "=COUNTIF('{s}'!L:L,\"Yes\")", '#,##0'),
- ('  % below 3° (of those pinged)', "=IFERROR(COUNTIF('{s}'!L:L,\"Yes\")/COUNTIF('{s}'!I:I,\"Yes\"),\"\")", '0%'),
- ('Avg height over Brockenhurst (ft)', "=IFERROR(AVERAGEIF('{s}'!J:J,\">0\"),\"\")", '#,##0'),
- ('Levelled off over the village',  "=COUNTIF('{s}'!M:M,\"Yes\")", '#,##0'),
- ('Night arrivals (23:00–06:00)',   "=COUNTIF('{s}'!C:C,\"Night\")", '#,##0'),
-]
+    c.alignment = Alignment(horizontal='center', wrap_text=True)
+recipe = {
+ 'Total arrivals': "=COUNTA('2025'!A:A)-1",
+ 'Large jets': "=COUNTIF('2025'!G:G,\"Large jet\")",
+ 'Night arrivals (23:00-06:00)': "=COUNTIF('2025'!C:C,\"Night\")",
+ '  large jets at night': "=COUNTIFS('2025'!G:G,\"Large jet\",'2025'!C:C,\"Night\")",
+ 'Approached over village (rwy 26) *': "=COUNTIF('2025'!H:H,\"Yes\")",
+ '  % over village of classified (floor *)': "=COUNTIF(H:H,\"Yes\")/(COUNTIF(H:H,\"Yes\")+COUNTIF(H:H,\"No\"))",
+ 'Large jets over the village (measured)': "=COUNTIFS('2025'!G:G,\"Large jet\",'2025'!I:I,\"Yes\")",
+ '  below the standard 3° descent height': "=COUNTIFS('2025'!G:G,\"Large jet\",'2025'!L:L,\"Yes\")",
+ '  % below 3° (large jets over village)': "=COUNTIFS(G:G,\"Large jet\",L:L,\"Yes\")/COUNTIFS(G:G,\"Large jet\",I:I,\"Yes\")",
+ 'Avg height of large jets over village (ft)': "=AVERAGEIFS('2025'!J:J,'2025'!G:G,\"Large jet\",'2025'!J:J,\">0\")",
+ 'Levelled off over the village': "=COUNTIF('2025'!M:M,\"Yes\")",
+}
 r = 5
-for label, tmpl, fmt in rows:
-    sm.cell(row=r, column=1, value=label).font = bold if not label.startswith('  ') else lbl_font
-    for y, col in cols.items():
-        c = sm.cell(row=r, column={2023:2,2024:3,2025:4}[y], value=tmpl.format(s=y))
-        c.font = lbl_font; c.number_format = fmt
-    # change 23->25
-    if fmt == '#,##0':
-        ch = sm.cell(row=r, column=5, value=f'=IFERROR(D{r}/B{r}-1,"")'); ch.number_format = '+0%;-0%'
-        ch.font = lbl_font
+for label in M[2025].keys():
+    sm.cell(row=r, column=1, value=label).font = lbl_font if label.startswith('  ') else bold
+    for ci, y in ((2, 2023), (3, 2024), (4, 2025)):
+        v = M[y][label]
+        c = sm.cell(row=r, column=ci, value=(round(v, 3) if v is not None else None))
+        c.font = lbl_font
+        c.number_format = '0%' if label in PCT else '#,##0'
+    if label not in PCT:
+        a, b = M[2023][label], M[2025][label]
+        ch = sm.cell(row=r, column=5, value=(round(b/a - 1, 3) if a else None))
+        ch.number_format = '+0%;-0%'; ch.font = lbl_font
+    fr = sm.cell(row=r, column=6, value=recipe.get(label, '').lstrip('='))  # text, not a live formula
+    fr.font = Font(name='Consolas', size=8, color='5A6B7E'); fr.number_format = '@'
     r += 1
-sm.column_dimensions['A'].width = 34
-for col in ('B', 'C', 'D', 'E'):
-    sm.column_dimensions[col].width = 13
+note = sm.cell(row=r + 1, column=1, value=(
+    '* Over-village counts are a conservative floor: sparse GPS sampling marks some flights that '
+    'did overfly as No/Unknown. The reliable per-flight signal is the "Approached over village" column; '
+    'the true share is ~55-65% (the airport\'s own published figure is ~65% from the east). See the Read me tab.'))
+note.font = Font(name=ARIAL, italic=True, size=9, color='C0392B')
+note.alignment = Alignment(wrap_text=True, vertical='top')
+sm.merge_cells(start_row=r + 1, start_column=1, end_row=r + 2, end_column=6)
+sm.column_dimensions['A'].width = 42
+for c in ('B', 'C', 'D', 'E'):
+    sm.column_dimensions[c].width = 12
+sm.column_dimensions['F'].width = 46
 
 # ---- Read-me tab ----
 rm = wb.create_sheet('Read me', 1)
