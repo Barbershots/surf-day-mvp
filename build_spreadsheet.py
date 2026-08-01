@@ -25,6 +25,22 @@ def airline(cs, cat):
     if cat == 'Business jet': return 'Business / private jet'
     return (pfx + ' (unverified)') if pfx else 'Unknown'
 
+def airline2(operator, cs, cat):
+    op = str(operator).strip()
+    if op in AIRLINES:
+        return AIRLINES[op]
+    if op and op.lower() != 'nan' and re.fullmatch(r'[A-Z]{3}', op):
+        return op  # real ICAO operator code, unmapped
+    return airline(cs, cat)  # fall back to callsign inference
+
+# OPDI per-flight reference fields (id, icao24, registration, adep, operator)
+try:
+    REFS = pd.read_csv('outputs/reverify_full/arrivals_refs.csv', dtype={'id': str})
+    REFS = REFS.drop_duplicates('id')
+except Exception as _e:
+    print('WARN: arrivals_refs.csv not available, reference columns will be blank:', _e)
+    REFS = None
+
 def yesno(b):
     return 'Yes' if bool(b) else 'No'
 
@@ -39,13 +55,20 @@ def build_year(year):
             'approached_over_village','runway_classified']
     pf = pf[[c for c in keep if c in pf.columns]]
     m = arr.merge(pf, left_on='id', right_on='flight_id', how='left')
+    m['id'] = m['id'].astype('uint64')
+    m['id'] = m['id'].astype(str)  # string key matches arrivals_refs.csv
+    if REFS is not None:
+        m = m.merge(REFS, on='id', how='left')
+    for c in ('icao24', 'registration', 'adep', 'icao_operator'):
+        if c not in m.columns:
+            m[c] = ''
     t = pd.to_datetime(m['last_seen'], utc=True).dt.tz_convert('Europe/London')
     out = pd.DataFrame()
     out['Date'] = t.dt.strftime('%Y-%m-%d')
     out['Arrival time (local)'] = t.dt.strftime('%H:%M')
     out['Time of day'] = m['time_window']
     out['Flight ID / callsign'] = m['flt_id'].astype(str).str.strip()
-    out['Airline (inferred)'] = [airline(c, k) for c, k in zip(m['flt_id'], m['category'])]
+    out['Airline'] = [airline2(op, c, k) for op, c, k in zip(m['icao_operator'], m['flt_id'], m['category'])]
     out['Aircraft type'] = m['typecode']
     out['Aircraft class'] = m['category']
     # approached over village: Yes/No/Unknown from runway classification
@@ -62,6 +85,11 @@ def build_year(year):
     out['Levelled off over village'] = np.where(
         m['leveloff_over_village'].fillna(False).astype(bool), 'Yes', 'No')
     out['Lowest level-off in approach (ft)'] = m['lowest_leveloff_ft'].round(0)
+    # ---- cross-check reference columns from OPDI (appended; A-N above unchanged) ----
+    out['OPDI flight ID'] = m['id'].astype(str)
+    out['Aircraft registration'] = m['registration'].fillna('').astype(str)
+    out['ICAO24 (hex)'] = m['icao24'].fillna('').astype(str)
+    out['From (origin airport)'] = m['adep'].fillna('').astype(str)
     out = out.sort_values(['Date', 'Arrival time (local)']).reset_index(drop=True)
     return out
 
@@ -93,7 +121,7 @@ for y in years:
         cell = ws.cell(row=1, column=c)
         cell.fill = hdr_fill; cell.font = hdr_font
         cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
-    widths = [11,9,10,15,20,11,13,16,14,14,14,14,14,16]
+    widths = [11,9,10,15,20,11,13,16,14,14,14,14,14,16,18,15,12,13]
     for i, w in enumerate(widths[:ncols], 1):
         ws.column_dimensions[get_column_letter(i)].width = w
     for row in ws.iter_rows(min_row=2, max_row=ws.max_row, max_col=ncols):
@@ -208,11 +236,26 @@ notes = [
  ('• Large jet = commercial narrow/wide-body airliner (e.g. B738, A320), by aircraft type.', lbl_font),
  ('• Standard 3° descent height = the altitude an aircraft on a continuous 3-degree approach would be at that point (~3,100 ft over Brockenhurst).', lbl_font),
  ('• Night = arrival between 23:00 and 06:00 local. (The airport\'s planning night is 23:30–06:00; both are shown in our analysis.)', lbl_font),
- ('• Airline is inferred from the callsign prefix; "(unverified)" or "Private / GA" where it could not be matched confidently.', lbl_font),
+ ('• Airline is the OPDI operator code where available (mapped to a name for the common carriers); otherwise inferred from the callsign, shown as "Private / GA" or "(unverified)".', lbl_font),
+ ('', lbl_font),
+ ('Cross-checking an individual flight', bold),
+ ('Each row carries OPDI\'s own references so any flight can be independently verified:', lbl_font),
+ ('• OPDI flight ID: the unique id for that flight in the OPDI dataset (opdi.aero).', lbl_font),
+ ('• Aircraft registration (tail number) and ICAO24 (hex): identify the exact aircraft; searchable on OpenSky Network or Flightradar24.', lbl_font),
+ ('• From (origin airport): the departure airport (ICAO code) for that arrival.', lbl_font),
+ ('• With the date, local time and callsign you can also look the flight up directly on Flightradar24 / OpenSky.', lbl_font),
+ ('', lbl_font),
+ ('How complete is this? (checked against the CAA\'s official figures)', bold),
+ ('The CAA publishes total aircraft movements per airport (Table 03). Bournemouth: 20,650 (2023), 21,000 (2024), 24,861 (2025).', lbl_font),
+ ('Movements are landings + take-offs, so official arrivals are about half of those (~10,325 / ~10,500 / ~12,430).', lbl_font),
+ ('This dataset holds 9,819 / 10,764 / 12,574 arrivals — about 95% / 102% / 101% of the official figure, and 99.7% over the three years combined.', Font(name=ARIAL, bold=True, size=10, color='1F8F7F')),
+ ('In other words, effectively every arrival is captured. (The small year-to-year wobble is because arrivals are only approximately half of movements.)', lbl_font),
+ ('Note: the CAA figures show most Bournemouth movements are non-commercial — in 2023 only 6,504 of 20,650 were commercial "air transport"; the rest is training, aero-club and private flying. That matches the aircraft-class mix in these tabs.', lbl_font),
  ('', lbl_font),
  ('Source & status', bold),
- ('Aircraft data via OPDI / OpenSky. Figures are our own calculations and are believed accurate at the time of extraction (Aug 2026).', lbl_font),
- ('Counts of flights "over the village" and heights are conservative minimums because of the sparse sampling described above.', lbl_font),
+ ('Aircraft data via OPDI / OpenSky. Completeness benchmark: UK CAA airport data (Table 03, Aircraft Movements), 2023-2025.', lbl_font),
+ ('Figures are our own calculations and are believed accurate at the time of extraction (Aug 2026).', lbl_font),
+ ('Counts of flights "over the village" and heights are conservative minimums because of the sparse GPS sampling described above.', lbl_font),
 ]
 for i, (txt, f) in enumerate(notes, 1):
     c = rm.cell(row=i, column=1, value=txt); c.font = f
