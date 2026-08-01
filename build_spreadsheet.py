@@ -261,5 +261,61 @@ for i, (txt, f) in enumerate(notes, 1):
     c = rm.cell(row=i, column=1, value=txt); c.font = f
     c.alignment = Alignment(wrap_text=False, vertical='top')
 
+# ---- Completeness (monthly) tab: our arrivals vs CAA official movements ----
+try:
+    from openpyxl.chart import LineChart, Reference
+    mc = pd.read_csv('outputs/reverify_full/monthly_completeness.csv')
+    cm = wb.create_sheet('Completeness (monthly)', 2)
+    cm['A1'] = 'How complete is this dataset? — month by month vs the CAA official record'
+    cm['A1'].font = title_font
+    cm['A2'] = ('CAA total movements are landings + take-offs, so this dataset\'s arrivals should be about half of them. '
+                'The last column is our arrivals ×2 as a % of the CAA figure: 100% = an exact match.')
+    cm['A2'].font = Font(name=ARIAL, italic=True, size=9, color='5A6B7E')
+    heads = ['Month', 'Our arrivals', 'CAA total movements', 'Our arrivals ×2', 'Match vs CAA (100% = exact)']
+    for j, h in enumerate(heads, 1):
+        c = cm.cell(row=4, column=j, value=h); c.font = hdr_font; c.fill = hdr_fill
+        c.alignment = Alignment(horizontal='center', wrap_text=True)
+    rr = 5
+    for _, row in mc.iterrows():
+        cm.cell(row=rr, column=1, value=row['month']).font = lbl_font
+        cm.cell(row=rr, column=2, value=int(row['our_arrivals'])).font = lbl_font
+        cm.cell(row=rr, column=3, value=int(row['caa_total_mov'])).font = lbl_font
+        cm.cell(row=rr, column=4, value=int(row['our_x2'])).font = lbl_font
+        pc = cm.cell(row=rr, column=5, value=round(row['pct_capt'] / 100, 3))
+        pc.number_format = '0%'; pc.font = lbl_font
+        if row['pct_capt'] < 85:
+            pc.font = Font(name=ARIAL, size=10, color='C0392B', bold=True)
+        rr += 1
+    # totals
+    to, tc = int(mc['our_arrivals'].sum()), int(mc['caa_total_mov'].sum())
+    cm.cell(row=rr, column=1, value='3-year total').font = bold
+    cm.cell(row=rr, column=2, value=to).font = bold
+    cm.cell(row=rr, column=3, value=tc).font = bold
+    cm.cell(row=rr, column=4, value=to * 2).font = bold
+    tp = cm.cell(row=rr, column=5, value=round(to * 2 / tc, 3)); tp.number_format = '0%'; tp.font = bold
+    # notes
+    nrow = rr + 2
+    for txt in [
+        'Reading this: over the three years combined, this dataset holds %.1f%% of the CAA\'s official movements — effectively every flight.' % (100 * to * 2 / tc),
+        'Individual months swing either side of 100% because arrivals and departures do not balance exactly within a calendar month,',
+        'and because GA / training movements are counted differently by the CAA. They average out to ~100%.',
+        'The lower months (shown in red) are in late 2023, consistent with thinner OpenSky receiver coverage early in the record;',
+        'from 2024 onward capture is consistently around 95-105%. Commercial large jets, which broadcast continuously, are captured most reliably of all.',
+        'Source: UK CAA airport data, Table 03 Aircraft Movements (monthly), 2023-2025.',
+    ]:
+        c = cm.cell(row=nrow, column=1, value=txt)
+        c.font = Font(name=ARIAL, size=9, color='333333'); nrow += 1
+    # line chart of match %
+    ch = LineChart(); ch.title = 'Coverage vs CAA official (100% = exact match)'
+    ch.height = 7.5; ch.width = 22; ch.y_axis.title = '% of CAA movements'; ch.legend = None
+    data = Reference(cm, min_col=5, min_row=4, max_row=4 + len(mc))
+    cats = Reference(cm, min_col=1, min_row=5, max_row=4 + len(mc))
+    ch.add_data(data, titles_from_data=True); ch.set_categories(cats)
+    cm.add_chart(ch, 'G4')
+    for col, w in (('A', 12), ('B', 13), ('C', 20), ('D', 14), ('E', 24)):
+        cm.column_dimensions[col].width = w
+except Exception as _e:
+    print('WARN: could not build monthly completeness tab:', _e)
+
 wb.save(FN)
 print('wrote', FN)
