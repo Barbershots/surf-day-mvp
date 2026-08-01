@@ -66,7 +66,11 @@ def build_year(year):
     out = pd.DataFrame()
     out['Date'] = t.dt.strftime('%Y-%m-%d')
     out['Arrival time (local)'] = t.dt.strftime('%H:%M')
-    out['Time of day'] = m['time_window']
+    # Time of day using the airport's OFFICIAL night window 23:30-06:00 (S106 / Noise Action Plan)
+    mins = t.dt.hour * 60 + t.dt.minute
+    is_night = (mins >= 23 * 60 + 30) | (mins < 6 * 60)
+    is_eve = (mins >= 19 * 60) & ~is_night
+    out['Time of day'] = np.where(is_night, 'Night', np.where(is_eve, 'Evening', 'Day'))
     out['Flight ID / callsign'] = m['flt_id'].astype(str).str.strip()
     out['Airline'] = [airline2(op, c, k) for op, c, k in zip(m['icao_operator'], m['flt_id'], m['category'])]
     out['Aircraft type'] = m['typecode']
@@ -143,7 +147,7 @@ def metrics(df):
     return {
         'Total arrivals': len(df),
         'Large jets': int(lj.sum()),
-        'Night arrivals (23:00-06:00)': int(night.sum()),
+        'Night arrivals (23:30-06:00, official)': int(night.sum()),
         '  large jets at night': int((lj & night).sum()),
         'Approached over village (rwy 26) *': int(ov_yes),
         '  % over village of classified (floor *)': (ov_yes/(ov_yes+ov_no)) if (ov_yes+ov_no) else None,
@@ -172,7 +176,7 @@ for j, h in enumerate(hdr, 1):
 recipe = {
  'Total arrivals': "=COUNTA('2025'!A:A)-1",
  'Large jets': "=COUNTIF('2025'!G:G,\"Large jet\")",
- 'Night arrivals (23:00-06:00)': "=COUNTIF('2025'!C:C,\"Night\")",
+ 'Night arrivals (23:30-06:00, official)': "=COUNTIF('2025'!C:C,\"Night\")",
  '  large jets at night': "=COUNTIFS('2025'!G:G,\"Large jet\",'2025'!C:C,\"Night\")",
  'Approached over village (rwy 26) *': "=COUNTIF('2025'!H:H,\"Yes\")",
  '  % over village of classified (floor *)': "=COUNTIF(H:H,\"Yes\")/(COUNTIF(H:H,\"Yes\")+COUNTIF(H:H,\"No\"))",
@@ -235,7 +239,8 @@ notes = [
  ('Definitions', bold),
  ('• Large jet = commercial narrow/wide-body airliner (e.g. B738, A320), by aircraft type.', lbl_font),
  ('• Standard 3° descent height = the altitude an aircraft on a continuous 3-degree approach would be at that point (~3,100 ft over Brockenhurst).', lbl_font),
- ('• Night = arrival between 23:00 and 06:00 local. (The airport\'s planning night is 23:30–06:00; both are shown in our analysis.)', lbl_font),
+ ('• Night = the airport\'s OFFICIAL night period, 23:30 to 06:00 local, as defined in the 2007 Section 106 agreement and Noise Action Plan. Every "night" figure in this workbook uses this window (a 23:15 arrival is Evening, not Night).', lbl_font),
+ ('• These are counts of ACTUAL flights measured in that window. They are separate from the airport\'s night noise "quota" (a fixed budget of noise points in the S106); this workbook counts flights, not quota points.', lbl_font),
  ('• Airline is the OPDI operator code where available (mapped to a name for the common carriers); otherwise inferred from the callsign, shown as "Private / GA" or "(unverified)".', lbl_font),
  ('', lbl_font),
  ('Cross-checking an individual flight', bold),
