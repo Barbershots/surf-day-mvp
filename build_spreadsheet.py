@@ -34,18 +34,19 @@ def airline2(operator, cs, cat):
     return airline(cs, cat)  # fall back to callsign inference
 
 # OPDI per-flight reference fields (id, icao24, registration, adep, operator)
-try:
-    REFS = pd.read_csv('outputs/reverify_full/arrivals_refs.csv', dtype={'id': str})
-    REFS = REFS.drop_duplicates('id')
-except Exception as _e:
-    print('WARN: arrivals_refs.csv not available, reference columns will be blank:', _e)
-    REFS = None
+import os
+_refs = []
+for _f in ('outputs/reverify_full/arrivals_refs.csv', 'outputs/reverify_full/arrivals_refs_2026.csv'):
+    if os.path.exists(_f):
+        _refs.append(pd.read_csv(_f, dtype={'id': str}))
+REFS = pd.concat(_refs, ignore_index=True).drop_duplicates('id') if _refs else None
 
 def yesno(b):
     return 'Yes' if bool(b) else 'No'
 
 def build_year(year):
-    arr = pd.read_csv('outputs/sweep/arrivals.csv')
+    src = 'outputs/sweep/arrivals_2026.csv' if year == 2026 else 'outputs/sweep/arrivals.csv'
+    arr = pd.read_csv(src)
     arr = arr[arr['year'] == year].copy()
     arr['id'] = arr['id'].astype('uint64')
     pf = pd.read_csv(f'outputs/reverify_full/perflight_{year}.csv')
@@ -97,9 +98,12 @@ def build_year(year):
     out = out.sort_values(['Date', 'Arrival time (local)']).reset_index(drop=True)
     return out
 
-years = [2023, 2024, 2025]
-data = {y: build_year(y) for y in years}
-for y in years:
+years = [2023, 2024, 2025]          # complete years — all headline figures use these
+PARTIAL = 2026                      # partial year (Jan-May), monitoring only
+all_years = years + ([PARTIAL] if os.path.exists('outputs/sweep/arrivals_2026.csv') else [])
+SHEET = {2023: '2023', 2024: '2024', 2025: '2025', 2026: '2026 (Jan-May)'}
+data = {y: build_year(y) for y in all_years}
+for y in all_years:
     print(y, 'rows', len(data[y]),
           '| ping Yes', (data[y]['GPS ping over Brockenhurst'] == 'Yes').sum(),
           '| over-village Yes', (data[y]['Approached over village (rwy 26)'] == 'Yes').sum())
@@ -107,8 +111,8 @@ for y in years:
 # ---- write workbook ----
 FN = 'outputs/Brockenhurst_arrivals_3yr.xlsx'
 with pd.ExcelWriter(FN, engine='openpyxl') as xl:
-    for y in years:
-        data[y].to_excel(xl, sheet_name=str(y), index=False)
+    for y in all_years:
+        data[y].to_excel(xl, sheet_name=SHEET[y], index=False)
 wb = openpyxl.load_workbook(FN)
 
 ARIAL = 'Arial'
@@ -117,8 +121,8 @@ hdr_font = Font(name=ARIAL, bold=True, color='FFFFFF', size=10)
 cell_font = Font(name=ARIAL, size=10)
 thin = Side(style='thin', color='D9E3EF')
 ncols = data[2023].shape[1]
-for y in years:
-    ws = wb[str(y)]
+for y in all_years:
+    ws = wb[SHEET[y]]
     ws.freeze_panes = 'A2'
     ws.auto_filter.ref = f"A1:{get_column_letter(ncols)}1"
     for c in range(1, ncols + 1):
@@ -157,8 +161,9 @@ def metrics(df):
         'Avg height of large jets over village (ft)': float(h.mean()) if len(h) else None,
         'Levelled off over the village': int((df['Levelled off over village'] == 'Yes').sum()),
     }
-M = {y: metrics(data[y]) for y in years}
+M = {y: metrics(data[y]) for y in all_years}
 PCT = {'  % over village of classified (floor *)', '  % below 3° (large jets over village)'}
+HAS26 = PARTIAL in all_years
 
 sm = wb.create_sheet('Summary', 0)
 title_font = Font(name=ARIAL, bold=True, size=13, color='0F335F')
@@ -169,10 +174,13 @@ sm['A1'].font = title_font
 sm['A2'] = 'Computed directly from the raw rows in the 2023 / 2024 / 2025 tabs. To re-audit any figure yourself, use the formula shown in the last column against the relevant year tab.'
 sm['A2'].font = Font(name=ARIAL, italic=True, size=9, color='5A6B7E')
 sm['A2'].alignment = Alignment(wrap_text=False)
-hdr = ['Metric', '2023', '2024', '2025', 'Change 23→25', 'Recompute in Excel (put = in front; 2025 tab shown)']
+hdr = ['Metric', '2023', '2024', '2025'] + (['2026 (Jan-May) *'] if HAS26 else []) + \
+      ['Change 23→25', 'Recompute in Excel (put = in front; 2025 tab shown)']
 for j, h in enumerate(hdr, 1):
     c = sm.cell(row=4, column=j, value=h); c.font = hdr_font; c.fill = hdr_fill
     c.alignment = Alignment(horizontal='center', wrap_text=True)
+CH_COL = 6 if HAS26 else 5     # column for Change 23->25
+RC_COL = 7 if HAS26 else 6     # column for the recompute recipe
 recipe = {
  'Total arrivals': "=COUNTA('2025'!A:A)-1",
  'Large jets': "=COUNTIF('2025'!G:G,\"Large jet\")",
@@ -187,31 +195,42 @@ recipe = {
  'Levelled off over the village': "=COUNTIF('2025'!M:M,\"Yes\")",
 }
 r = 5
+year_cols = [(2, 2023), (3, 2024), (4, 2025)] + ([(5, 2026)] if HAS26 else [])
 for label in M[2025].keys():
     sm.cell(row=r, column=1, value=label).font = lbl_font if label.startswith('  ') else bold
-    for ci, y in ((2, 2023), (3, 2024), (4, 2025)):
+    for ci, y in year_cols:
         v = M[y][label]
         c = sm.cell(row=r, column=ci, value=(round(v, 3) if v is not None else None))
         c.font = lbl_font
         c.number_format = '0%' if label in PCT else '#,##0'
     if label not in PCT:
         a, b = M[2023][label], M[2025][label]
-        ch = sm.cell(row=r, column=5, value=(round(b/a - 1, 3) if a else None))
+        ch = sm.cell(row=r, column=CH_COL, value=(round(b/a - 1, 3) if a else None))
         ch.number_format = '+0%;-0%'; ch.font = lbl_font
-    fr = sm.cell(row=r, column=6, value=recipe.get(label, '').lstrip('='))  # text, not a live formula
+    fr = sm.cell(row=r, column=RC_COL, value=recipe.get(label, '').lstrip('='))  # text, not a live formula
     fr.font = Font(name='Consolas', size=8, color='5A6B7E'); fr.number_format = '@'
     r += 1
+last_col = RC_COL
 note = sm.cell(row=r + 1, column=1, value=(
     '* Over-village counts are a conservative floor: sparse GPS sampling marks some flights that '
     'did overfly as No/Unknown. The reliable per-flight signal is the "Approached over village" column; '
     'the true share is ~55-65% (the airport\'s own published figure is ~65% from the east). See the Read me tab.'))
 note.font = Font(name=ARIAL, italic=True, size=9, color='C0392B')
 note.alignment = Alignment(wrap_text=True, vertical='top')
-sm.merge_cells(start_row=r + 1, start_column=1, end_row=r + 2, end_column=6)
+sm.merge_cells(start_row=r + 1, start_column=1, end_row=r + 2, end_column=last_col)
+if HAS26:
+    n2 = sm.cell(row=r + 3, column=1, value=(
+        '2026 is a PART YEAR (January to May only) and its recent months are still being backfilled by OPDI, '
+        'so its counts are undercounts (see the Completeness tab). It is shown for monitoring only. '
+        'Every headline change uses the three COMPLETE years 2023-2025.'))
+    n2.font = Font(name=ARIAL, italic=True, size=9, color='B26B00')
+    n2.alignment = Alignment(wrap_text=True, vertical='top')
+    sm.merge_cells(start_row=r + 3, start_column=1, end_row=r + 4, end_column=last_col)
 sm.column_dimensions['A'].width = 42
-for c in ('B', 'C', 'D', 'E'):
+for c in ('B', 'C', 'D', 'E', 'F'):
     sm.column_dimensions[c].width = 12
-sm.column_dimensions['F'].width = 46
+sm.column_dimensions[get_column_letter(RC_COL)].width = 46
+sm.column_dimensions['A'].width = 42
 
 # ---- Read-me tab ----
 rm = wb.create_sheet('Read me', 1)
@@ -220,7 +239,8 @@ notes = [
  ('Brockenhurst aircraft arrivals — 3-year dataset', title_font),
  ('', lbl_font),
  ('What this is', bold),
- ('One row per aircraft arriving into Bournemouth Airport (EGHH) in 2023, 2024 and 2025, on a tab per year.', lbl_font),
+ ('One row per aircraft arriving into Bournemouth Airport (EGHH) in 2023, 2024 and 2025, on a tab per year, plus a "2026 (Jan-May)" partial-year tab for monitoring.', lbl_font),
+ ('The three full years (2023-2025) carry all the headline figures. 2026 is incomplete (5 months, and OPDI is still backfilling the recent months), so treat it as monitoring only, not for headline claims.', lbl_font),
  ('Built from independent aircraft GPS (ADS-B) data published by OPDI (derived from the OpenSky Network).', lbl_font),
  ('', lbl_font),
  ('How to read the key columns', bold),
@@ -311,7 +331,30 @@ try:
     ]:
         c = cm.cell(row=nrow, column=1, value=txt)
         c.font = Font(name=ARIAL, size=9, color='333333'); nrow += 1
-    # line chart of match %
+    # ---- 2026 partial-year monitoring rows ----
+    if os.path.exists('outputs/reverify_full/monthly_completeness_2026.csv'):
+        mc26 = pd.read_csv('outputs/reverify_full/monthly_completeness_2026.csv')
+        nrow += 1
+        hh = cm.cell(row=nrow, column=1, value='2026 (partial year — monitoring only; recent months still backfilling)')
+        hh.font = Font(name=ARIAL, bold=True, size=10, color='B26B00'); nrow += 1
+        for j, htext in enumerate(heads, 1):
+            hc = cm.cell(row=nrow, column=j, value=htext); hc.font = hdr_font; hc.fill = hdr_fill
+            hc.alignment = Alignment(horizontal='center', wrap_text=True)
+        nrow += 1
+        for _, row in mc26.iterrows():
+            cm.cell(row=nrow, column=1, value=row['month']).font = lbl_font
+            cm.cell(row=nrow, column=2, value=int(row['our_arrivals'])).font = lbl_font
+            cm.cell(row=nrow, column=3, value=int(row['caa_total_mov'])).font = lbl_font
+            cm.cell(row=nrow, column=4, value=int(row['our_x2'])).font = lbl_font
+            pc = cm.cell(row=nrow, column=5, value=round(row['pct_capt'] / 100, 3)); pc.number_format = '0%'
+            pc.font = Font(name=ARIAL, size=10, color='C0392B', bold=True) if row['pct_capt'] < 85 else lbl_font
+            nrow += 1
+        cap = cm.cell(row=nrow + 1, column=1, value=(
+            'These 2026 months are INCOMPLETE: OPDI is still backfilling recent data (Jan ~48%, rising to ~96% by May), '
+            'so the counts are undercounts and are not comparable to the full years. Shown for monitoring only.'))
+        cap.font = Font(name=ARIAL, italic=True, size=9, color='B26B00'); cap.alignment = Alignment(wrap_text=True)
+        cm.merge_cells(start_row=nrow + 1, start_column=1, end_row=nrow + 2, end_column=5)
+    # line chart of match % (full years only)
     ch = LineChart(); ch.title = 'Coverage vs CAA official (100% = exact match)'
     ch.height = 7.5; ch.width = 22; ch.y_axis.title = '% of CAA movements'; ch.legend = None
     data = Reference(cm, min_col=5, min_row=4, max_row=4 + len(mc))
