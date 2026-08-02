@@ -278,10 +278,11 @@ notes = [
  ('In other words, effectively every arrival is captured. (The small year-to-year wobble is because arrivals are only approximately half of movements.)', lbl_font),
  ('Note: the CAA figures show most Bournemouth movements are non-commercial — in 2023 only 6,504 of 20,650 were commercial "air transport"; the rest is training, aero-club and private flying. That matches the aircraft-class mix in these tabs.', lbl_font),
  ('', lbl_font),
- ('Source & status', bold),
- ('Aircraft data via OPDI / OpenSky. Completeness benchmark: UK CAA airport data (Table 03, Aircraft Movements), 2023-2025.', lbl_font),
- ('Figures are our own calculations and are believed accurate at the time of extraction (Aug 2026).', lbl_font),
- ('Counts of flights "over the village" and heights are conservative minimums because of the sparse GPS sampling described above.', lbl_font),
+ ('Source & licensing', bold),
+ ('Aircraft data: OPDI (Open Performance Data Initiative), published by EUROCONTROL, derived from the OpenSky Network. Movement benchmark: UK CAA airport data (Table 03 Aircraft Movements), under the Open Government Licence.', lbl_font),
+ ('EUROCONTROL / OPDI data may be reused provided EUROCONTROL is credited as the source and it is not used for commercial purposes. This is a non-commercial residents\' analysis and credits EUROCONTROL / OPDI, the OpenSky Network and the CAA accordingly.', lbl_font),
+ ('The figures in this workbook are OUR OWN calculations derived from that data, not the original published EUROCONTROL / CAA tables. Believed accurate at the time of extraction (Aug 2026).', lbl_font),
+ ('Over-village counts and heights are conservative minimums because of the sparse GPS sampling described above.', lbl_font),
 ]
 for i, (txt, f) in enumerate(notes, 1):
     c = rm.cell(row=i, column=1, value=txt); c.font = f
