@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<style>
+  :root{
+    --ink:#16202e; --muted:#5a6b7e; --blue:#1b4f8f; --deep:#0f335f; --bright:#2c6fbb;
+    --sky:#eef4fb; --line:#d9e3ef; --gold:#e8a020; --red:#c0392b; --green:#1f8f7f;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  @page{size:A4 portrait; margin:0;}
+  html{font-family:"Liberation Sans","DejaVu Sans",Arial,Helvetica,sans-serif; color:var(--ink);}
+  .page{position:relative; width:210mm; background:#fff; padding-bottom:6mm;}
+  .banner{background:linear-gradient(135deg,var(--deep),var(--blue) 72%,var(--bright) 130%); color:#fff; padding:6.5mm 13mm 5.5mm; position:relative; overflow:hidden;}
+  .bigplane{position:absolute; right:-10mm; top:-12mm; width:80mm; height:80mm; opacity:.10;}
+  .mark{display:flex; align-items:center; gap:7px; font-weight:800; letter-spacing:.02em; font-size:10.5px;}
+  .disc{display:inline-flex; width:20px; height:20px; border-radius:50%; border:2px solid var(--gold); align-items:center; justify-content:center;}
+  h1{font-size:23px; font-weight:800; line-height:1.08; margin-top:2.5mm;}
+  .sub{margin-top:2mm; font-size:11px; line-height:1.45; color:#eaf1fb; max-width:170mm;}
+  .tag{margin-top:3mm; display:inline-block; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.33); padding:2px 9px; border-radius:20px; font-size:9.5px; font-weight:700;}
+  .pad{padding:3.5mm 13mm 0;}
+  h2{font-size:13.5px; font-weight:800; color:var(--deep); margin:3.5mm 0 1mm; display:flex; align-items:center; gap:7px;}
+  h2 .n{display:inline-flex; width:18px; height:18px; border-radius:50%; background:var(--gold); color:#fff; font-size:11px; align-items:center; justify-content:center;}
+  .rule{width:30px; height:3px; background:var(--gold); border-radius:2px; margin:0 0 2.5mm;}
+  p{font-size:10.4px; line-height:1.5; color:#26333f;}
+  ul{list-style:none; margin:1mm 0;}
+  li{position:relative; padding-left:5.5mm; margin-bottom:1mm; font-size:10.3px; line-height:1.42; color:#28333f;}
+  li:before{content:""; position:absolute; left:0; top:3px; width:7px; height:7px; border-radius:2px; background:var(--gold);}
+  li b{color:var(--ink);}
+  .rulesbox{background:var(--sky); border:1px solid var(--line); border-left:3px solid var(--bright); border-radius:8px; padding:3mm 4mm;}
+  .tiles{display:grid; grid-template-columns:1fr 1fr 1fr; gap:3.5mm; margin-top:1mm;}
+  .tile{border:1px solid var(--line); border-radius:9px; padding:3mm 3mm 2.6mm; text-align:center; background:#fcfdff;}
+  .tile .big{font-size:26px; font-weight:800; line-height:1; color:var(--red);}
+  .tile.blue .big{color:var(--bright);}
+  .tile .lab{font-size:9.4px; color:var(--ink); font-weight:700; margin-top:1.5mm; line-height:1.25;}
+  .tile .sub2{font-size:8.6px; color:var(--muted); margin-top:1mm;}
+  .note{font-size:9px; color:var(--muted); margin-top:1.5mm;}
+  table{width:100%; border-collapse:collapse; margin-top:1mm; font-size:9.4px;}
+  th{background:var(--deep); color:#fff; text-align:left; padding:2mm 2.4mm; font-size:9px;}
+  td{border-bottom:1px solid var(--line); padding:1.8mm 2.4mm; vertical-align:top; line-height:1.3;}
+  tr:nth-child(even) td{background:#f7fafd;}
+  td.a{font-weight:800; color:var(--deep);}
+  tr.boh td{background:#fff7ea!important;}
+  tr.boh td.a{color:#a5670a;}
+  a{color:var(--bright); text-decoration:none;}
+  .none{color:var(--red); font-weight:800;}
+  .takeaway{background:linear-gradient(135deg,var(--deep),var(--blue)); color:#fff; border-radius:9px; padding:3mm 4mm; margin-top:2.5mm;}
+  .takeaway b{color:#ffe6b8;}
+  .takeaway li{color:#eaf1fb;} .takeaway li:before{background:var(--gold);} .takeaway li b{color:#fff;}
+  .foot{margin:3mm 13mm 0; border-top:1px solid var(--line); padding-top:2.5mm; font-size:8.2px; color:var(--muted); line-height:1.45;}
+  .foot a{color:var(--muted); text-decoration:underline;}
+</style></head><body>
+<div class="page">
+  <div class="banner">
+    <svg class="bigplane" viewBox="0 0 512 512"><path fill="#fff" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg>
+    <div class="mark"><span class="disc"><svg width="11" height="11" viewBox="0 0 512 512"><path fill="#e8a020" d="M256 8c18 0 32 42 32 95v66l176 108v44l-176-52v94l50 40v33l-82-22-82 22v-33l50-40v-94L16 361v-44l176-108V103c0-53 14-95 32-95z"/></svg></span> YOUR BROCKENHURST · COMMUNITY ACTION GROUP</div>
+    <h1>Night flights at Bournemouth Airport</h1>
+    <div class="sub">The rules, what is actually happening over the village, and how Bournemouth's night regime compares with other UK airports. Working note for the group.</div>
+    <span class="tag">Night quota period 23:30&ndash;06:00 · figures verified against official sources</span>
+  </div>
+
+  <div class="pad">
+    <h2><span class="n">1</span> The rules at Bournemouth</h2>
+    <div class="rule"></div>
+    <div class="rulesbox">
+      <ul>
+        <li><b>Night period: 23:30 to 06:00</b> (the official "night quota period", as defined in the 2007 Section 106 agreement and Noise Action Plan).</li>
+        <li><b>Night noise budget: 3,100 Quota Count (QC) points per year</b>, set in 2007 and unchanged since. QC is a noise score, so this caps total night <i>noise</i>, not the number of flights.</li>
+        <li><b>There is no cap on the number of night flights.</b> This is unusual: most comparable airports also limit how many aircraft may operate at night.</li>
+        <li>The noisiest aircraft are restricted: QC8 and QC16 are banned at night, and QC4 cannot be scheduled.</li>
+        <li>The airport uses only a fraction of the budget today. But its own Noise Action Plan states that <b>"the same points total can be maintained by operating a greater [number of aircraft]"</b> as jets get quieter, so a fixed budget allows ever more flights over time. At QC0.5 for a typical 737 landing, 3,100 points is roughly <b>6,200 landings a year (about 17 a night)</b>, and rising.</li>
+      </ul>
+    </div>
+
+    <h2><span class="n">2</span> What is actually happening (our flight data, 2023&ndash;2025)</h2>
+    <div class="rule"></div>
+    <div class="tiles">
+      <div class="tile"><div class="big">+95%</div><div class="lab">Night arrivals over 23:30&ndash;06:00</div><div class="sub2">251 (2023) &rarr; 490 (2025), almost doubled</div></div>
+      <div class="tile"><div class="big">+158%</div><div class="lab">Large jets arriving at night</div><div class="sub2">159 (2023) &rarr; 411 (2025), more than doubled</div></div>
+      <div class="tile blue"><div class="big">+28%</div><div class="lab">All movements, 2026 so far</div><div class="sub2">CAA official, Jan&ndash;May vs 2025</div></div>
+    </div>
+    <div class="note">Actual aircraft counted from their own GPS (ADS-B) broadcasts, using the airport's official 23:30&ndash;06:00 night window. Independently cross-checked as 99.9% complete against the CAA's official movement figures. These are real flights, separate from the noise-points budget above.</div>
+
+    <h2><span class="n">3</span> How Bournemouth compares</h2>
+    <div class="rule"></div>
+    <table>
+      <tr><th>Airport</th><th>Size (approx)</th><th>Cap on number of night flights?</th><th>Night noise quota (QC pts/yr)</th><th>Source</th></tr>
+      <tr class="boh"><td class="a">Bournemouth</td><td>~1.4m pax</td><td class="none">None</td><td><b>3,100</b></td><td><a href="https://www.bournemouthairport.com/content/uploads/Bournemouth-Airport-Noise-Action-Plan-2024-FINAL-V3.0.pdf">Noise Action Plan 2024</a></td></tr>
+      <tr><td class="a">Southampton</td><td>~1m pax</td><td>~100 / year (medical, technical, delays only)</td><td>near-curfew</td><td><a href="https://www.southamptonairport.com/about-us/aircraft-noise/">Aircraft noise</a></td></tr>
+      <tr><td class="a">Bristol</td><td>~10m pax</td><td>4,000 / year</td><td>QC4+ not scheduled</td><td><a href="https://www.bristolairport.co.uk/corporate/environment/aircraft-noise/night-flying/">Night flying</a></td></tr>
+      <tr><td class="a">Exeter</td><td>~0.5m pax</td><td>None</td><td>None (nightly Royal Mail)</td><td><a href="https://exeter-airport.co.uk/content/uploads/Aircraft-Movements-and-Noise.pdf">Movements &amp; noise</a></td></tr>
+      <tr><td class="a">Heathrow</td><td>~80m pax</td><td>~5,800 / year</td><td>5,150 (2,415 W + 2,735 S)</td><td><a href="https://www.heathrow.com/company/local-community/noise/operations/night-flights">Night flights</a></td></tr>
+      <tr><td class="a">Gatwick</td><td>~40m pax</td><td>~14,450 / year</td><td>6,935 (1,785 W + 5,150 S)</td><td><a href="https://assets.publishing.service.gov.uk/media/6752c47114973821ce2a6c90/decision-night-flight-restrictions-heathrow-gatwick-stansted-from-oct-25.pdf">DfT decision 2025</a></td></tr>
+      <tr><td class="a">Stansted</td><td>~28m pax</td><td>~13,700 / year</td><td>7,960 (3,310 W + 4,650 S)</td><td><a href="https://assets.publishing.service.gov.uk/media/6752c47114973821ce2a6c90/decision-night-flight-restrictions-heathrow-gatwick-stansted-from-oct-25.pdf">DfT decision 2025</a></td></tr>
+    </table>
+    <div class="note">London airports (Heathrow/Gatwick/Stansted) quota figures are the current Government-set limits (regime Oct 2025 &ndash; Oct 2028), and apply <i>alongside</i> a movement cap. Systems differ between airports, so each is shown on its own terms.</div>
+
+    <div class="takeaway">
+      <ul>
+        <li><b>Bournemouth is one of the few UK airports with no limit on the number of night flights</b> &ndash; only a noise budget. Bristol caps at 4,000 a year, Southampton at about 100, and even the big London airports cap movements as well as noise.</li>
+        <li><b>The noise budget is generous for the airport's size.</b> At 3,100 points it is about 60% of Heathrow's and 40&ndash;45% of Gatwick's and Stansted's, despite Bournemouth handling a tiny fraction of their traffic.</li>
+        <li><b>Our nearest neighbour is far stricter.</b> Southampton, similar size and same region, permits only about 100 night movements a year, and tightened its rules under community pressure.</li>
+        <li><b>Night flights are already climbing fast and the budget will not stop them:</b> night arrivals have almost doubled and large jets at night have more than doubled since 2023, only a fraction of the budget is used, and quieter aircraft let the same budget carry ever more flights.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot">
+    Sources &mdash; Bournemouth: <a href="https://www.bournemouthairport.com/content/uploads/Bournemouth-Airport-Noise-Action-Plan-2024-FINAL-V3.0.pdf">Noise Action Plan 2024</a>, <a href="https://www.bournemouthairport.com/content/uploads/Evironmental-Information-March-2026.pdf">monitoring data</a>. Comparators: <a href="https://www.southamptonairport.com/about-us/aircraft-noise/">Southampton</a>, <a href="https://www.bristolairport.co.uk/corporate/environment/aircraft-noise/night-flying/">Bristol</a>, <a href="https://exeter-airport.co.uk/content/uploads/Aircraft-Movements-and-Noise.pdf">Exeter</a>, <a href="https://assets.publishing.service.gov.uk/media/6752c47114973821ce2a6c90/decision-night-flight-restrictions-heathrow-gatwick-stansted-from-oct-25.pdf">DfT night-flight decision (Heathrow/Gatwick/Stansted, Oct 2025)</a>. QC explained: <a href="https://en.wikipedia.org/wiki/Quota_Count_system">Quota Count system</a>.
+    Flight counts are our own calculations from independent aircraft GPS (ADS-B) data via OPDI (published by EUROCONTROL) and the OpenSky Network; completeness benchmarked against UK CAA airport data (Open Government Licence). Non-commercial community analysis, believed accurate at Aug 2026. Verify exact figures before formal use.
+  </div>
+</div>
+</body></html>
