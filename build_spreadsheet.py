@@ -44,6 +44,39 @@ REFS = pd.concat(_refs, ignore_index=True).drop_duplicates('id') if _refs else N
 def yesno(b):
     return 'Yes' if bool(b) else 'No'
 
+# ---- QNH pressure correction -------------------------------------------------
+# OPDI/ADS-B altitudes are BAROMETRIC PRESSURE altitudes referenced to the
+# standard 1013.25 hPa (i.e. flight-level / QNE), not height above sea level.
+# Verified two ways: (a) aircraft recorded on the ground at EGHH (true elevation
+# 38 ft) read between -181 and +229 ft depending on the day's pressure, and
+# (b) the QNH implied by those ground readings matches the airport's official
+# METAR observations to within 0.1 hPa on average.
+# Correction to approximate height above mean sea level:
+#     AMSL ft ~= pressure altitude + (QNH_hPa - 1013.25) * 27.3
+FT_PER_HPA = 27.3
+STD_HPA = 1013.25
+try:
+    _m = pd.read_csv('data/eghh_metar.csv')
+    _m['valid'] = pd.to_datetime(_m['valid'], utc=True, errors='coerce')
+    _m['qnh'] = pd.to_numeric(_m['alti'], errors='coerce') * 33.8639  # inHg -> hPa
+    _m = _m.dropna(subset=['valid', 'qnh'])
+    _m = _m[_m['qnh'].between(950, 1060)]          # drop corrupt observations
+    METAR = _m[['valid', 'qnh']].sort_values('valid').reset_index(drop=True)
+    print(f'METAR pressure records loaded: {len(METAR):,}')
+except Exception as _e:
+    print('WARN: METAR data unavailable, altitudes will NOT be pressure-corrected:', _e)
+    METAR = None
+
+def qnh_for(times_utc):
+    """Nearest METAR QNH (hPa) for each timestamp; NaN where none within 2 hours."""
+    if METAR is None:
+        return pd.Series(np.nan, index=range(len(times_utc)))
+    left = pd.DataFrame({'valid': pd.to_datetime(times_utc, utc=True)}).reset_index()
+    left = left.sort_values('valid')
+    merged = pd.merge_asof(left, METAR, on='valid', direction='nearest',
+                           tolerance=pd.Timedelta('2h'))
+    return merged.sort_values('index')['qnh'].reset_index(drop=True)
+
 def build_year(year):
     src = 'outputs/sweep/arrivals_2026.csv' if year == 2026 else 'outputs/sweep/arrivals.csv'
     arr = pd.read_csv(src)
@@ -83,10 +116,16 @@ def build_year(year):
         return 'Yes' if row.get('approached_over_village') else 'No'
     out['Approached over village (rwy 26)'] = [ov(r) for _, r in m.iterrows()]
     out['GPS ping over Brockenhurst'] = np.where(m['gate_alt_ft'].notna(), 'Yes', 'No')
-    out['Height over Brockenhurst (ft)'] = m['gate_alt_ft'].round(0)
-    out['Height vs standard 3° descent (ft)'] = m['alt_vs_cda_ft'].round(0)
+    # Pressure-correct the recorded (QNE) altitude to height above sea level, so the
+    # figures are directly comparable with the airport's own QNH-based radar display.
+    qnh = qnh_for(pd.to_datetime(m['last_seen'], utc=True).values)
+    corr = (qnh - STD_HPA) * FT_PER_HPA
+    corr_alt = m['gate_alt_ft'].reset_index(drop=True) + corr
+    corr_vs_cda = m['alt_vs_cda_ft'].reset_index(drop=True) + corr
+    out['Height over Brockenhurst (ft)'] = corr_alt.round(0).values
+    out['Height vs standard 3° descent (ft)'] = corr_vs_cda.round(0).values
     out['Below standard 3° descent height'] = np.where(
-        m['gate_alt_ft'].notna(), np.where(m['alt_vs_cda_ft'] < 0, 'Yes', 'No'), 'n/a')
+        corr_alt.notna().values, np.where(corr_vs_cda.values < 0, 'Yes', 'No'), 'n/a')
     out['Levelled off over village'] = np.where(
         m['leveloff_over_village'].fillna(False).astype(bool), 'Yes', 'No')
     out['Lowest level-off in approach (ft)'] = m['lowest_leveloff_ft'].round(0)
@@ -95,6 +134,10 @@ def build_year(year):
     out['Aircraft registration'] = m['registration'].fillna('').astype(str)
     out['ICAO24 (hex)'] = m['icao24'].fillna('').astype(str)
     out['From (origin airport)'] = m['adep'].fillna('').astype(str)
+    # ---- altitude working, shown so the correction can be checked ----
+    out['Raw recorded altitude (ft, pressure/QNE)'] = m['gate_alt_ft'].round(0).values
+    out['QNH at the time (hPa)'] = qnh.round(1).values
+    out['Pressure correction applied (ft)'] = corr.round(0).values
     out = out.sort_values(['Date', 'Arrival time (local)']).reset_index(drop=True)
     return out
 
@@ -129,7 +172,7 @@ for y in all_years:
         cell = ws.cell(row=1, column=c)
         cell.fill = hdr_fill; cell.font = hdr_font
         cell.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
-    widths = [11,9,10,15,20,11,13,16,14,14,14,14,14,16,18,15,12,13]
+    widths = [11,9,10,15,20,11,13,16,14,14,14,14,14,16,18,15,12,13,16,13,15]
     for i, w in enumerate(widths[:ncols], 1):
         ws.column_dimensions[get_column_letter(i)].width = w
     for row in ws.iter_rows(min_row=2, max_row=ws.max_row, max_col=ncols):
@@ -247,8 +290,9 @@ notes = [
  ('• Approached over village (rwy 26): the aircraft lined up on the runway-26 approach, whose path runs over/near Brockenhurst.', lbl_font),
  ('   This is the RELIABLE indicator of whether a flight came over the village. "Unknown" = not enough track data to tell.', lbl_font),
  ('• GPS ping over Brockenhurst: a track point was actually recorded inside 3 km of the village for that flight.', lbl_font),
- ('• Height over Brockenhurst (ft): the aircraft\'s altitude at that ping.', lbl_font),
+ ('• Height over Brockenhurst (ft): the aircraft\'s height above sea level at that ping, PRESSURE-CORRECTED (see the altitude note below).', lbl_font),
  ('• Height vs standard 3° descent (ft): how far above (+) or below (−) a standard continuous 3-degree descent the aircraft was.', lbl_font),
+ ('• The last three columns show the altitude working: the raw recorded figure, the official air pressure at the time, and the correction applied.', lbl_font),
  ('', lbl_font),
  ('IMPORTANT caveat about the GPS pings (please read)', Font(name=ARIAL, bold=True, size=10, color='C0392B')),
  ('The public data records only occasional track points, not a continuous trail. Roughly 1 in 5 flights happens to have a', lbl_font),
@@ -258,7 +302,17 @@ notes = [
  ('', lbl_font),
  ('Definitions', bold),
  ('• Large jet = commercial narrow/wide-body airliner (e.g. B738, A320), by aircraft type.', lbl_font),
- ('• Standard 3° descent height = the altitude an aircraft on a continuous 3-degree approach would be at that point (~3,100 ft over Brockenhurst).', lbl_font),
+ ('• Standard 3° descent height = the altitude an aircraft on a continuous 3-degree approach would be at that point (~3,127 ft over Brockenhurst).', lbl_font),
+ ('', lbl_font),
+ ('ALTITUDE: why these figures are pressure-corrected', Font(name=ARIAL, bold=True, size=10, color='0F335F')),
+ ('Aircraft transponders broadcast PRESSURE altitude measured against a fixed standard setting (1013.25 hPa), not true height above sea level.', lbl_font),
+ ('On a high-pressure day an aircraft is really higher than it reports; on a low-pressure day it is really lower. The gap can exceed 500 ft.', lbl_font),
+ ('We therefore correct every flight using the airport\'s own official hourly pressure readings (METAR), so these heights are directly comparable', lbl_font),
+ ('with the airport\'s radar display, which also works in height above sea level. Correction = (QNH - 1013.25) x 27.3 ft.', lbl_font),
+ ('We verified this two independent ways, and they agree to within 0.1 hPa (about 2 ft):', lbl_font),
+ ('   (a) aircraft recorded ON THE GROUND at Bournemouth, where the true elevation is known to be 38 ft, read between -181 and +229 ft', lbl_font),
+ ('       depending on the day, exactly tracking the weather; and (b) the pressure implied by those ground readings matches the official METARs.', lbl_font),
+ ('Note: correcting made the picture slightly WORSE for the airport, not better. Our earlier uncorrected figures were the conservative ones.', Font(name=ARIAL, bold=True, size=10, color='1F8F7F')),
  ('• Night = the airport\'s OFFICIAL night period, 23:30 to 06:00 local, as defined in the 2007 Section 106 agreement and Noise Action Plan. Every "night" figure in this workbook uses this window (a 23:15 arrival is Evening, not Night).', lbl_font),
  ('• These are counts of ACTUAL flights measured in that window. They are separate from the airport\'s night noise "quota" (a fixed budget of noise points in the S106); this workbook counts flights, not quota points.', lbl_font),
  ('• Airline is the OPDI operator code where available (mapped to a name for the common carriers); otherwise inferred from the callsign, shown as "Private / GA" or "(unverified)".', lbl_font),
