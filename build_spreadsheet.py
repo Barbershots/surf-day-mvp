@@ -191,6 +191,8 @@ def metrics(df):
     lj_ping = (lj & ping).sum()
     lj_below = (lj & below).sum()
     h = pd.to_numeric(df.loc[lj & ping, 'Height over Brockenhurst (ft)'], errors='coerce')
+    ovlj = lj & (df['Approached over village (rwy 26)'] == 'Yes')   # full population
+    lev = df['Levelled off over village'] == 'Yes'
     return {
         'Total arrivals': len(df),
         'Large jets': int(lj.sum()),
@@ -198,14 +200,18 @@ def metrics(df):
         '  large jets at night': int((lj & night).sum()),
         'Approached over village (rwy 26) *': int(ov_yes),
         '  % over village of classified (floor *)': (ov_yes/(ov_yes+ov_no)) if (ov_yes+ov_no) else None,
-        'Large jets over the village (measured)': int(lj_ping),
-        '  below the standard 3° descent height': int(lj_below),
-        '  % below 3° (large jets over village)': (lj_below/lj_ping) if lj_ping else None,
-        'Avg height of large jets over village (ft)': float(h.mean()) if len(h) else None,
-        'Levelled off over the village': int((df['Levelled off over village'] == 'Yes').sum()),
+        # --- HEADLINE, unbiased: measured across ALL over-village large jets ---
+        'Large jets approaching over the village': int(ovlj.sum()),
+        '  levelled off over the village': int((ovlj & lev).sum()),
+        '  % levelled off (UNBIASED)': ((ovlj & lev).sum()/ovlj.sum()) if ovlj.sum() else None,
+        # --- height: measured subset only, carries a sampling bias (see Read me) ---
+        'Height sample: large jets measured (~half) †': int(lj_ping),
+        '  below the standard 3° descent height †': int(lj_below),
+        '  % below 3° (of the measured sample) †': (lj_below/lj_ping) if lj_ping else None,
+        'Avg height of measured large jets (ft) †': float(h.mean()) if len(h) else None,
     }
 M = {y: metrics(data[y]) for y in all_years}
-PCT = {'  % over village of classified (floor *)', '  % below 3° (large jets over village)'}
+PCT = {'  % over village of classified (floor *)', '  % levelled off (UNBIASED)', '  % below 3° (of the measured sample) †'}
 HAS26 = PARTIAL in all_years
 
 sm = wb.create_sheet('Summary', 0)
@@ -231,11 +237,13 @@ recipe = {
  '  large jets at night': "=COUNTIFS('2025'!G:G,\"Large jet\",'2025'!C:C,\"Night\")",
  'Approached over village (rwy 26) *': "=COUNTIF('2025'!H:H,\"Yes\")",
  '  % over village of classified (floor *)': "=COUNTIF(H:H,\"Yes\")/(COUNTIF(H:H,\"Yes\")+COUNTIF(H:H,\"No\"))",
- 'Large jets over the village (measured)': "=COUNTIFS('2025'!G:G,\"Large jet\",'2025'!I:I,\"Yes\")",
- '  below the standard 3° descent height': "=COUNTIFS('2025'!G:G,\"Large jet\",'2025'!L:L,\"Yes\")",
- '  % below 3° (large jets over village)': "=COUNTIFS(G:G,\"Large jet\",L:L,\"Yes\")/COUNTIFS(G:G,\"Large jet\",I:I,\"Yes\")",
- 'Avg height of large jets over village (ft)': "=AVERAGEIFS('2025'!J:J,'2025'!G:G,\"Large jet\",'2025'!J:J,\">0\")",
- 'Levelled off over the village': "=COUNTIF('2025'!M:M,\"Yes\")",
+ 'Large jets approaching over the village': "=COUNTIFS('2025'!G:G,\"Large jet\",'2025'!H:H,\"Yes\")",
+ '  levelled off over the village': "=COUNTIFS('2025'!G:G,\"Large jet\",'2025'!H:H,\"Yes\",'2025'!M:M,\"Yes\")",
+ '  % levelled off (UNBIASED)': "=COUNTIFS(G:G,\"Large jet\",H:H,\"Yes\",M:M,\"Yes\")/COUNTIFS(G:G,\"Large jet\",H:H,\"Yes\")",
+ 'Height sample: large jets measured (~half) †': "=COUNTIFS('2025'!G:G,\"Large jet\",'2025'!I:I,\"Yes\")",
+ '  below the standard 3° descent height †': "=COUNTIFS('2025'!G:G,\"Large jet\",'2025'!L:L,\"Yes\")",
+ '  % below 3° (of the measured sample) †': "=COUNTIFS(G:G,\"Large jet\",L:L,\"Yes\")/COUNTIFS(G:G,\"Large jet\",I:I,\"Yes\")",
+ 'Avg height of measured large jets (ft) †': "=AVERAGEIFS('2025'!J:J,'2025'!G:G,\"Large jet\",'2025'!J:J,\">0\")",
 }
 r = 5
 year_cols = [(2, 2023), (3, 2024), (4, 2025)] + ([(5, 2026)] if HAS26 else [])
@@ -257,10 +265,17 @@ last_col = RC_COL
 note = sm.cell(row=r + 1, column=1, value=(
     '* Over-village counts are a conservative floor: sparse GPS sampling marks some flights that '
     'did overfly as No/Unknown. The reliable per-flight signal is the "Approached over village" column; '
-    'the true share is ~55-65% (the airport\'s own published figure is ~65% from the east). See the Read me tab.'))
+    'the true share is ~55-65% (the airport\'s own published figure is ~65% from the east).\n'
+    '† HEIGHT FIGURES CARRY A SAMPLING BIAS. A measured height exists for only about half of over-village '
+    'flights, and those are disproportionately the ones that levelled off (which are lower), because a '
+    'level-off is itself one of the events the data records. So the height percentages describe the measured '
+    'sample, NOT all flights, and they overstate the picture. The "% levelled off" figure above has no such '
+    'bias: it is measured across every over-village large jet. Quote that one. See the Read me tab.'))
 note.font = Font(name=ARIAL, italic=True, size=9, color='C0392B')
 note.alignment = Alignment(wrap_text=True, vertical='top')
-sm.merge_cells(start_row=r + 1, start_column=1, end_row=r + 2, end_column=last_col)
+sm.merge_cells(start_row=r + 1, start_column=1, end_row=r + 4, end_column=last_col)
+sm.row_dimensions[r + 1].height = 30
+r += 3
 if HAS26:
     n2 = sm.cell(row=r + 3, column=1, value=(
         '2026 is a PART YEAR (January to May only) and its recent months are still being backfilled by OPDI, '
@@ -293,6 +308,16 @@ notes = [
  ('• Height over Brockenhurst (ft): the aircraft\'s height above sea level at that ping, PRESSURE-CORRECTED (see the altitude note below).', lbl_font),
  ('• Height vs standard 3° descent (ft): how far above (+) or below (−) a standard continuous 3-degree descent the aircraft was.', lbl_font),
  ('• The last three columns show the altitude working: the raw recorded figure, the official air pressure at the time, and the correction applied.', lbl_font),
+ ('', lbl_font),
+ ('WHICH FIGURES ARE SAFE TO QUOTE (please read)', Font(name=ARIAL, bold=True, size=10, color='C0392B')),
+ ('SAFE: the "% levelled off over the village" figure. It is measured across EVERY large jet that approached over the village', lbl_font),
+ ('(identified by approach direction, which is independent of levelling off), so there is no circularity. About 3 in 4.', lbl_font),
+ ('TREAT WITH CARE: the height figures and the "% below the 3-degree descent". A measured height exists for only about half', lbl_font),
+ ('of over-village flights, and a level-off is itself one of the events the data records, so the flights we can measure are', lbl_font),
+ ('disproportionately the ones that levelled off, which are the lower ones. Those percentages therefore describe the measured', lbl_font),
+ ('sample and overstate the picture for all flights. We flag this ourselves rather than have it found for us.', lbl_font),
+ ('This limitation disappears once the group\'s own ADS-B receiver is running, because that records continuous tracks for every', lbl_font),
+ ('flight rather than occasional milestone events.', lbl_font),
  ('', lbl_font),
  ('IMPORTANT caveat about the GPS pings (please read)', Font(name=ARIAL, bold=True, size=10, color='C0392B')),
  ('The public data records only occasional track points, not a continuous trail. Roughly 1 in 5 flights happens to have a', lbl_font),
