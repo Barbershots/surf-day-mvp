@@ -34,7 +34,9 @@ LON0, LON1 = BLON - 0.22, BLON + 0.22
 HDG_LO, HDG_HI = 215, 295
 MAX_ALT_M = 3000            # ~10,000 ft. NOTE: OpenSky altitudes are METRES.
 
-CACHE = 'trino/cache'
+import pathlib
+HERE = pathlib.Path(__file__).resolve().parent
+CACHE = str(HERE / 'cache')
 os.makedirs(CACHE, exist_ok=True)
 
 
@@ -91,8 +93,8 @@ def main() -> None:
               f"days_with_data={int(r['n_days_seen'] or 0):>2}/7")
 
     out = pd.DataFrame(rows)
-    out.to_csv('trino/coverage_probe.csv', index=False)
-    print('\nwrote trino/coverage_probe.csv')
+    out.to_csv(str(HERE / 'coverage_probe.csv'), index=False)
+    print(f'\nwrote {HERE / "coverage_probe.csv"}')
     print('\nRead this before pulling: only use years where days_with_data is 7/7')
     print('and the aircraft count is in the same ballpark as recent years.')
     print('Earlier years are a coverage artefact, not a traffic trend.')

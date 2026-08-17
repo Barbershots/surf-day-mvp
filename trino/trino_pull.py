@@ -39,7 +39,9 @@ GATE_KM = 5.0                          # keep the closest approach within 5 km
 HDG_LO, HDG_HI = 215, 295              # inbound to runway 26 (track 255)
 MAX_ALT_M = 3000                       # ~10,000 ft
 
-CACHE = 'trino/cache'
+import pathlib
+HERE = pathlib.Path(__file__).resolve().parent
+CACHE = str(HERE / 'cache')
 os.makedirs(CACHE, exist_ok=True)
 
 # One row per flight per day: the state vector at closest approach to the
@@ -131,9 +133,9 @@ def main() -> None:
         print('no data pulled')
         return
     all_df = pd.concat(parts, ignore_index=True)
-    all_df.to_parquet('trino/brockenhurst_gate_10yr.parquet', index=False)
+    all_df.to_parquet(str(HERE / 'brockenhurst_gate_10yr.parquet'), index=False)
     print(f'\n{n_new} new chunks, {n_cached} already cached')
-    print(f'wrote trino/brockenhurst_gate_10yr.parquet  ({len(all_df):,} flights)')
+    print(f'wrote {HERE / "brockenhurst_gate_10yr.parquet"}  ({len(all_df):,} flights)')
 
 
 if __name__ == '__main__':

@@ -26,8 +26,12 @@ which are far less sensitive to how many receivers were listening.
 """
 from __future__ import annotations
 
+import pathlib
+
 import numpy as np
 import pandas as pd
+
+HERE = pathlib.Path(__file__).resolve().parent
 
 M_TO_FT = 3.280839895
 BLAT, BLON = 50.8217, -1.5739
@@ -59,7 +63,7 @@ def along_across(lat, lon):
 
 
 def main() -> None:
-    df = pd.read_parquet('trino/brockenhurst_gate_10yr.parquet')
+    df = pd.read_parquet(str(HERE / 'brockenhurst_gate_10yr.parquet'))
     df['dt'] = pd.to_datetime(df['time'], unit='s', utc=True)
     df['year'] = df['dt'].dt.year
     df['ym'] = df['dt'].dt.to_period('M').astype(str)
@@ -128,8 +132,8 @@ def main() -> None:
     m = m[m['n'] >= 20]                       # ignore thin months
     for col in ('med_offset', 'width', 'med_height'):
         m[f'{col}_shift'] = m[col].diff()
-    m.to_csv('trino/monthly_series.csv')
-    print(f'{len(m)} usable months written to trino/monthly_series.csv')
+    m.to_csv(str(HERE / 'monthly_series.csv'))
+    print(f'{len(m)} usable months written to {HERE / "monthly_series.csv"}')
     print()
     for col, label, unit in (('med_offset', 'sideways move', 'km'),
                              ('width', 'corridor width change', 'km'),
@@ -143,8 +147,8 @@ def main() -> None:
             print(f'   {ym}: {val:+.2f} {unit}   (now {m.loc[ym, col]:.2f})')
         print()
 
-    d.to_parquet('trino/brockenhurst_analysed.parquet', index=False)
-    print('wrote trino/brockenhurst_analysed.parquet')
+    d.to_parquet(str(HERE / 'brockenhurst_analysed.parquet'), index=False)
+    print(f'wrote {HERE / "brockenhurst_analysed.parquet"}')
     print()
     print('Caveats to carry into anything published:')
     print(' * OpenSky counts reflect receiver coverage as well as traffic.')
