@@ -15,6 +15,12 @@ AIRLINES = {
     'EWG':'Eurowings','KLM':'KLM','AFR':'Air France','DLH':'Lufthansa',
     'BCS':'European Air Transport (DHL)','PGT':'Pegasus','NEX':'Aer Lingus Regional',
     'EIN':'Aer Lingus','SWR':'Swiss','TAP':'TAP Air Portugal','NAX':'Norwegian',
+    # Based A340-600 freighters. The airframes are ex-Virgin, so the registry
+    # operator field still reads VIR, but they are flown as cargo by European
+    # Cargo (callsign URO) and a few by Maleth Aero (MLT). They are NOT Virgin
+    # Atlantic passenger flights: never label them "Virgin".
+    'URO':'European Cargo (A340 freighter)', 'MLT':'Maleth Aero',
+    'GEC':'Lufthansa Cargo', 'VIR':'Virgin Atlantic',
 }
 def airline(cs, cat):
     cs = str(cs).strip()
@@ -26,6 +32,17 @@ def airline(cs, cat):
     return (pfx + ' (unverified)') if pfx else 'Unknown'
 
 def airline2(operator, cs, cat):
+    """Who actually operated the flight.
+
+    The CALLSIGN is checked first because it reflects the operator on the day.
+    The registry operator field can be stale: the based ex-Virgin A340-600s
+    still carry operator code VIR but are flown as freighters by European Cargo
+    under the URO callsign, so trusting the operator field would wrongly label
+    707 cargo flights as Virgin Atlantic.
+    """
+    m = re.match(r'^([A-Z]{3})', str(cs).strip())
+    if m and m.group(1) in AIRLINES:
+        return AIRLINES[m.group(1)]
     op = str(operator).strip()
     if op in AIRLINES:
         return AIRLINES[op]
@@ -109,6 +126,13 @@ def build_year(year):
     out['Airline'] = [airline2(op, c, k) for op, c, k in zip(m['icao_operator'], m['flt_id'], m['category'])]
     out['Aircraft type'] = m['typecode']
     out['Aircraft class'] = m['category']
+    # Safety net for the "Virgin trap": the based A340-600s are ex-Virgin airframes
+    # (G-V... registrations) flown as freighters, not Virgin Atlantic passenger
+    # services. Catch any callsign variant that slips past the lookup above.
+    out['Airline'] = np.where(
+        out['Aircraft type'].isin(['A342', 'A343', 'A345', 'A346'])
+        & out['Airline'].astype(str).str.contains('Virgin', case=False, na=False),
+        'European Cargo (A340 freighter)', out['Airline'])
     # approached over village: Yes/No/Unknown from runway classification
     def ov(row):
         if not row.get('runway_classified', False) or pd.isna(row.get('runway_classified')):
